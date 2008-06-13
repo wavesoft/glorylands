@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-7"?>
+<package>
+
+	<!--// REQUIRED FIELDS //-->
+	<guid><!-- A Unique Object GUID - Version Independant --></guid>
+	<name><!-- Package Name --></name>
+	<version><!-- Package Version using lo-hi HEX order: 0xHHHHLLLL --></version>
+	<description><!-- A long package description --></description>
+
+	<!--// OPTIONAL FIELDS //-->
+	<author><!-- Package Author --></author>
+	<copyright><!-- Package Copyright --></copyright>
+	<website><!-- Package Website --></website>
+
+	<!--// INSTALLATION FIELDS //-->	
+	<dependencies>		
+		<!-- Preinstalled Packages required -->
+		<!-- [!] NAME attribute is required -->
+		
+		<!-- Case 1 : Require the specified package to be installed -->
+		<dependency name="The BukePRoject">d2ac7bc0c9f82a972cf3dfe1a8de1c6b</dependency>
+		<!-- Case 2 : Require a specific file version to be installed -->
+		<dependency name="The Something Else" version="12">c6d58971076c28e6e896c0e2533bef15</dependency>
+	</dependencies>
+	
+	<files>
+		<!-- ============= Files to copy ============ -->
+		<!-- Destination is set by the type attribute -->
+		<!-- It can be:
+				
+			 * ACTION.MANIFEST			* IMAGE.CHARS
+			 * ACTION.LIBRARY			* IMAGE.ELEMENTS
+			 * ACTION					* IMAGE.INVENTORY
+			 * SYSTEM.MANAGER			* IMAGE.PLAYERS
+			 * SYSTEM.INCLUDE			* IMAGE.PORTRAITS
+			 * SYSTEM.ENGINE			* IMAGE.SIGHTSEENS
+			 * SYSTEM					* IMAGE.UI
+			 * OUTPUT.PROCESSOR			* IMAGE.TILES
+			 * OUTPUT.FILE				* INTERFACE.INCLUDE
+			 * DOCUMENTATION			* INTERFACE.THEME
+			 * DATA.MAPS				* DATA.MODEL
+			 * DATA.ENGINE				* DATA.INTERFACE
+			 * DATA.MODULE				* DATA.HOOK
+			 
+			# Subdir attribute contains a possible destination sub-directory.
+			# If recurse is set to 'yes', and the >value< is folder, the contents
+			  of the folder are transfered recursively
+		-->
+		<file type="IMAGE.TILES" subdir="/" recurse="yes">tiles</file>
+	</files>
+
+	<database>
+		<!-- Database SQL Files to execute while installing the script -->
+		<sql>install.sql</sql>
+		<sql>units.sql</sql>
+	</database>
+	
+	<dictionary>
+		<!-- Dictionary entries to import    -->
+		<!--  TYPE : Dictionary to import to -->
+		
+		<!-- Case 1 : Add an entry with a unique (But not defined) value -->
+		<entry type="category">unit</entry>
+		<!-- Case 2 : Add an item with a specific value -->
+		<entry type="category" value="3">elemental</entry>
+	</dictionary>
+
+	<!-- Entries to append on event hook system -->
+	<hooks>
+		<hook event="name" function="name">filename</hook>
+	</hooks>
+
+	<!--// UNINSTALLATION FIELDS //-->	
+	<uninstalls>
+		<!--  === Actions to perform while uninstalling ===  -->
+		<!-- TYPE can be : [*] SQL 		= Execute SQL file 	 -->
+		<!-- 			   [*] SCRIPT	= Execute PHP script -->
+		
+		<uninstall type="SQL">uninstall.sql</uninstall>
+		<uninstall type="SCRIPT">cleanup.php</uninstall>
+	</uninstalls>
+</package>

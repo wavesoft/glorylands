@@ -1,0 +1,6 @@
+
+
+ADMIN							Game administration utilities
+CONFIG							Global game configuration
+DOC								Game documentation
+ENGINE							Central game engine
