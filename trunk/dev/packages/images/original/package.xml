@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-7"?>
+<package>
+
+	<!--// REQUIRED FIELDS //-->
+	<guid>3f05cf00782a0345e9b9e3ec776c32f7</guid>
+	<name>GloryLands Original Iconset</name>
+	<version>1</version>
+	<description>Original GloryLands inventory iconset</description>
+
+	<!--// OPTIONAL FIELDS //-->
+	<author>Many</author>
+	<copyright>(CC) CopyLeft by various sources.</copyright>
+
+	<!-- // INSTALLATION //-->
+	<files>
+		<file type="IMAGE.INVENTORY" subdir="/" recurse="yes">images</file>
+		<file type="IMAGE.UI" subdir="/" recurse="yes">flags</file>
+		<file type="IMAGE.UI" subdir="/" recurse="yes">UI</file>
+		<file type="DOCUMENTATION" subdir="/" recurse="no">OriginalInventorySet - Authors</file>
+	</files>
+	
+</package>

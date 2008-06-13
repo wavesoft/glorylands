@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-7" />
+<title>GloryLands Map Editor Advanced Tutorial</title>
+<style type="text/css">
+<!--
+.lezanta {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #333333;
+}
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #000000;
+	background-color: #FFFF99;
+	margin: 0px;
+	padding: 0px;
+}
+td.head {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #FFFFFF;
+	background-color: #333333;
+	margin-left: 5px;
+	padding-left: 5px;
+}
+.navcurrent {
+	font-weight: bold;
+	color: #FFCC00;
+}
+td.body {
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 8px;
+	padding: 8px;
+	font-size: 14px;
+}
+td.footer {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-style: italic;
+	color: #333333;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #333333;
+}
+a.navlink {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+a.navlink:hover {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFCC00;
+	text-decoration: none;
+}
+-->
+</style>
+</head>
+
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="head"><a href="index.html" class="navlink">GloryLands Map Editor Help</a> &rArr; <span class="navcurrent">Extended Tutorial </span></td>
+  </tr>
+  <tr>
+    <td class="body"><h1>GloryLands Map Editor Extended Tutorial </h1>
+      <h2>Introduction</h2>
+      <p>MapEditor also offers some usefull actions to simplify your design. For example, instead of clicking on the map you can use some  keystrokes and mouse moves instead. </p>
+      <p>This tutorial will show you the remaining functions of the editor. </p>
+      <h2>Using keystrokes while designing </h2>
+      <p>Two special keys can be used while designing. The <strong>CONTROL</strong> and the <strong>SHIFT</strong> key. Their function varies, depending of the operation being executed:</p>
+      <ul>
+        <li><em>While Designing, </em>holding down <em>SHIFT</em> will enable the <strong>overwrite</strong> <strong>mode</strong>. While in overwrite mode, you can place an object anywere on the map (If you are not in overwrite mode clicking on an existing object will start the drag/resize mode)</li>
+        <li><em>While Designing,  </em>holding down <em>CTRL</em> will enable the <strong>hover mode</strong>. While in hover mode, each object is being highligthed when the mouse moves over it. When an object is highlighted, a horizontal line and a rectangle are displaied. The line represents the item's Z=0 position (Ground position or Z-Reference position) and the rectangle marks the area the current object occupies. </li>
+      </ul>      
+      <table width="200" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><img src="tut_20.jpg" alt="New Project" width="349" height="262" /></td>
+        </tr>
+        <tr>
+          <td class="lezanta"><strong>Fig.20</strong> : An object in hover mode </td>
+        </tr>
+      </table>      
+      <ul>
+        <li><em>While Setting Attennuation,</em> Holding the SHIFT button will emulate the mouse click. So, if you have to fill a large area, you han hold down SHIFT and move your mouse over the area you want to fill. </li>
+      </ul>      
+      <p>Also, note that the <strong>ESC</strong> key will cancel any active operation (For example object repositioning or z-reference modification) </p>
+      <h2>Modifying Z-Reference</h2>
+    <p>There are some cases you will need to modify the z-reference line of an object. When placing an object, it's default z-reference is 0. That is tranlated to &quot;the object is 0 units high from the ground&quot; or simply, its <em>on</em> the ground. If you want to place an object on a higher altitute you will have to modify it's Z-Reference. For example, windows are not on the ground level, they are on a specific position above the ground. The next image shows a wrong window z-reference: </p>
+    <table width="200" border="0" align="center" cellpadding="5" cellspacing="5">
+      <tr>
+        <td><img src="tut_21.jpg" alt="New Project" width="242" height="271" /></td>
+        <td><table width="100" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+              <td><img src="tut_22.jpg" alt="New Project" width="353" height="278" /></td>
+            </tr>
+            <tr>
+              <td class="lezanta">&nbsp;</td>
+            </tr>
+        </table></td>
+      </tr>
+      <tr>
+        <td class="lezanta"><strong>Fig.21 </strong>: Windows having an invalid Z-Reference position (They are on ground-level) </td>
+        <td class="lezanta"><strong>Fig.22</strong> : The compiled result of the previous example. You can see that the windows are placed inside the building instead in front of it.</td>
+      </tr>
+    </table>
+    <p>To change some object's Z-Reference use the object's dropdown menu and select &quot;Change Z-Reference&quot;. After the click, the object is highlighted and the horizontal Z-Reference line starts floating. Left-click on the new position to save the item's Z-Reference or hit ESC to cancel. </p>
+    <table width="200" border="0" align="center" cellpadding="5" cellspacing="5">
+      <tr>
+        <td><img src="tut_23.jpg" alt="New Project" width="242" height="271" /></td>
+        <td><table width="100" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+              <td><img src="tut_24.jpg" alt="New Project" width="353" height="278" /></td>
+            </tr>
+            <tr>
+              <td class="lezanta">&nbsp;</td>
+            </tr>
+        </table></td>
+      </tr>
+      <tr>
+        <td class="lezanta"><strong>Fig.23 </strong>: The correct Z-Reference position </td>
+        <td class="lezanta"><strong>Fig.24</strong> : The correct result </td>
+      </tr>
+    </table>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p></td>
+  </tr>
+  <tr>
+    <td class="footer"> This is a preliminary help and subject to change. If you have any questions, please use the GloryLands community forums or wiki. </td>
+  </tr>
+</table>
+</body>
+</html>
