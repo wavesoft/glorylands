@@ -13,8 +13,8 @@
 // ===========================================
 
 // Check for interface availability
-if (!file_exists(DIROF('DATA.INTERFACE')."base_{$act_interface}.tpl")) {
-	echo "Not found : ".DIROF('DATA.INTERFACE')."base_{$act_interface}.tpl";
+if (!file_exists(DIROF('DATA.INTERFACE')."{$act_interface}.tpl")) {
+	echo "Not found : ".DIROF('DATA.INTERFACE')."{$act_interface}.tpl";
 	return false;
 }
 
@@ -86,6 +86,6 @@ if ($ans && !$sql->emptyResults) {
 $smarty->assign($resources);
 $smarty->assign('modules', $modules);
 
-$smarty->display("base_{$act_interface}.tpl");
+$smarty->display("{$act_interface}.tpl");
 
 ?>
