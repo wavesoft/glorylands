@@ -16,6 +16,7 @@ define(REF_URL,'REF_URL');
 define(TUNE,'TUNE');
 define(MAP_GRID_W,'MAP_GRID_W');
 define(MAP_GRID_H,'MAP_GRID_H');
+define(INDX_INTERFACE, 'INDX_INTERFACE');
 
 ### The database configuration
 $_CONFIG[DB][HOST] 			= "localhost";
@@ -27,8 +28,9 @@ $_CONFIG[DB][PASSWORD] 		= "lands";
 $_CONFIG[GAME][TITLE] 		= "Glory Lands";
 $_CONFIG[GAME][CHARSET] 	= "iso-8859-7";
 $_CONFIG[GAME][THEME] 		= "default";
-$_CONFIG[GAME][BASE] 		= "C:/xampp/htdocs/glorylands";
+$_CONFIG[GAME][BASE] 		= "C:/xampp/htdocs/gl-sf";
 $_CONFIG[GAME][REF_URL] 	= "/glorylands";
+$_CONFIG[GAME][INDX_INTERFACE] = 'interface.entry';
 
 ### Tuning variables
 $_CONFIG[TUNE][MAP_GRID_W]	= 4;
