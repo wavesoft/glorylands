@@ -26,7 +26,7 @@
 		 <tr><td><b>Price:</b></td><td>200 <img src="images/UI/gold.gif" align="absmiddle" /></td></tr>
 		 <tr><td><b>Owner:</b></td><td>Lord Ashriel</td></tr>
 		 <tr><td><b>Population:</b></td><td>1241</td></tr>
-		 <tr><td colspan="2" align="center" valign="bottom" height="24"><a href="javascript:restoreview();"><img border="0" src="images/UI/return.gif" /></a></td></tr>
+		 <tr><td colspan="2" align="center" valign="bottom" height="24"><a href="javascript:ddwin_dispose();"><img border="0" src="images/UI/return.gif" /></a></td></tr>
 	  	</table>
 	  </td>
 	  </tr>
