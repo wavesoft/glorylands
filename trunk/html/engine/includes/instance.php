@@ -1,23 +1,64 @@
 <?php
-// ===========================================
-//   PROJECT: The Glory Lands MMORPG Game
-// ===========================================
-//   Version: v0.2 Beta
-//      File: Object instancing manager
-//                   _______
-// _________________| TO DO |_________________
-//  -
-// ___________________________________________
-//   (C) Copyright 2007, John Haralampidis
-// ===========================================
 
-// Return true if the guid specified is valid
+/**
+  * Object instancing manager
+  *
+  * This file contains all the functions used by the instancing system.
+  * The instancing system uses a GUID-Reference system. Every instance in the game as a unique number (GUID).
+  * this number contains three parameters: The instancing table prefixes, the reference type and the template 
+  * tabe index for the instance.
+  *
+  * GUID Analysis: 
+  * <pre>
+  * GUID is a 32-bit integer value. It's bits are the following:
+  *    
+  *    xxxxxxxxxxxxxxxxxxxxxxxx     nnnnnnn            t
+  *     24 bits (16777216 max)  7 bits (128 max)   1 bit (2 max)
+  *           ITEM INDEX         CATEGORY INDEX     GUID TYPE
+  *
+  * GUID Type is: 	0 - for Template reference (used to create instances)
+  *	                 1 - for Instance reference (an instanced, playable object)
+  *
+  * </pre>
+  *
+  * An instance can store an infinite number of parameters. Some of them are static and template-wide (they are the
+  * same for all the instances of a template), others can be can be used in SQL queries and others are just kept in
+  * storage. In general:
+  * <ul>
+  *  <li>The table <i>xxxx_template</i> contains all the template-wide cariables, among with some initialization ones</li>
+  *  <li>The table <i>xxxx_instance</i> contains all the variables that can be used in SQL queries</li>
+  *  <li>The field `data` of the table <i>xxxx_instance</i> contains the rest of the variables, stored in an serialized format</li>
+  * </ul>
+  *
+  * @package GloryLands
+  * @subpackage Engine
+  * @author John Haralampidis <johnys2@gmail.com>
+  * @copyright Copyright (C) 2007-2008, John Haralampidis
+  * @version 1.2
+  */
+
+/**
+  * Check if the given number is a valid GUID
+  *  
+  * The check is performed by checking if the number contains an existing 
+  * `category index` field, and a  valid `index` field
+  *
+  * @param int $guid The number to be checked for GUID validity
+  * @return bool Returns true if the given number is a valid GUID
+  */
 function gl_guid_valid($guid) {
 	$parts = gl_analyze_guid($guid);
 	return ($parts['index']>0) && ($parts['group']!=false);
 }
 
-// Generate a GUID based on information provided
+/**
+  * Generate a GUID based on information provided
+  *
+  * @param int $index 		The value of the `index` field of the generated GUID
+  * @param bool $instance	If true, defines the GUID as INSTANCE (`type` flag)
+  * @param string|int $group	The category name or the category index that will be stored in the `category` field
+  * @return int 			The generated GUID
+  */
 function gl_make_guid($index, $instance = true, $group = 0) {
 	global $GUIDReverseOf;
 	$guid = 0;
@@ -45,7 +86,21 @@ function gl_make_guid($index, $instance = true, $group = 0) {
 	return $guid;
 }
 
-// Analyze a GUID and return it's information
+/**
+  * Analyze a GUID and return it's information
+  *
+  * Returns an array with the following fields:
+  * <ul>
+  * <li><b>instance</b> (bool) : True if the GUID is an instance</li>
+  * <li><b>template</b> (bool) : True if the GUID is a template</li>
+  * <li><b>index</b> (int) : The object index stored in GUID</li>
+  * <li><b>group_id</b> (int) : The category field</li>
+  * <li><b>group</b> (string) : The category field, translated to string</li>
+  * </ul>
+  *
+  * @param int $guid 		The GUID to analyze
+  * @return array			The guid information
+  */
 function gl_analyze_guid($GUID) {
 	global $GUIDGroupOf;
 
@@ -74,7 +129,12 @@ function gl_analyze_guid($GUID) {
 	);
 }
 
-// Obdain a guid's template group
+/**
+  * Obdain a guid's template group
+  *
+  * @param int $guid 		A GUID of an instanced entry
+  * @return int 			The GUID of the template entry
+  */
 function gl_get_guid_template($guid) {
 	global $sql;
 
@@ -86,7 +146,7 @@ function gl_get_guid_template($guid) {
 	if ($parts['template']) return $guid;
 	
 	// Search for guid's template
-	$ans = $sql->query("SELECT `temlpate` FROM `{$parts['group']}_template`");
+	$ans = $sql->query("SELECT `template` FROM `{$parts['group']}_template`");
 	if (!$ans) return false;
 	if ($sql->emptyResults) return false;
 	$row = $sql->fetch_array(MYSQL_NUM);	
@@ -95,7 +155,17 @@ function gl_get_guid_template($guid) {
 	return gl_make_guid($row[0],false,$parts['group_id']);
 }
 
-// Load object data from instance and instanciate a new object
+/**
+  * Create a new instance based on the GUID given
+  *
+  * If the given GUID is a template, the function will generate a new instance based on 
+  * the template. 
+  * If the given GUID is an instance, this function will duplicate the instance
+  *
+  * @param int $guid 		A GUID of an instance or a template entry
+  * @param bool $vars		A single-dimensional array that contains the parameter names and values to store into the instance
+  * @return int 			The newly generated GUID
+  */
 function gl_instance_object($guid, $vars = false) {
 	global $sql, $TableInstanceFields;
 	
@@ -192,8 +262,15 @@ function gl_instance_object($guid, $vars = false) {
 	}
 }
 
-// Decode variables based on index
-// Return the decoded variables...
+/**
+  * Convert a variable into a visual result based on the type and schema provided
+  *
+  * @param mixed $var 		The variable to convert into visual result
+  * @param string $type		The visual convertion mode to use
+  * @param string $schema	Supporting information for type
+  * @param string $default	The default value to use in case the variable is empty
+  * @return string 			A visual result that is ready to be echoed into the browser
+  */
 function gl_decode_variable($var,$type,$schema, $default = '') {
 	global $sql;
 	
@@ -238,8 +315,13 @@ function gl_decode_variable($var,$type,$schema, $default = '') {
 	}
 }
 
-// Load template variable description and translate variables
-// Returns a two-dimensional array containing the detail name and value
+/**
+  * Load template variable description and translate variables
+  *
+  * @param string $type		The GUID category from which to obdain the translation information (*_vardesc table)
+  * @param array $vars		The variables to convert (usually obdained from the gl_get_guid_vars()
+  * @return array 			A two-dimensional array that contains the parameter name and a visual value
+  */
 function gl_translate_vars($type, $vars) {
 	global $sql;
 	
@@ -282,7 +364,13 @@ function gl_translate_vars($type, $vars) {
 	return $result;
 }
 
-// Get all the GUID's variables
+
+/**
+  * Get all the GUID's parameters
+  *
+  * @param int $vars			The GUID to read (instance only)
+  * @return array|bool		An array that contains the parameter names and a values or false in case of error
+  */
 function gl_get_guid_vars($guid) {
 	global $sql;
 
@@ -320,7 +408,13 @@ function gl_get_guid_vars($guid) {
 	return $data_vars;	
 }	
 
-// Update any of the GUID's variables
+/**
+  * Update any of the GUID's parameters
+  *
+  * @param int $vars		The GUID to update (instance only)
+  * @param array $vars		An array that contains the variables to update and their new value
+  * @return bool 			True if successfull, false otherways
+  */
 function gl_update_guid_vars($guid, $vars) {
 	global $sql, $TableInstanceFields;
 
