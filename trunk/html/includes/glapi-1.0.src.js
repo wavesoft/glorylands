@@ -571,6 +571,14 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 						window.alert(e);	
 					}
 
+				// ## HTML Data for dropdown menu ##
+				} else if (mode=='DROPDOWN') {
+
+					// Update dropdown menu text
+					if ($defined(obj.text) && dropdownInfo.visible) {
+						$('dropdownLayer').setHTML(obj.text);
+					}
+
 				// ## Unknown Interface ##
 				} else {
 					// Process unknown messages to later-included scripts
@@ -758,6 +766,48 @@ function renderUpdate() {
 }
 
 // ======================================================
+//  Information hover and popup window handling
+// ======================================================
+
+var hoverInfo={text:'',x:0,y:0,sz:{x:0,y:0}};
+function hoverShow(text,x,y) {
+	var layer = $('hoverLayer');
+	if (text) {
+		if (hoverInfo.text!=text) {
+			hoverInfo.text=text;	
+			layer.setHTML(text);
+			hoverInfo.sz = layer.getSize().size;
+			layer.setStyles({visibility:'visible'});	
+		}
+		if (hoverInfo.x!=x || hoverInfo.y!=y) {
+			hoverInfo.x=x; hoverInfo.y=y;
+			layer.setStyles({'left':x-(hoverInfo.sz.x/2), 'top':y-hoverInfo.sz.y-12});	
+		}
+	} else {
+		if (hoverInfo.text!='') {
+			hoverInfo={text:'',x:0,y:0,sz:{x:0,y:0}};
+			layer.setStyles({visibility:'hidden'});	
+		}
+	}
+}
+
+var dropdownInfo={visible:false};
+function dropdownShow(x,y,guid) {
+	var layer = $('dropdownLayer');
+	layer.setHTML('<img src="images/UI/loading2.gif" align="absmiddle" />');
+	layer.setStyles({visibility:'visible', 'left':x+5, 'top':y+5});
+	dropdownInfo.visible=true;
+	gloryIO('?a=interface.dropdown&guid='+guid, false, true);
+}
+function disposeDropDown(){
+	var layer = $('dropdownLayer');
+	if (dropdownInfo.visible) {
+		layer.setStyles({visibility:'hidden'});
+		dropdownInfo.visible=false;
+	}
+}
+
+// ======================================================
 //  Periodical Message Popper (Message-only Data feedback)
 // ======================================================
 var feeder_interval=5000;
@@ -781,6 +831,10 @@ function feeder() {
 // ======================================================
 //  Basic site initializatoin functions
 // ======================================================
+
+// The overlay item the player has his mouse over (contains the dictionary entry)
+var hoveredItem=false;
+
 $(window).addEvent('load', function(e){
 	
 	/* -=[ PHASE 1 ]=- */
@@ -812,10 +866,15 @@ $(window).addEvent('load', function(e){
 		
 		if (DicEntry.d) {
 			$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base+', Overlay: '+Overlay+' Dic:'+DicEntry.d.name);
+			hoveredItem=DicEntry;
+			hoverShow(DicEntry.d.name, e.event.clientX, e.event.clientY);			
 		} else {
 			$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base);
+			hoveredItem=false;
+			hoverShow(false);
 		}
 		
+		// Rectangle handling
 		var r = $('grid_rect');
 		if (r) {
 			if (r.getStyle('display')!='none') r.setStyles({left:(bxP-rectinfo.bx)*32, top:(byP-rectinfo.by)*32, width: rectinfo.w*32, height:rectinfo.h*32, display:''});
@@ -825,7 +884,13 @@ $(window).addEvent('load', function(e){
 	$('datapane').addEvent('contextmenu', function(e) {
 		e = new Event(e);
 		if (e.rightClick) {
-			
+			if (hoveredItem!=false) {
+				// Display the dropdown menu
+				dropdownShow(e.event.clientX,e.event.clientY,hoveredItem.g);	
+			} else {
+				// Clicked over no item
+				disposeDropDown();	
+			}
 		}
 		//window.alert($trace(e));
 		e.stop();
@@ -849,6 +914,9 @@ $(window).addEvent('load', function(e){
 				$('grid_rect').setStyles({'display':'none'});
 			}
 		}
+		
+		// Dispose dropdown (if visible)
+		disposeDropDown();
 	});
 
 	

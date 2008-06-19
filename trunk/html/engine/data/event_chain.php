@@ -3,8 +3,8 @@
 # Please do not edit by hand!
 global $EventChain;
 $EventChain = array(
-'map.move'=>array( array('hook-distance.php', 'distance_map_move'), array('hook-portal.php','portal_map_move') ),
-'chat.command' => array( array('hook-chatcommands.php', 'chat_admin') ),
-'map.updategrid' => array( array('hook-chatcommands.php','chat_notify_zidchange') )
+'map.move'=>array( array('hook-distance.php', 'distance_map_move'), array('hook-portal.php', 'portal_map_move')) ,
+'chat.command'=>array( array('hook-chatcommands.php', 'chat_admin')) ,
+'map.updategrid'=>array( array('hook-chatcommands.php', 'chat_notify_zidchange')) 
 );
 ?>

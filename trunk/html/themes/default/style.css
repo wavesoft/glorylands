@@ -410,3 +410,34 @@ div.dbf_container img {
 	padding: 0px;
 	margin: 0px;
 }
+
+/* ======[ Hover Layer ]====================================== */
+
+#hoverLayer {
+	position:absolute; 
+	z-index: 100; 
+ 	background-image:url(images/UI/backblack.png);
+ 	padding: 3px;
+	border: solid 1px #666666;
+}
+
+#dropdownLayer {
+	font-size: 10px;
+	position:absolute; 
+	z-index: 101; 
+ 	background-color: #000000;
+ 	padding: 5px;
+	border: solid 1px #666666;
+}
+#dropdownLayer a {
+/*	display: block; 
+	padding: 3px;*/
+	color: #FFFFFF;
+	text-decoration: none;
+}
+/*
+#dropdownLayer a:hover {
+	background-color: #FF9900;
+	color: #000000;
+}
+*/
