@@ -38,6 +38,7 @@ while (false !== ($entry = $d->read())) {
    if ((substr($entry,-4)=='.gif') && (substr($entry,0,6)=='chars-')) {
 //   	echo("Deleting ".$base.$entry."\n");
 	copy($base.$entry,$_CONFIG[GAME][BASE]."/admin/cache/tiles/".$entry);
+	if ($_GET['a']=='remove') unlink($base.$entry);
 	array_push($z_tiles, $_CONFIG[GAME][BASE]."/admin/cache/tiles/".$entry);
 	$count++;
    }
@@ -56,6 +57,7 @@ foreach ($info as $entry => $value) {
 	if ($entry!='new_y' && $entry!='last_x' && $entry!='last_y' && $entry!='version' && (substr($entry,0,1)!=';') && ($entry!='')) {
 		$entry.='.o';
 		copy($base.$entry,$_CONFIG[GAME][BASE]."/admin/cache/models/".$entry);
+		if ($_GET['a']=='remove') unlink($base.$entry);
 		array_push($z_models, $_CONFIG[GAME][BASE]."/admin/cache/models/".$entry);
 		$count++;
    	}
@@ -88,10 +90,14 @@ $zip = new PclZip($_CONFIG[GAME][BASE]."/admin/cache/chars.zip");
 $zip->create(array_merge($z_tiles, $z_models, $z_extras), '', $_CONFIG[GAME][BASE]."/admin/cache/");
 
 // Update ini
-$f = fopen(DIROF('IMAGE.TILES')."chars.ini","w");
-fwrite($f,"; Cache file for the charachters tileset\r\n");
-foreach ($info as $parm => $value) {
-	fwrite($f,"{$parm} = {$value}\r\n");	
+if (!isset($_GET['a'])) {
+	$f = fopen(DIROF('IMAGE.TILES')."chars.ini","w");
+	fwrite($f,"; Cache file for the charachters tileset\r\n");
+	foreach ($info as $parm => $value) {
+		fwrite($f,"{$parm} = {$value}\r\n");	
+	}
+} else {
+	if ($_GET['a']=='remove') unlink(DIROF('IMAGE.TILES')."chars.ini");
 }
 
 echo "<font color=\"green\">done</font>\n";
@@ -99,4 +105,5 @@ echo "<font color=\"green\">done</font>\n";
 ?>
 
 <a href="cache/chars.zip">Get It!</a>
+<a href="?a=remove">Remove files and reset characters</a>
 </pre>

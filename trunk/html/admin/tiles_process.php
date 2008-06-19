@@ -126,7 +126,19 @@ for ($y=0;$y<$cellsY;$y++) {
 }
 
 imagedestroy($im_new);	
-imagedestroy($imsrc);	
+imagedestroy($imsrc);
+
+####  Rotate the latest 5 files for comparison ####
+
+// Load all the cache files into the array
+if (!is_dir("cache/.tilecache")) mkdir("cache/.tilecache");
+$d = dir("cache/.tilecache");
+$files = array();
+while (false !== ($entry = $d->read())) {
+	if (substr($entry,0,1)!='.') array_push($files, $entry);
+}
+$d->close();
+
 ?>
 </pre>
 <table class="tiles">
@@ -137,7 +149,13 @@ imagedestroy($imsrc);
 </tr>
 <tr>
 	<td class="data"><img src="../images/chars/<?php echo $_REQUEST['char'] ?>.png" /></td>
-	<td class="data"><img src="cache/<?php echo $_REQUEST['char'] ?>_res.gif" /></td>
+	<td class="data">
+    <img src="cache/.tilecache/<?php echo $files[0]; ?>" />   
+    <img src="cache/.tilecache/<?php echo $files[1]; ?>" />   
+    <img border="1" src="cache/<?php echo $_REQUEST['char'] ?>_res.gif" />   
+    <img src="cache/.tilecache/<?php echo $files[2]; ?>" />   
+    <img src="cache/.tilecache/<?php echo $files[3]; ?>" />   
+    </td>
 	<td class="data">
 	<table border="1" cellpadding="0" cellspacing="0">
 <?php

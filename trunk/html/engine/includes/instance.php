@@ -466,4 +466,25 @@ function gl_update_guid_vars($guid, $vars) {
 		
 }	
 
+/**
+  * Delete an instance
+  *
+  * @param int $guid 		The GUID to delete (instance only)
+  * @return bool 			Returns TRUE if deletion was successfull;
+  */
+function gl_delete_guid($guid) {
+	global $sql, $TableInstanceFields;
+
+	// Analyze guid
+	$parts = gl_analyze_guid($guid);
+	if (!$parts['group']) return false;		// Group not exists? Cannot continue...
+	if (!$parts['instance']) return false;	// Is not an instance? Template variables 
+	
+	// Delete the table
+	$ans = $sql->query("DELETE FROM `{$parts['group']}_instance` WHERE `guid` = {$guid}");
+	if (!$ans) return false;
+	if ($sql->affectedRows == 0)  return false;
+	return true;
+
+}
 ?>
