@@ -29,7 +29,7 @@ $_CONFIG[GAME][TITLE] 		= "Glory Lands";
 $_CONFIG[GAME][CHARSET] 	= "iso-8859-7";
 $_CONFIG[GAME][THEME] 		= "default";
 $_CONFIG[GAME][BASE] 		= "C:/xampp/htdocs/gl-sf";
-$_CONFIG[GAME][REF_URL] 	= "/glorylands";
+$_CONFIG[GAME][REF_URL] 	= "/gl-sf";
 $_CONFIG[GAME][INDX_INTERFACE] = 'interface.entry';
 
 ### Tuning variables

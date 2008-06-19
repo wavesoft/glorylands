@@ -82,7 +82,9 @@ var mapOfsY = 8;
 </head>
 <body>
 <table id="waiter_host"><tr><td valign="middle" align="center"><div id="waiter">Loading Graphics</div></td></tr></table>
-<div id="toolTipLayer" style="position:absolute; visibility: hidden; z-index: 100;"></div>
+<!-- Hover info -->
+<div id="hoverLayer" style="visibility: hidden; background-image:url(images/UI/backblack.png);"></div>
+<div id="dropdownLayer" style="visibility: hidden;"></div>
 <!-- Dedicated Window -->
 <div class="dd_blackie" id="dd_host" style="display: none">
 <table class="dd_maxsize"><tr valign="middle"><td align="center">

@@ -15,8 +15,8 @@ error_reporting(E_ALL);
 function cleanDir($base) {
 	$d = dir($base);
 	while (false !== ($entry = $d->read())) {
-		if (($entry=='.') || ($entry=='..')) {
-			// skip
+		if (substr($entry,0,1)=='.') {
+			// skip '.', '..', and hidden files (linux)
 		} elseif (is_dir($base."/".$entry)) {
 			cleanDir($base."/".$entry);
 			rmdir($base."/".$entry);

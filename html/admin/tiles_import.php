@@ -60,7 +60,7 @@ $fmap = fopen("../data/models/{$imgName}.o","w");
  $cx = ceil($imgW/2);
  $cx--;
  if ($cx<0) $cx=0;
- $cy = $imgH-1;
+ $cy = $imgH;
  fwrite($fmap, "{$cx},{$cy}\r\n");
 
 // Copy images

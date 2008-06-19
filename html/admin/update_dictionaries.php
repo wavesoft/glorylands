@@ -100,6 +100,13 @@ function updateDictionaryCache() {
 
 }
 
+echo "Updating <b>template_dictionary.php</b>...";
 updateTableCache();
+echo "OK<br />\n";
+
+echo "Updating <b>guid_dictionary.php</b>...";
 updateDictionaryCache();
+echo "OK<br />\n";
+
+echo "<br />\n<h2>Completed!</h2>";
 ?>

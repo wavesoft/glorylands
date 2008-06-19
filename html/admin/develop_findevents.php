@@ -3,6 +3,7 @@ ob_implicit_flush();
 
 global $events;
 include "../config/config.php";
+include "../config/diralias.php";
 include "../engine/data/event_chain.php";
 
 $events = array();
