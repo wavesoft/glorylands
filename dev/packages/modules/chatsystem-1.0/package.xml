@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-7"?>
+<package>
+
+	<guid>b14578f5c69246d82a68b513945da167</guid>
+	<name>Chat System</name>
+	<version>1</version>
+	<description>This package provides cross-user chat and system message display unit</description>
+
+	<author>John Haralampidis</author>
+	<copyright>(C) Copyright 2008, John Haralampidis</copyright>
+	<website>http://wavesoft.dyndns.org/</website>
+	
+	<files>
+		<file type="DATA.MODULE" subdir="/mod_chat/" recurse="yes">mod_chat</file>
+		<file type="DATA.HOOK" subdir="/" recurse="yes">hooks</file>
+		<file type="ACTION.MANIFEST" subdir="/" recurse="yes">manifests</file>
+		<file type="ACTION" subdir="/" recurse="yes">actions</file>
+	</files>
+
+	<database>
+		<sql>install.sql</sql>
+	</database>
+
+	<hooks>
+		<hook event="chat.command" function="chat_admin">hook-chatcommands.php</hook>
+	</hooks>
+
+	<uninstalls>
+		<uninstall type="SQL">uninstall.sql</uninstall>
+	</uninstalls>
+</package>

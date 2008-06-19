@@ -1,0 +1,81 @@
+/* CSS Document */
+
+.modchat_popup .tl {
+	background-image:url(chatsys-lt.png);
+	background-repeat: no-repeat;
+	width: 17px;
+	height: 19px;
+}
+
+.modchat_popup .bl {
+	background-image:url(chatsys-lb.png);
+	background-repeat: no-repeat;
+	background-position: top;
+	width: 17px;
+	height: 45px;
+}
+
+.modchat_popup .tr {
+	background-image: url(chatsys-rt.png);
+	background-repeat: no-repeat;
+	width: 17px;
+	height: 19px;
+}
+
+.modchat_popup .tr {
+	background-image: url(chatsys-rt.png);
+	background-repeat: no-repeat;
+	width: 17px;
+	height: 19px;
+}
+
+.modchat_popup .br {
+	background-image: url(chatsys-rb.png);
+	background-repeat: no-repeat;
+	background-position: top;
+	width: 17px;
+	height: 45px;
+}
+
+.modchat_popup .t {
+	background-image: url(chatsys-t.png);
+	background-repeat: repeat-x;
+	height: 19px;
+}
+
+.modchat_popup .b {
+	background-image: url(chatsys-b.png);
+	background-repeat: repeat-x;
+	background-position: top;
+	height: 45px;
+}
+
+.modchat_popup .l {
+	background-image: url(chatsys-l.png);
+	background-repeat: repeat-y;
+	width: 17px;
+}
+
+.modchat_popup .r {
+	background-image: url(chatsys-r.png);
+	background-repeat: repeat-y;
+	width: 17px;
+}
+
+.modchat_popup .m {
+	background-color: #FFFFCC;
+	color: #333333;
+	font-size: 10px;	
+}
+
+.modchat_popup .arrow {
+	background-image: url(chatsys-chat.png);
+	background-repeat: no-repeat;
+	background-position: top;
+	height: 45px;
+	width: 36px;
+}
+
+.modchat_popup .user{
+	color: #990000;
+}
