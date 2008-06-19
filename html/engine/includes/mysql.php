@@ -3,6 +3,7 @@
 /**
   * MySQL Database Management Module
   *
+  * <pre>
   * ----------------------- Revision History ---------------------------
   * v.2.4	- Added query_and_get_value function to query and get a value
   * v.2.3	- Added Script Run function
@@ -15,8 +16,10 @@
   * v.1.1	- Introduced fetch_array_fromresults
   * v.1.0    - First stable release
   * --------------------------------------------------------------------
+  * </pre>
   *
-  * @package GloryLands Engine
+  * @package GloryLands
+  * @subpackage Includes
   * @author John Haralampidis <johnys2@gmail.com>
   * @copyright Copyright (C) 2007-2008, John Haralampidis
   * @version 2.4
@@ -24,7 +27,8 @@
 
 
 /**
-  * @package GloryLands Engine
+  * @package GloryLands
+  * @subpackage Includes
   */
 class db {
 
