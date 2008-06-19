@@ -13,9 +13,9 @@ $(window).addEvent('load', function(e) {
 	eChatFloat.setHTML('\
 		<table class="modchat_popup" cellspacing="0" cellpadding="0">\
 		<tr>\
-			<td class="tl">&nbsp;</td>\
+			<td class="tl" width="17">&nbsp;</td>\
 			<td class="t" colspan="2">&nbsp;</td>\
-			<td class="tr">&nbsp;</td>\
+			<td class="tr" width="17">&nbsp;</td>\
 		</tr>\
 		<tr>\
 			<td class="l">&nbsp;</td>\
@@ -25,10 +25,10 @@ $(window).addEvent('load', function(e) {
 			<td class="r">&nbsp;</td>\
 		</tr>\
 		<tr>\
-			<td class="bl">&nbsp;</td>\
-			<td class="arrow">&nbsp;</td>\
+			<td class="bl" width="17">&nbsp;</td>\
+			<td class="arrow" width="45">&nbsp;</td>\
 			<td class="b">&nbsp;</td>\
-			<td class="br">&nbsp;</td>\
+			<td class="br  width="17"">&nbsp;</td>\
 		</tr>\
 		</table>\
    ');

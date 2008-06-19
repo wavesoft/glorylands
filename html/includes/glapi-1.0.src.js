@@ -884,14 +884,12 @@ $(window).addEvent('load', function(e){
 	});
 	$('datapane').addEvent('contextmenu', function(e) {
 		e = new Event(e);
-		if (e.rightClick) {
-			if (hoveredItem!=false) {
-				// Display the dropdown menu
-				dropdownShow(e.event.clientX,e.event.clientY,hoveredItem.g);	
-			} else {
-				// Clicked over no item
-				disposeDropDown();	
-			}
+		if (hoveredItem!=false) {
+			// Display the dropdown menu
+			dropdownShow(e.event.clientX,e.event.clientY,hoveredItem.g);	
+		} else {
+			// Clicked over no item
+			disposeDropDown();	
 		}
 		//window.alert($trace(e));
 		e.stop();
