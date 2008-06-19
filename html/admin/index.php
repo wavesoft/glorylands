@@ -15,7 +15,7 @@
 <h2>Developing</h2>
 <ul>
 <li><a href="tiles.php">Autimatic charactel model generator</a></li>
-<li><a href="develop_cleanchars.php">Delete all character models</a></li>
+<li><a href="develop_cleanchars.php">Build characters package</a></li>
 <li><a href="modelmaker/">Model designer</a></li>
 <li><a href="develop_findevents.php">Find interrupt hooks (events)</a></li>
 <li><a href="mkguid.php">Make a GUID</a></li>
@@ -25,5 +25,6 @@
 <li><a href="update_dictionaries.php">Update engine cache (Data dictinaries)</a></li>
 <li><a href="develop_cleanobj.php">Clear model cache</a></li>
 </ul>
+<li><a href="..">Back to game</a></li>
 </body>
 </html>

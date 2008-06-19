@@ -55,7 +55,7 @@ if ($_REQUEST['action'] == 'login') {
 ////// General information ////
 
 // Find out server statistics
-$users = $sql->getValue("SELECT count(*) FROM `users_accounts` WHERE `online` = 1");
+$users = $sql->query_and_get_value("SELECT count(*) FROM `users_accounts` WHERE `online` = 1");
 $max_users = 100;
 $perc = ceil(100*$users/$max_users);
 $act_result['server_load_img'] = ceil(7*$perc/100);

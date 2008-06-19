@@ -523,6 +523,7 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 					grid_display['head_link'] = head_link;
 					grid_display['head_image'] = head_image;
 					grid_display['background'] = background;
+					grid_display['title'] = title;
 
 					// Is there overlay data defined?
 					if ($defined(obj.data)) {
