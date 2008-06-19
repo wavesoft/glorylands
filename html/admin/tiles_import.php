@@ -106,6 +106,25 @@ fwrite($f,"; Cache file for the charachters tileset\r\n");
 foreach ($info as $parm => $value) {
 	fwrite($f,"{$parm} = {$value}\r\n");	
 }
+
+####  Rotate the latest 5 files for comparison ####
+
+// Load all the cache files into the array
+if (!is_dir("cache/.tilecache")) mkdir("cache/.tilecache");
+$d = dir("cache/.tilecache");
+$files = array();
+while (false !== ($entry = $d->read())) {
+	if (substr($entry,0,1)!='.') array_push($files, $entry);
+}
+$d->close();
+// Perform rotation if items are more than 4
+if (sizeof($files)>=4) {
+	$fkill = array_shift($files);
+	unlink("cache/.tilecache/".$fkill);
+	array_push($files,$imgName.".gif");
+}
+copy("cache/".$imgName."_res.gif", "cache/.tilecache/".$imgName.".gif");
+
 echo " done!";
 
 ?>
