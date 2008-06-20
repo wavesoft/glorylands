@@ -21,12 +21,18 @@ if (substr($text,0,1)=='/') {
 			$ans="You have left room <b>{$parm[1]}</b>";
 		}
 	} elseif ($cmd == 'chan') {
-		$sql->query("SELECT `channel` FROM `mod_chat_channel_registrations` WHERE `user` = ".$_SESSION[PLAYER][GUID]);
-		$ans='You are currently on channels:<br /><ul>';
+		$sql->query("SELECT `channel` FROM `mod_chat_channel_registrations` WHERE `user` = ".$_SESSION[PLAYER][GUID]." AND `channel` NOT LIKE '#%'");
+		$c='';
 		while ($chan=$sql->fetch_array(MYSQL_NUM)) {
-			$ans.="<li>{$chan[0]}</li>\n";
+			if ($c!='') $c.="\n";
+			$c.="<li>{$chan[0]}</li>";
 		}
 		$ans.="</ul>";
+		if  ($c=='') {
+			$ans='You are not on any channel. Type /join &lt;channel&gt; to join one!';
+		} else {
+			$ans='You are currently on channels:<br /><ul>'.$c.'</ul>';
+		}
 		
 	} else {
 		array_shift($parm);
@@ -34,22 +40,40 @@ if (substr($text,0,1)=='/') {
 	}
 	if ($ans) relayMessage(MSG_INTERFACE, 'CHAT', "<font color=\"gold\">$ans</font>", 'system');
  	
-} else {
+} else { 
 
 	$ans=$sql->query("SELECT `channel` FROM `mod_chat_channel_registrations` WHERE `user` = ".$_SESSION[PLAYER][GUID]);
-	if ($ans && !$sql->emptyResults) {
-		while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {		
-			if (callEvent('chat.sendchannel', $text, $row['channel'])) {
-				// Forward chat message to all the enrolled users on the channel
-				$chans=$sql->query("SELECT `user` FROM `mod_chat_channel_registrations` WHERE `channel` = '{$row['channel']}'");
-				if ($chans && !$sql->emptyResults) {
-					while ($user = $sql->fetch_array_fromresults($chans,MYSQL_NUM)) {
-						postMessage(MSG_INTERFACE, $user[0] ,'CHAT',$text, $_SESSION[PLAYER][DATA]['name']);
-					}
-				}
-			}
+	if (!$ans || $sql->emptyResults) return;
+	
+	// Prepare the query for the rest of the users
+	$q = '';
+	while ($row = $sql->fetch_array_fromresults($ans,MYSQL_NUM)) {		
+		// Forward chat message to all the enrolled users on the channel
+		if (callEvent('chat.sendchannel', $text, $row[0])) {
+			if ($q!='') $q.=',';
+			$q.="'{$row[0]}'";
 		}
 	}
+	if ($q=='') return;
+
+	// Obdain all the users to inform
+	$ans=$sql->query("SELECT
+					`mod_chat_channel_registrations`.`user`
+					FROM
+					`mod_chat_channel_registrations`
+					Inner Join `char_instance` ON `mod_chat_channel_registrations`.`user` = `char_instance`.`guid`
+					WHERE
+					`channel` IN ($q) AND
+					`char_instance`.`online` =  1
+					GROUP BY
+					`mod_chat_channel_registrations`.`user`");
+
+	if (!$ans || $sql->emptyResults) return;
+
+	// Send chats 
+	while ($row = $sql->fetch_array_fromresults($ans,MYSQL_NUM)) {
+		postMessage(MSG_INTERFACE, $row[0] ,'CHAT',$text, $_SESSION[PLAYER][DATA]['name']);
+	}		
 
 }
 ?>
