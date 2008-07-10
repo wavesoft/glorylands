@@ -271,7 +271,7 @@ function gl_instance_object($guid, $vars = false) {
   * @param string $default	The default value to use in case the variable is empty
   * @return string 			A visual result that is ready to be echoed into the browser
   */
-function gl_decode_variable($var,$type,$schema, $default = '') {
+function gl_decode_variable($var,$type,$schema,$default = '',$guid) {
 	global $sql;
 	
 	switch ($type) {
@@ -323,7 +323,7 @@ function gl_decode_variable($var,$type,$schema, $default = '') {
   * @param array $vars		The variables to convert (usually obdained from the gl_get_guid_vars()
   * @return array 			A two-dimensional array that contains the parameter name and a visual value
   */
-function gl_translate_vars($type, $vars) {
+function gl_translate_vars($type, $vars, $guid = 0) {
 	global $sql;
 	
 	// Initialize result
@@ -349,13 +349,13 @@ function gl_translate_vars($type, $vars) {
 			// Everything ok? Add a respond
 			if ($ok) {
 				$info['name'] = $row['name'];
-				$info['value'] = gl_decode_variable($vars[$row['variable']],$row['mode'],$row['translation'], $row['default']);
+				$info['value'] = gl_decode_variable($vars[$row['variable']],$row['mode'],$row['translation'], $row['default'], $guid);
 				array_push($result, $info);
 			}			
 			
 		} elseif ($row['showmissing'] == 1) {
 			$info['name'] = $row['name'];
-			$info['value'] = gl_decode_variable($row['default'],$row['mode'],$row['translation'], $row['default']);
+			$info['value'] = gl_decode_variable($row['default'],$row['mode'],$row['translation'], $row['default'], $guid);
 			array_push($result, $info);
 		}
 		

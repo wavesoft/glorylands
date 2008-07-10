@@ -1,21 +1,27 @@
 <?php
 
 if (!isset($_REQUEST['char'])) {
-	$text = "";
+
+	$text = "<table><tr><td>";
+
 	$d = dir(DIROF('DATA.MODEL',true));
 	while (false !== ($entry = $d->read())) {
 		if (substr($entry,-2) == '.o') {
-			$text.="<a href=\"javascript:gloryIO('?a=interface.ad.swapchar&char={$entry}');\">$entry</a><br />\n";
+			//$text.="<a href=\"javascript:gloryIO('?a=interface.ad.swapchar&char={$entry}');\">$entry</a><br />\n";
+			$text.="<a onMouseOver=\"var e=document.getElementById('ad_char_preview'); e.src='admin/viewmodel.php?model={$entry}';\" href=\"javascript:gloryIO('?a=interface.ad.swapchar&char={$entry}');\">$entry</a><br />\n";
 		}
 	}
 	$d->close();
+	
+	$text.="</td><td valign=\"top\"><img style=\"position: absolute; top: 32px;\" id=\"ad_char_preview\" name=\"ad_char_preview\" /></td></tr></table>";
 	
 	
 	// Return result
 	$act_result = array(
 			'mode' => 'POPUP',
 			'text' => "<div style=\"height: 200px; overflow: auto\">$text</div>",
-			'title' => 'Change your model'
+			'title' => 'Change your model',
+			'width' => 300
 	);
 
 } else {
