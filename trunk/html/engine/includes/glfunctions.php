@@ -89,6 +89,9 @@ function gl_user_logout() {
 	// Notify all event chains
 	callEvent('user.logout', $_SESSION[PLAYER][PROFILE]['name'], $_SESSION[PLAYER][PROFILE]['index']);
 
+	// Notify Grid alteration
+	callEvent('grid.alter', $_SESSION[PLAYER][GUID], $_SESSION[PLAYER][DATA]['x'], $_SESSION[PLAYER][DATA]['y'], $_SESSION[PLAYER][DATA]['map']); // Missing object here
+
 	// Logout chars and profile
 	$sql->query("UPDATE `char_instance` SET `online` = 0 WHERE `account` = ".$_SESSION[PLAYER][PROFILE]['index']);
 	$sql->query("UPDATE `users_accounts` SET `online` = 0 WHERE `index` = ".$_SESSION[PLAYER][PROFILE]['index']);
@@ -118,15 +121,20 @@ function gl_user_select_char($char_guid) {
 	$_SESSION[PLAYER][DATA]=gl_get_guid_vars($char_guid);
 	$_SESSION[PLAYER][GUID]=$char_guid;
 	$sql->query("UPDATE `char_instance` SET `online` = 1 WHERE `account` = ".$_SESSION[PLAYER][PROFILE]['index']." AND `guid` = $char_guid");
+
+	// Notify Grid alteration
+	callEvent('grid.alter', $_SESSION[PLAYER][GUID], $_SESSION[PLAYER][DATA]['x'], $_SESSION[PLAYER][DATA]['y'], $_SESSION[PLAYER][DATA]['map']); // New object here
 	
-	// Everything went OK!
+	// Everything went OK!s
 	return true;
 }
 
 // User storage
 function gl_user_getvar($variable, $player=false) {
-
+	// If player GUID is missing, use default player
 	if (!$player) $player=$_SESSION[PLAYER][GUID];
+	
+	// Get var
 	$vars=gl_get_guid_vars($player);
 	return $vars[$variable];
 }

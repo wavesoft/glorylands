@@ -29,7 +29,7 @@ function callEvent($event,&$a=false,&$b=false,&$c=false,&$d=false,&$e=false,&$f=
 		if (!$ans) return false;
 	}
 	
-	// Everything is ok
+	// Everything is ok by default
 	return true;
 }
 
@@ -44,11 +44,12 @@ define('MSG_INTERFACE',0); // Message is delivered to the User Interface Javascr
 define('MSG_INTERNAL',1);	 // Message is delivered to the internal system 
 
 // A common function used by all the other message functions
-function message_backend($type, $user_guid, $data) {
+function message_backend($type, $user_guid, $data, $once) {
 	global $sql;
 	$row['type'] = $type;
 	$row['user'] = $user_guid;
 	$row['data'] = serialize($data);
+	if ($once) $sql->query("DELETE FROM `system_messages` WHERE `user` = '$user_guid' AND `type` = '$type'");
 	$sql->addRow('system_messages', $row);
 }
 
@@ -68,7 +69,7 @@ function sendMessage($type) {
 	$user_guid = $_SESSION[PLAYER][GUID];
 	$data = func_get_args();
 	array_shift($data);	
-	message_backend($type, $user_guid, $data);
+	message_backend($type, $user_guid, $data, false);
 }
 
 // Same as above, but can send a message to a specific user
@@ -76,7 +77,15 @@ function postMessage($type, $user_guid) {
 	$data = func_get_args();
 	array_shift($data);	
 	array_shift($data);	
-	message_backend($type, $user_guid, $data);
+	message_backend($type, $user_guid, $data, false);
+}
+
+// Same as above, but makes sure only one message exists for the user
+function postMessage_once($type, $user_guid) {
+	$data = func_get_args();
+	array_shift($data);	
+	array_shift($data);	
+	message_backend($type, $user_guid, $data, true);
 }
 
 // Return and erase all messages stacked up by now

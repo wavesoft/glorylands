@@ -4,8 +4,8 @@
 <ul>
 {section name=id loop=$_my.objects}
 <li>
-	<img src="images/inventory/{$_my.objects[id].image}" />
-	<a href="javascript:gloryIO('?a=guidinfo&guid={$_my.objects[id].guid}');">{$_my.objects[id].name}</a>
+	<img src="images/{$_my.objects[id].image}" />
+	<a href="javascript:gloryIO('?a=info.guid&guid={$_my.objects[id].guid}');">{$_my.objects[id].name}</a>
 	<span>{$_my.objects[id].desc}</span>
 	<p>{$_my.objects[id].cost}</p>
 </li>

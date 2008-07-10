@@ -19,6 +19,7 @@
 <li><a href="modelmaker/">Model designer</a></li>
 <li><a href="develop_findevents.php">Find interrupt hooks (events)</a></li>
 <li><a href="mkguid.php">Make a GUID</a></li>
+<li><a href="guid_instance.php">Instance a new object</a></li>
 </ul>
 <h2>Maintenance</h2>
 <ul>

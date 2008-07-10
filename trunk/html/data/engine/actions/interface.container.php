@@ -26,9 +26,11 @@ if ($ans) {
 	}
 }
 
+$object_vars = gl_get_guid_vars($root_guid);
+
 $act_result = array(
 	'mode' => 'POPUP',
-	'title' => 'Contents of ',
+	'title' => 'Contents of '.$object_vars['name'],
 	'width' => 430,
 	
 	'_my'=>array(

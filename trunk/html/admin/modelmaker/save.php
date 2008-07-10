@@ -14,6 +14,7 @@ $f=fopen('../../data/models/b_'.$name.'.o','w');
 $maxx=0; $maxy=0; $vx=0; $vy=0;
 $dgrid='';
 foreach ($grid as $y => $frow) {
+	if ($dgrid!='') $dgrid.="\n";
 	$row='';
 	$vx=0;
 	foreach ($frow as $x => $img) {
@@ -24,14 +25,15 @@ foreach ($grid as $y => $frow) {
 	}
 	$vy++;
 	if ($vy>$maxy) $maxy=$vy;
-	$dgrid.=$row."\n";
+	$dgrid.=$row;
 }
 //echo "$maxx,$maxy";
-fwrite($f,ceil($maxx/2).",".$maxy."\n");
+fwrite($f,(ceil($maxx/2)-1).",".($maxy-1)."\n");
 fwrite($f, $dgrid);
 fclose($f);
 
-echo "Completed";
 ?>
+Completed!
+<p><a href="render.php">Add New</a></p>
 </body>
 </html>

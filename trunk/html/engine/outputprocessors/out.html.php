@@ -64,7 +64,8 @@ if ($ans && !$sql->emptyResults) {
 		// Render module and stack result on buffer
 		ob_start();
 		include DIROF('DATA.MODULE').'mod_'.$mod['filename'].'/render.php';
-		$modules[$mod['position']] = ob_get_contents();
+		if (!isset($modules[$mod['position']])) $modules[$mod['position']]='';
+		$modules[$mod['position']] .= ob_get_contents();
 		ob_end_clean();
 		
 		// Prepare the query to process afterwards to include any other required resources

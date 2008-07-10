@@ -2,9 +2,9 @@
 return Array(
    "helpers" => false,
    "managers" => false,
-   "lib" => array(),
+   "lib" => array("map.interface.maplib"),
    "default_outmode" => "html",
-   "default_interface" => "info.guid",
+   "default_interface" => "admin.addobj",
    "post_processor" => "json"
 );
 ?>

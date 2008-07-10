@@ -1,5 +1,7 @@
 <?php
 
+	if ($_SESSION[PLAYER][PROFILE]['level']!='ADMIN') { relayMessage(MSG_INTERFACE,'MSGBOX','Sorry, only administrators can use this function!'); return; };
+
 	if (isset($_REQUEST['guid'])) {
 		
 		if (!gl_delete_guid($_REQUEST['guid'])) {		

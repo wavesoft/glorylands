@@ -56,8 +56,8 @@ var mapOfsY = 8;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	height: 100px;
-	margin: 4px;
-	padding: 4px;
+	margin: 0px;
+	padding: 0px;
 }
 .container .dispose {
 	position: absolute;
@@ -127,7 +127,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 	</tr>
 	<tr>
 		<td align="center">
-		<a href="#" onclick="javascript:gloryIO('?a=interface.buildselect');" title="Place a building"><img border="0" src="images/UI/navbtn_repair.gif" /></a>
+		<a href="#" onclick="javascript:gloryIO('?a=admin.addobj');" title="Place a building"><img border="0" src="images/UI/navbtn_repair.gif" /></a>
 		<a href="#" onclick="javascript:gloryIO('?a=interface.inventory');" title="Open Inventory"><img border="0" src="images/UI/navbtn_explore.gif" /></a>
 		<a href="#" onclick="javascript:gloryIO('?a=interface.ad.swapchar');" title="Change Characther"><img border="0" src="images/UI/navbtn_act.gif" /></a>
 		</td>
