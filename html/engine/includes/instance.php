@@ -291,16 +291,17 @@ function gl_decode_variable($var,$type,$schema, $default = '') {
 						break;
 
 		case 'GUID':	$info = gl_get_guid_vars($var);
-						return "<a href=\"javascript:display('a=guidinfo&guid=".$var."');\">".$info['name']."</a>";
+						return "<a href=\"javascript:display('a=info.guid&guid=".$var."');\">".$info['name']."</a>";
 						break;
 
 		case 'IMAGE':	return "<img src=\"images/".$var."\">".$info['name']."</a>";
 						break;
 
-		case 'MONEY':	$gold = floor($var / 10000);
-						$silver = floor($var / 100);
-						$copper = $var - $gold*1000 - $silver*100;
-						return "<span class=\"money_gold\">$gold</span> <span class=\"money_silver\">$silver</span> <span class=\"money_copper\">$copper</span>";
+		case 'MONEY':	//$gold = floor($var / 10000);
+						//$silver = floor($var / 100);
+						//$copper = $var - $gold*1000 - $silver*100;
+						//return "<span class=\"money_gold\">$gold</span> <span class=\"money_silver\">$silver</span> <span class=\"money_copper\">$copper</span>";
+						return "<span class=\"money\">$var</span>";
 
 		case 'QUERY':	$ans = $sql->query(str_replace('$var',$var,$schema));
 						if (!$ans) fatalError($sql->getError());
@@ -393,7 +394,7 @@ function gl_get_guid_vars($guid) {
 	unset($row['guid']);
 	unset($row['template']);
 	unset($row['data']);
-	$data_vars = array_merge($row, $data_vars);
+	$instance_vars = $row;
 	
 	// Include template variables
 	$ans = $sql->query("SELECT * FROM `{$parts['group']}_template` WHERE `template` = {$template}");
@@ -402,10 +403,10 @@ function gl_get_guid_vars($guid) {
 	$row = $sql->fetch_array(MYSQL_ASSOC);
 	unset($row['template']);
 	unset($row['schema']);
-	$data_vars = array_merge($row, $data_vars);
+	$template_vars = $row;
 
 	// Return result
-	return $data_vars;	
+	return array_merge($template_vars, $instance_vars, $data_vars);
 }	
 
 /**

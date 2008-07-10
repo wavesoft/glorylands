@@ -389,6 +389,18 @@ div.bag_container li p {
 	text-align: right;
 }
 
+.money {
+	padding-right: 13px;
+	margin: 0px;
+	font-size: 12px;
+	background-image: url(../../images/UI/gold.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+	color: #996600;
+	width: 50px;
+	text-align: right;
+}
+
 /* =====[ Design-by-flow containers ]======================== */
 
 div.dbf_container ul {

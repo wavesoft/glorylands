@@ -4,7 +4,7 @@ return Array(
    "managers" => false,
    "lib" => array(),
    "default_outmode" => "html",
-   "default_interface" => "info.guid",
+   "default_interface" => "battle.main",
    "post_processor" => "json"
 );
 ?>

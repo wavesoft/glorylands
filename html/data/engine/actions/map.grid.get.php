@@ -56,33 +56,43 @@ function push_info($x, $y, $type, $guid, $details, $w=1, $h=1, $bx=0, $by=0) {
 
 // =========================== END OF DEFINITIONS ==============================
 
-$Gx=5; $Gy=5; $map=1;
+$Gx=5; $Gy=5; $map=1; $quick=false;
 if (isset($_SESSION[PLAYER][DATA]['x'])) $Gx = $_SESSION[PLAYER][DATA]['x'];
 if (isset($_SESSION[PLAYER][DATA]['y'])) $Gy = $_SESSION[PLAYER][DATA]['y'];
 if (isset($_SESSION[PLAYER][DATA]['map'])) $map = $_SESSION[PLAYER][DATA]['map'];
 if (isset($_REQUEST['x'])) $Gx = $_REQUEST['x'];
 if (isset($_REQUEST['y'])) $Gy = $_REQUEST['y'];
 if (isset($_REQUEST['map'])) $map = $_REQUEST['map'];
+if (isset($_REQUEST['quick'])) $quick=($_REQUEST['quick']=='1');
 
-// Raise Move Event
-if (!callEvent('map.move', $_REQUEST[PLAYER][GUID], 
-		$_SESSION[PLAYER][DATA]['x'], 
-		$_SESSION[PLAYER][DATA]['y'], 
-		$_SESSION[PLAYER][DATA]['map'], 
-		$Gx, $Gy, $map)) {
+// Raise Move Event if not in quick mode
+if (!$quick) {
 
- 	// Our move is cancelled? Display nothing, but send messages		
-	die(json_encode(array(
-		'mode'=>'NONE', 
-		'messages'=>jsonPopMessages(MSG_INTERFACE)
-	)));		
+	if (($_SESSION[PLAYER][DATA]['x']!=$Gx) || ($_SESSION[PLAYER][DATA]['y']!=$Gy)) {
+		// Notify Grid alteration
+		callEvent('grid.alter', $_SESSION[PLAYER][GUID], $_SESSION[PLAYER][DATA]['x'], $_SESSION[PLAYER][DATA]['y'], $_SESSION[PLAYER][DATA]['map']); // Missing object here
+		callEvent('grid.alter', $_SESSION[PLAYER][GUID], $Gx, $Gy, $map); // New object appeared here
+	}
+
+	if (!callEvent('map.move', $_SESSION[PLAYER][GUID], 
+			$_SESSION[PLAYER][DATA]['x'], 
+			$_SESSION[PLAYER][DATA]['y'], 
+			$_SESSION[PLAYER][DATA]['map'], 
+			$Gx, $Gy, $map)) {
+	
+		// Our move is cancelled? Display nothing, but send messages		
+		die(json_encode(array(
+			'mode'=>'NONE', 
+			'messages'=>jsonPopMessages(MSG_INTERFACE)
+		)));		
+	}
+	
+	// Update player information	
+	$_SESSION[PLAYER][DATA]['x'] = $Gx;
+	$_SESSION[PLAYER][DATA]['y'] = $Gy;
+	$_SESSION[PLAYER][DATA]['map'] = $map;
+	gl_update_guid_vars($_SESSION[PLAYER][GUID], array('x'=>$Gx,'y'=>$Gy,'map'=>$map));
 }
-
-// Update player information	
-$_SESSION[PLAYER][DATA]['x'] = $Gx;
-$_SESSION[PLAYER][DATA]['y'] = $Gy;
-$_SESSION[PLAYER][DATA]['map'] = $map;
-gl_update_guid_vars($_SESSION[PLAYER][GUID], array('x'=>$Gx,'y'=>$Gy,'map'=>$map));
 
 // Prepare Grid
 $grid = array();
@@ -104,9 +114,10 @@ $ans=$sql->query("SELECT
 	`gameobject_instance`.`guid`,
 	`gameobject_instance`.`x`,
 	`gameobject_instance`.`y`,
+	`gameobject_instance`.`z`,
 	`gameobject_instance`.`map`,
 	`gameobject_instance`.`model`,
-	`gameobject_template`.`name`,
+	`gameobject_instance`.`name`,
 	`gameobject_template`.`subname`,
 	`gameobject_template`.`icon`,
 	`gameobject_template`.`flags`
@@ -121,7 +132,7 @@ $ans=$sql->query("SELECT
 ");
 while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	if (!isset($models[$row['model']])) $models[$row['model']] = new mapobj('data/models/'.$row['model']);
-	push_object($row['x'], $row['y'],0,$models[$row['model']]);
+	push_object($row['x'], $row['y'], $row['z'],$models[$row['model']]);
 	push_info($row['x'], $row['y'],'GOB',$row['guid'],array('name'=>$row['name'],'subname'=>$row['subname'], 'icon'=>$row['icon'], 'flags'=>$row['flags']), 
 			  $models[$row['model']]->width, $models[$row['model']]->height, $models[$row['model']]->bindX, $models[$row['model']]->bindY);
 }
@@ -184,36 +195,58 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	//relayMessage(MSG_INTERFACE,'MSGBOX',print_r($models[$row['model']],true));		
 }
 
-$char=$_REQUEST['char'];
-if (!$char && isset($_SESSION[DATA]['model'])) $char=$_SESSION[DATA]['model'];
-if (!$char) $char='faux-choque.o';
-
+// ############ OBSOLETED ##################
+//$char=$_REQUEST['char'];
+//if (!$char && isset($_SESSION[DATA]['model'])) $char=$_SESSION[DATA]['model'];
+//if (!$char) $char='faux-choque.o';
 //$o_char = new mapobj('data/models/'.$char);
 //push_object($Gx,$Gy+1,0,$o_char);
+// ###########################################
 
-// If cached ZID is not the one current grid has, reload it
-if ($_SESSION['GRID']['ID'] != $map) {
-	if (file_exists(DIROF('DATA.MAP').$map_info['filename'].'.zmap')) {
-		// Raise Update grid Event
-		//$grid = unserialize(file_get_contents($_CONFIG[GAME][BASE].'/data/maps/'.$map_info['filename'].'.zmap'));		
-		$_SESSION['GRID']['ZID'] = unserialize(file_get_contents(DIROF('DATA.MAP').$map_info['filename'].'.zmap'));
-		callEvent('map.updategrid', $_SESSION['GRID']['ZID'], $map_info['filename']);
+// If cached ZID is not the one current grid has, reload it (if not in quick mode)
+if (!$quick) {
+	if ($_SESSION['GRID']['ID'] != $map) {
+		if (file_exists(DIROF('DATA.MAP').$map_info['filename'].'.zmap')) {
+			// Raise Update grid Event
+			//$grid = unserialize(file_get_contents($_CONFIG[GAME][BASE].'/data/maps/'.$map_info['filename'].'.zmap'));		
+			$_SESSION['GRID']['ZID'] = unserialize(file_get_contents(DIROF('DATA.MAP').$map_info['filename'].'.zmap'));
+			callEvent('map.updategrid', $_SESSION['GRID']['ZID'], $map_info['filename']);
+		}
+		$_SESSION['GRID']['ID'] = $map;
 	}
-	$_SESSION['GRID']['ID'] = $map;
 }
 
-// Return result
-$act_result = array_merge($act_result, array(
-		'mode' => 'GRID',
-		'data' => $grid,
-		'nav' => $nav_grid,
-		'map' => $map_info['filename'],
-		'head_image'=>'UI/navbtn_help.gif', 
-		'head_link'=>'?a=interface.book&book='.$map_info['index'],
-		'title'=>$map_info['name'],
-		'background'=>$map_info['background'],
-		'x' => $Gx,
-		'y' => $Gy
-));
+// Notify infogrid on linked modules
+callEvent('map.infogrid', $nav_grid, $map_info['filename']);
+
+if (!$quick) {
+	// Return result
+	$act_result = array_merge($act_result, array(
+			'mode' => 'GRID',
+			'data' => $grid,
+			'nav' => $nav_grid,
+			'map' => $map_info['filename'],
+			'head_image'=>'UI/navbtn_help.gif', 
+			'head_link'=>'?a=interface.book&book='.$map_info['index'],
+			'title'=>$map_info['name'],
+			'background'=>$map_info['background'],
+			'x' => $Gx,
+			'y' => $Gy
+	));
+} else {
+	// Return result
+	$act_result = array_merge($act_result, array(
+			'mode' => 'GRID',
+			'data' => $grid,
+			'nav' => $nav_grid,
+			'map' => $map_info['filename'],
+			'head_image'=>'UI/navbtn_help.gif', 
+			'head_link'=>'?a=interface.book&book='.$map_info['index'],
+			'title'=>$map_info['name'],
+			'background'=>$map_info['background'],
+			'x' => $Gx,
+			'y' => $Gy
+	));
+}
 
 ?>

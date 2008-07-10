@@ -33,6 +33,6 @@ $_CONFIG[GAME][REF_URL] 	= "/gl-sf";
 $_CONFIG[GAME][INDX_INTERFACE] = 'interface.entry';
 
 ### Tuning variables
-$_CONFIG[TUNE][MAP_GRID_W]	= 4;
-$_CONFIG[TUNE][MAP_GRID_H]	= 3;
+$_CONFIG[TUNE][MAP_GRID_W]	= 24;
+$_CONFIG[TUNE][MAP_GRID_H]	= 16;
 ?>

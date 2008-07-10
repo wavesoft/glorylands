@@ -6,6 +6,7 @@ include "../config/config.php";
 include "../config/diralias.php";
 include "../engine/data/event_chain.php";
 
+echo "<span id=\"waiter\" style=\"display:block;\">Please wait a moment. Filesystem is being searched...</span>";
 $events = array();
 
 function search_events($basedir) {
@@ -30,7 +31,7 @@ function search_events($basedir) {
 	$d->close();
 }
 
-search_events(DIROF('SYSTEM.ENGINE'));
+search_events($_CONFIG[GAME][BASE]);
 array_unique($events);
 sort($events);
 
@@ -67,3 +68,7 @@ foreach ($matches as $val) {
 */
 
 ?>
+<script language="javascript">
+var e = document.getElementById('waiter');
+e.style.display = 'none';
+</script>

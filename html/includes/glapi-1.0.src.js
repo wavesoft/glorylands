@@ -93,7 +93,7 @@ function showStatus(text,timeout) {
 //  header and content
 // =====================================================
 var winCache = [];
-var lastZ=10;
+var lastZ=1000;
 function createWindow(header, content, x, y, w, h) {
 	
 	// If window is not already visible, create a new
@@ -300,8 +300,8 @@ function ddwin_show(width, height, text) {
 			'opacity': 0
 		}).chain(function() {
 			popup.start({
-			'height': width,
-			'width': height,
+			'height': height,
+			'width': width,
 			'opacity': 1
 			}).chain(function() {
 				// Update content
@@ -398,6 +398,10 @@ function handleMessages(msg) {
 			// ## Navigate browser into a new location ##
 			} else if (mType=='NAVIGATE') {
 				window.location='index.php?a='+mText;
+
+			// ## The grid is altered. Perform an update ##
+			} else if (mType=='UPDATEGRID') {
+				gloryIO('?a=map.grid.get&quick=1',false,true);
 
 			// ## Show/Hide navigation rect ##
 			} else if (mType=='RECT') {
@@ -555,6 +559,7 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 						// If not defined, just update current view
 						setTimeout(renderUpdate,100);
 					}
+
 
 				// ## Dedicated window (Black pop-in window with dedicated focus) ##
 				} else if (mode=='DEDICATED') {
@@ -929,6 +934,7 @@ $(window).addEvent('load', function(e){
 });
 
 $(window).addEvent('focus', function(e){
+	 return;
 	// Re-Enable feeder when we get focus
 	feeder_enabled = true;
 	if (feeder_timer==0) {
@@ -936,6 +942,7 @@ $(window).addEvent('focus', function(e){
 	}
 });
 $(window).addEvent('blur', function(e){
+	 return;
 	// BUGFIX: CPU Usage in idle state
 	// Disable feeder when we lost focus
 	feeder_enabled = false;
@@ -959,6 +966,8 @@ $(window).onerror = function(e) {
 $(window).addEvent('keydown', function(e){
 	e = new Event(e);	
 	if (e.code == 27) {
+		
+		// Dispose rectangle (if visible)
 		var r = $('grid_rect');
 		if (r) {
 			if (r.getStyle('display')!='none') {
@@ -966,6 +975,11 @@ $(window).addEvent('keydown', function(e){
 				rectinfo.url='';
 			}
 		}
+		
+		// Dispose dropdown menu
+		disposeDropDown();
+		
+		// Do not forward the event any further
 		e.stop();		
 	}
 });

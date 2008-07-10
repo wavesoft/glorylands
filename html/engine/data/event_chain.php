@@ -5,6 +5,8 @@ global $EventChain;
 $EventChain = array(
 'map.move'=>array( array('hook-distance.php', 'distance_map_move'), array('hook-portal.php', 'portal_map_move')) ,
 'chat.command'=>array( array('hook-chatcommands.php', 'chat_admin')) ,
-'map.updategrid'=>array( array('hook-chatcommands.php', 'chat_notify_zidchange')) 
+'map.updategrid'=>array( array('hook-chatcommands.php', 'chat_notify_zidchange')) ,
+'interface.dropdown'=>array( array('hook-admin.php', 'admin_hook_dropdown')) ,
+'grid.alter'=>array( array('hook-base.php', 'hb_dynamic_grid_alter')) 
 );
 ?>
