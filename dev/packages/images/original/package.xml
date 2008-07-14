@@ -16,7 +16,7 @@
 		<file type="IMAGE.INVENTORY" subdir="/" recurse="yes">images</file>
 		<file type="IMAGE.UI" subdir="/" recurse="yes">flags</file>
 		<file type="IMAGE.UI" subdir="/" recurse="yes">UI</file>
-		<file type="DOCUMENTATION" subdir="/" recurse="no">OriginalInventorySet - Authors</file>
+		<file type="DOCUMENTATION" subdir="/" recurse="no">OriginalInventorySet - Authors.txt</file>
 	</files>
 	
 </package>
