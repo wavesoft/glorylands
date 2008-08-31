@@ -23,10 +23,10 @@ function callEvent($event,&$a=false,&$b=false,&$c=false,&$d=false,&$e=false,&$f=
 	
 	// Start chaining
 	foreach ($EventChain[$event] as $calee) {
-		require_once DIROF('DATA.HOOK').$calee[0];
+		include_once(DIROF('DATA.HOOK').$calee[0]);
 		$ans = true;
 		$ans = call_user_func_array($calee[1], $parm);
-		if (!$ans) return false;
+		if ($ans === false) return false;
 	}
 	
 	// Everything is ok by default
@@ -109,6 +109,30 @@ function popMessages($type) {
 		}
 		$ans=$sql->query("DELETE FROM `system_messages` WHERE `type` = $type AND `user` = $user_guid");
 		if (!$ans) die($sql->getError());
+	}
+	
+	// Return result
+	return $result;
+}
+
+// Return but keep all messages stacked up by now
+function peekMessages($type) {
+	global $sql;
+
+	// First, dump messages from session (higher priority)
+	$result = array();
+	if (isset($_SESSION['RELAYQ'][$type])) {
+		$result = $_SESSION['RELAYQ'][$type];
+	}
+	
+	// Then, dump messages from SQL
+	$user_guid = $_SESSION[PLAYER][GUID];
+	$ans=$sql->query("SELECT `data` FROM `system_messages` WHERE `type` = $type AND `user` = $user_guid ORDER BY `index` ASC");
+	if (!$ans) die($sql->getError());
+	if (!$sql->emptyResults) {
+		while ($row = $sql->fetch_array(MYSQL_NUM)) {
+			$result[] = unserialize($row[0]);		
+		}
 	}
 	
 	// Return result

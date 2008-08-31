@@ -14,7 +14,6 @@ $ans=$sql->query("SELECT `guid` FROM `item_instance` WHERE `parent` = {$root_gui
 if ($ans) {
 	while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		$vars = gl_get_guid_vars($row['guid']);
-		relayMessage(MSG_INTERFACE,'POPUP',print_r($vars,true),'Debug');
 
 		array_push($objects, array(
 			'name' => $vars['name'], 
@@ -31,7 +30,7 @@ $object_vars = gl_get_guid_vars($root_guid);
 $act_result = array(
 	'mode' => 'POPUP',
 	'title' => 'Contents of '.$object_vars['name'],
-	'width' => 430,
+	'width' => 230,
 	
 	'_my'=>array(
 		'objects' => $objects,

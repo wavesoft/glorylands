@@ -29,7 +29,7 @@ foreach ($grid as $y => $frow) {
 }
 //echo "$maxx,$maxy";
 fwrite($f,(ceil($maxx/2)-1).",".($maxy-1)."\n");
-fwrite($f, $dgrid);
+fwrite($f, $dgrid."\n");
 fclose($f);
 
 ?>

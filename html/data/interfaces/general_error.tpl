@@ -9,7 +9,7 @@
 	<div style="background-color:#FFC6C6; border:1px dashed #FF5555; font-family:Arial, Helvetica, sans-serif; font-size:12px">
 	<table>
 		<tr>
-			<td><img src="images/messagebox_critical.gif" /></td>
+			<td><img src="images/UI/msgbox-critical.gif" /></td>
 			<td><b>FATAL</b> Error: <br /><b>{$error}</b>
 		</td>
 	</tr>

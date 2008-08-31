@@ -16,10 +16,6 @@ function distance_map_move(&$player_guid, &$from_x, &$from_y, &$from_map, &$to_x
 	$mod[5] = array('x'=>0, 'y'=>1);
 	$mod[6] = array('x'=>1, 'y'=>1);
 	$mod[7] = array('x'=>1, 'y'=>0);
-
-	function d($x1,$y1,$x2,$y2) {
-		return sqrt(pow(($x1-$x2),2) + pow(($y1-$y2),2));
-	}
 	
 	global $log;
 	$log = '';
@@ -114,6 +110,202 @@ function distance_map_move(&$player_guid, &$from_x, &$from_y, &$from_map, &$to_x
 
 	
 	return $ans;
+}
+
+
+function renderPhase() {
+	
+	error_reporting(E_ALL);
+	
+	global $dgrid;
+	$dgrid = array();
+
+	// Store modifiers used by walk function
+	global $mod;
+	$mod[0] = array('x'=>1, 'y'=>-1);
+	$mod[1] = array('x'=>1, 'y'=>0);
+	$mod[2] = array('x'=>1, 'y'=>1);
+	$mod[3] = array('x'=>-1, 'y'=>-1);
+	$mod[4] = array('x'=>-1, 'y'=>0);
+	$mod[5] = array('x'=>-1, 'y'=>1);
+	$mod[6] = array('x'=>0, 'y'=>-1);
+	$mod[7] = array('x'=>0, 'y'=>1);
+
+	// Walking function. This marks the hit points
+	
+	// Note : Must be as quick as possible because it uses
+	//        high-level recursion
+	
+	global $minX, $maxX, $minY, $maxY, $first, $log, $dgrid;
+	$minX = 0; $minY = 0; $first = true;
+	$maxX = 0; $maxY = 0; $log='';
+
+	function walk($range_left_ref, $by_x, $by_y, $to_x, $to_y, $initial=false) {
+		global $minX, $maxX, $minY, $maxY, $first, $log, $dgrid;
+		global $mod;
+	
+		// Shortcuts
+		$x = &$to_x;
+		$y = &$to_y;
+		
+		// Get the attennuation modifier
+		$modifier = $_SESSION['GRID']['ZID'][$y][$x]/100;
+		
+		// Check if we have any steps left
+		$range_left = $range_left_ref;
+		$range_left = $range_left * (1-$modifier);
+		$range_left--;
+	
+		if ($range_left < 0.5) {
+			return false;
+		}
+		
+		// Mark the grid location as "visitable"
+		$dgrid[$x][$y] = true;
+		
+		// Update the extends
+		if ($first) {
+			$minX = $x;
+			$minY = $y;
+			$maxX = $x;
+			$maxY = $y;
+			$first = false;
+		} else {
+			if ($x<$minX) $minX=$x;
+			if ($y<$minY) $minY=$y;
+			if ($x>$maxX) $maxX=$x;
+			if ($y>$maxY) $maxY=$y;
+		}
+	
+		// Further walk to all the directions
+		for ($i=0; $i<8; $i++) {
+			$nx = $x + $mod[$i]['x'];
+			$ny = $y + $mod[$i]['y'];
+			if (!(($nx==$by_x) && ($ny==$by_y))) {
+				$ans = walk($range_left, $x, $y, $nx, $ny);				
+			}
+		}
+		
+		// Ok. we have something marked!
+		return true;
+	}
+	
+	// Obdain walking power and apply any modifiers
+	$walk_power = 5;
+	$var='walk.steps';
+	callEvent('var.modifier', $var, $walk_power);
+	
+	// Create a visual walking grid
+/*
+	chunk.grid  = [x,y]	(.i .c) : Contains the grid information
+	chunk.show	= (.x .y)		: Contains the X/Y coordinates of the mouse location that will
+								  display the region object
+	chunk.x.m	= (int)			: Minimum X Value
+	chunk.x.M	= (int)			: Maximum X Value
+	chunk.y.m	= (int)			: Minimum Y Value
+	chunk.y.M	= (int)			: Maximum Y Value
+	chunk.center.x = (int)		: Center X offset
+	chunk.center.y = (int)		: Center Y offset	
+	chunk.action = (str)		: The base url
+*/
+	$visualgrid = array();
+
+	$visualgrid['grid'] = array();
+	$visualgrid['show'] = array('x'=>$_SESSION[PLAYER][DATA]['x'],'y'=>$_SESSION[PLAYER][DATA]['y']);
+	$visualgrid['x'] = array('m'=>0,'M'=>0);
+	$visualgrid['y'] = array('m'=>0,'M'=>0);
+	$visualgrid['action'] = 'map.grid.get';
+
+	for ($i=0; $i<8; $i++) {
+		$nx = $_SESSION[PLAYER][DATA]['x']+$mod[$i]['x'];
+		$ny = $_SESSION[PLAYER][DATA]['y']+$mod[$i]['y'];
+		
+		$ans=walk($walk_power, $_SESSION[PLAYER][DATA]['x'], $_SESSION[PLAYER][DATA]['y'], 
+						  $nx, $ny, true
+			 );
+
+		// In case we cannot move anywere, since this is the first
+		// step we are about to take, make sure this is not a wall
+		// (100% Attennuation). Otherwise, take the step anyways
+		if (!$ans) {
+			if ($_SESSION['GRID']['ZID'][$ny][$nx]!=100) {
+				$dgrid[$nx][$ny] = true;
+			}
+		}
+	}
+	
+	// Prepare local cache for secure use
+	$_SESSION[DATA]['WALKID'] = array();
+	
+	// Build visual grid
+	$log.="Range: x=[$minX~$maxX] y=[$minY~$maxY]";
+	$first = false;
+	$vgrid = array();
+	for ($x=$minX; $x<$maxX; $x++) {
+		for ($y=$minY; $y<$maxY; $y++) {
+			if ($dgrid[$x][$y]) {
+			
+				$log.="DGrid @$x,$y - ";
+				
+				// In order to avoid code exploits from
+				// client-side script, the new location is not
+				// received by the browser, but it is stored
+				// on the local session. The value is mapped
+				// with an ID that client send us back
+				
+				$id = sizeof($_SESSION[DATA]['WALKID']);
+				$id++;
+				$_SESSION[DATA]['WALKID'][$id] = array('x'=>$x, 'y'=>$y);
+						
+				// Store grid information
+				$gx = $x-$minX;
+				$gy = $y-$minY;				
+				$vgrid[$gy][$gx] = array('i'=>$id, 'c'=>'#66FF66');
+				$log.="VGrid @$gx,$gy<br />";
+				
+				// Calculate visualgrid extends
+				if ($first) {
+					$visualgrid['x']['m']=$gx;
+					$visualgrid['x']['M']=$gx;
+					$visualgrid['y']['m']=$gx;
+					$visualgrid['y']['M']=$gx;
+					$first=false;
+				} else {
+					if ($visualgrid['x']['m']>$gx) $visualgrid['x']['m']=$gx;
+					if ($visualgrid['y']['m']>$gy) $visualgrid['y']['m']=$gy;
+					if ($visualgrid['x']['M']<$gx) $visualgrid['x']['M']=$gx;
+					if ($visualgrid['y']['M']<$gy) $visualgrid['y']['M']=$gy;
+				}
+			}
+		}
+	}
+	
+	// Center Offset Calculation
+	$visualgrid['point'] = array('x' => $minX , 'y' => $minY);
+	$visualgrid['grid'] = $vgrid;
+	
+	// Send the visual grid	
+	$log.="<br />\n Result:<br />\n<pre>".print_r($dgrid,true)."</pre><br />\n VGrid:<br />\n<pre>".print_r($visualgrid,true)."</pre>";
+	//relayMessage(MSG_INTERFACE, 'POPUP', $log, 'Debug Range');
+	relayMessage(MSG_INTERFACE, 'RANGE', $visualgrid);
+	
+	// Continue with next message
+	return true;
+}
+
+// Hooks system.init_operation to translate request value "id" into "x","y"
+function opinitTranslateID($lastop, $newop) {
+	if ($newop == 'map.grid.get') {
+		if (isset($_REQUEST['id']) && isset($_SESSION[DATA]['WALKID'])) {
+			$_REQUEST['x'] = $_SESSION[DATA]['WALKID'][$_REQUEST['id']]['x'];
+			$_REQUEST['y'] = $_SESSION[DATA]['WALKID'][$_REQUEST['id']]['y'];
+			unset($_SESSION[DATA]['WALKID']);
+			unset($_REQUEST['id']);
+		}
+	}
+
+	// Continue with next message
+	return true;
 }
 
 ?>

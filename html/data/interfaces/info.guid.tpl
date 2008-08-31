@@ -22,7 +22,7 @@
             	{if $_my.info[id].value == ''} 
             	<td colspan="2" align="center"><i>{$_my.info[id].name}</i></td>
                 {else}
-            	<td><b>{$_my.info[id].name}</b></td>
+            	<td valign="top"><b>{$_my.info[id].name}:</b></td>
             	<td style="width: 100%;">{$_my.info[id].value}</td>
                 {/if}            
             </tr>

@@ -40,7 +40,7 @@ if (isset($vars['icon'])) {
 // Return the result
 $act_result = array(
 	'mode' => 'POPUP',
-	'title' => 'Information for '.$vars['name'],
+	'title' => 'Information for '.$vars['name'].' (#'.$_REQUEST['guid'].')',
 	'width' => 430,
 	
 	'_my' => array(

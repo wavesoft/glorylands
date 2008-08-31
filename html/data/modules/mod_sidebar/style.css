@@ -1,0 +1,20 @@
+@charset "iso-8859-7";
+/* CSS Document */
+
+.sidebar_infotbl b {
+	color: #999999;
+}
+.sidebar_infotbl td {
+	color: #FFCC00;
+}
+.sidebar_evtable td {
+	color: #CCCCCC;
+}
+.sidebar_evtable b {
+	color: #66CC00;
+}
+.sidebar_scrollable {
+	height: 65px;
+	width: 310px;
+	overflow: auto;
+}

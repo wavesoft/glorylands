@@ -1,7 +1,7 @@
 <?php
 
 /**
-  * Object instancing manager
+  * <h3>Object instancing manager</h3>
   *
   * This file contains all the functions used by the instancing system.
   * The instancing system uses a GUID-Reference system. Every instance in the game as a unique number (GUID).
@@ -219,7 +219,13 @@ function gl_instance_object($guid, $vars = false) {
 
 		// Analyze schema and create data to import
 		$row = $sql->fetch_array();
-		parse_str($row['schema'], $sch_vars);
+		if (substr($row,0,2)=='a:') {
+			// Serialize mode
+			$sch_vars = unserialize($row['schema']);
+		} else {
+			// URL-Encoded mode
+			parse_str($row['schema'], $sch_vars);
+		}
 		
 		// Merge/update variables
 		if (!$vars) $vars = array();
@@ -391,7 +397,7 @@ function gl_get_guid_vars($guid) {
 	$template = $row['template'];
 	$data_vars = unserialize($row['data']);
 	unset($row['index']);
-	unset($row['guid']);
+	//unset($row['guid']);
 	unset($row['template']);
 	unset($row['data']);
 	$instance_vars = $row;
@@ -459,12 +465,12 @@ function gl_update_guid_vars($guid, $vars) {
 	}
 	$import['data'] = serialize($data_vars);
 
-	// Notify system messenger for possible final modifications
-	callEvent('system.guid.update_end', $guid, $parts['group'], $vars, $import, $row);
-
 	// Import result
-	return $sql->editRow("{$parts['group']}_instance", "`guid` = {$guid}", $import);
-		
+	$ans = $sql->editRow("{$parts['group']}_instance", "`guid` = {$guid}", $import);
+
+	// Notify system messenger to update any binded information
+	callEvent('system.guid.update_end', $guid, $parts['group'], $vars);
+	return $ans;		
 }	
 
 /**
@@ -488,4 +494,25 @@ function gl_delete_guid($guid) {
 	return true;
 
 }
+
+
+/** Some Bag Groups */
+define('BAGS_INVENTORY', 1000);
+define('BAGS_KEYRING',   1001);
+define('BAGS_SAFE',      1002);
+define('BAGS_SHOP',      1003);
+define('BAGS_LOOT',      1004);
+
+/**
+  * Get User's bag(s) GUID
+  *
+  * @param int $bag			The bag index or the bag group index from wich to obdain the bags GUID
+  * @return array			The bag(s) requested
+  *
+  */
+
+function gl_get_user_bags($bag = 0) {
+
+}
+
 ?>

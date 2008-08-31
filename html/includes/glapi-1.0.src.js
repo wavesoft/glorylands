@@ -1,4 +1,4 @@
-
+	
 // Identify browser
 var isInternetExplorer=(navigator.userAgent.indexOf("MSIE")>=0);
 var isMozilla=(navigator.userAgent.indexOf("Gecko")>=0);
@@ -13,7 +13,6 @@ function $trace(obj) {
 	});	
 	return ans;
 }
-
 
 // Hook chains for later-included scripts
 var CBChain = new Class({
@@ -226,6 +225,11 @@ function createWindow(header, content, x, y, w, h) {
 var data_cache = new Array();
 var ex_buffer_data = ""; /* Any extra data required on Grid Area */
 
+function initDisplayBuffer() {
+	// Store any data previous initialized in design-time on datapane
+	ex_buffer_data = $('datapane').innerHTML;	
+}
+
 function displayBuffer(buffer, cached, hLink, hImg, hText) {
 	var data = buffer;
 	if (cached) {
@@ -236,9 +240,9 @@ function displayBuffer(buffer, cached, hLink, hImg, hText) {
 		if (hText!='') {
 			if (hLink!='') {
 				if (hImg!='') {
-					data+='<span class="maplabel"><a class="navlink" href="javascript:gloryIO(\''+hLink+'\');"><img align="absmiddle" src="images/'+hImg+'" /></a> '+hText+'</span>';
+					data+='<span class="maplabel"><a class="navlink" href="javascript:gloryIO(\''+hLink+'\',false,true);"><img align="absmiddle" src="images/'+hImg+'" /></a> '+hText+'</span>';
 				} else {
-					data+='<span class="maplabel"><a class="navlink" href="javascript:gloryIO(\''+hLink+'\');"> '+hText+'</a></span>';
+					data+='<span class="maplabel"><a class="navlink" href="javascript:gloryIO(\''+hLink+'\',false,true);"> '+hText+'</a></span>';
 				}
 			} else {
 				if (hImg!='') {
@@ -272,6 +276,7 @@ function ddwin_dispose() {
 		var iPopup = $('dd_popup');
 		var iHost = $('dd_host');
 		var iContent = $('dd_content');
+
 		content.start({
 			'opacity': 0
 		}).chain(function() {
@@ -294,7 +299,7 @@ function ddwin_show(width, height, text) {
 	var iHost = $('dd_host');
 	var popup = new Fx.Styles('dd_popup', {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
 	var content = new Fx.Styles('dd_content', {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
-	// If DDWin is visible, perform a transmutation of the window
+	// If DDWin is visible, perform a transformation of the window
 	if (ddw_visible) {
 		content.start({
 			'opacity': 0
@@ -305,7 +310,7 @@ function ddwin_show(width, height, text) {
 			'opacity': 1
 			}).chain(function() {
 				// Update content
-				iPopup.setHTML("<div style=\"position:relative; width:100%; height:100%\"><span class=\"dd_head\"><a href=\"javascript:ddwin_dispose()\">X</a></span>"+text+"</div>");
+				iContent.setHTML("<div style=\"position:relative; width:100%; height:100%\"><span class=\"dd_head\"><a href=\"javascript:ddwin_dispose()\">X</a></span>"+text+"</div>");
 				content.start({
 					'opacity': 1
 				});
@@ -367,7 +372,28 @@ function ddwin_prepare() {
 //  JSON exchanges
 // ======================================================
 
+var msgstack = []	   // If message handling is locked by a time-consuming
+var msglocked = false; // function, messages are stacked till it's completed
+
+function lockMessages(lock) {
+	msglocked = lock;
+	
+	// If unlocked, process any stacked messages
+	if (!lock) {
+		$each(msgstack, function(obj, id) {
+			handleMessages(obj);
+		});
+		msgstack = [];
+	}
+}
+
 function handleMessages(msg) {
+	// If message handling is locked, stack messages
+	if (msglocked) {
+		msgstack.push(msg);
+		return;
+	}
+	
 	var mType='', mText='';
 	for (var i=0; i<msg.count; i++) {
 		if ($defined(msg.message[i])) {
@@ -427,6 +453,16 @@ function handleMessages(msg) {
 					window.alert(e);	
 				}
 
+			// ## Set action ranges ##
+			} else if (mType=='RANGE') {
+
+				if ($defined(msg.message[i][1])) stackRegion(msg.message[i][1]);
+
+			// ## Set feeder interval ##
+			} else if (mType=='POLLINTERVAL') {
+				
+				feeder_interval = msg.message[i][1];
+
 			// ## Unknown message arrived ##
 			} else {
 				// Process unknown messages to later-included scripts
@@ -451,11 +487,6 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 			onComplete: function(obj) {
 				showStatus();
 				data_io_time = $time()-data_io_time;
-
-				// If we have exchange messages, handle them now
-				if ($defined(obj.messages)) {
-					handleMessages(obj.messages);
-				}
 
 				// Try to detect incoming data mode
 				var mode='NONE';
@@ -505,7 +536,14 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 					
 				// ## GRID Data for main window window ##
 				} else if (mode=='GRID') {
-					// Feed data for grid management
+					/*  Feed data for grid management */
+
+					// Reset any active action range grids 
+					resetRegion();
+
+					// This process is time-consuming
+					// Prevent messages from being executed now
+					lockMessages(true);
 					
 					// Default Grid Display Parameters
 					var rollback = false;
@@ -589,6 +627,11 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 				} else {
 					// Process unknown messages to later-included scripts
 					callback.call('ioreply',obj);
+				}
+				
+				// If we have exchange messages, handle them now
+				if ($defined(obj.messages)) {
+					handleMessages(obj.messages);
 				}
 				
 				// Callback the function we are supposed to call
@@ -769,6 +812,8 @@ function renderUpdate() {
 	);
 	showStatus();
 	
+	// Free any locked messages
+	lockMessages(false);
 }
 
 // ======================================================
@@ -814,6 +859,150 @@ function disposeDropDown(){
 }
 
 // ======================================================
+//  Action Panel Management functions
+// ======================================================
+
+var regions = [];
+var visibleRegionID = -1;
+var activeEvent = false;
+
+// Stack a region on region management system
+function stackRegion(chunk) {
+	//window.alert('Stack: '+$trace(chunk));
+	regions.push(chunk);	
+}
+
+// Reset region stack
+function resetRegion() {
+	disposeActionPane();
+	regions = [];
+	visibleRegionID = -1;
+}
+
+// Display a region object if it hits the x/y coordinates
+function hitTestRegion(x,y) {
+	
+	// If we already have a visible region object do not show seconds
+	if (visibleRegionID>-1) return;
+	
+	// Check regions for collision
+	for (var i=0; i<regions.length; i++) {
+		if ((regions[i].show.x == x) && (regions[i].show.y == y)) {
+			setTimeout(function(){ showRegion(i); }, 100);
+			return;
+		}
+	}
+}
+
+// Display a region object
+function showRegion(index) {
+	renderActionRange(regions[index]);
+	visibleRegionID = index;
+	hoverShow(false);
+}
+
+// Disposes a region object
+function disposeActionPane() {
+	// Exit if no panel is visible
+	if (visibleRegionID==-1) return;
+	
+	var panel = $('actionpane');
+	var fx = new Fx.Styles(panel, {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
+	fx.start({
+		'opacity': 0
+	}).chain(function() {
+		panel.setStyles({visibility:'hidden'});	
+	});	
+	visibleRegionID = -1;
+}
+
+// Converts the given array into an HTML representation
+// of action range
+function renderActionRange(chunk) {
+	
+	/* Chunk structure (JSON Object): 
+	
+	chunk.grid  = (.i .c) [x,y]	: Contains the grid information
+	chunk.show	= (.x .y)		: Contains the X/Y coordinates of the mouse location that will
+								  display the region object
+	chunk.x.m	= (int)			: Minimum X Value
+	chunk.x.M	= (int)			: Maximum X Value
+	chunk.y.m	= (int)			: Minimum Y Value
+	chunk.y.M	= (int)			: Maximum Y Value
+	chunk.center.x = (int)		: Center X offset
+	chunk.center.y = (int)		: Center Y offset	
+	chunk.action = (str)		: The base url
+	
+	*/
+	
+	try {
+	var x=0;
+	var y=0;
+	
+	var HTML = '<table cellspacing="0" cellpadding="0">';
+	for (y=chunk.y.m; y<=chunk.y.M; y++) {
+		HTML+='<tr>';
+		for (x=chunk.x.m; x<=chunk.x.M; x++) {
+			if ($defined(chunk.grid[y])) {
+  			  if ($defined(chunk.grid[y][x])) {
+				HTML+='<td><a href="javascript:void(0);" onclick="disposeDropDown();gloryIO(\'?a='+chunk.action+'&id='+chunk.grid[y][x].i+'\');" class="actgrid_link" style="background-color: ' + chunk.grid[y][x].c + '">';
+				if ($defined(chunk.grid[y][x].t)) {
+					HTML+=chunk.grid[y][x].t;
+				} else {
+					HTML+='&nbsp;';
+				}
+				HTML+='</a></td>';
+			  } else {
+				HTML+='<td><div class="actgrid_div">&nbsp;</div></td>';  
+			  }
+			} else {
+				HTML+='<td><div class="actgrid_div">&nbsp;</div></td>';
+			}
+		}
+		HTML+='</tr>';
+	}
+	HTML += '</table>';
+	
+	renderActionPane(HTML, chunk.point.x - glob_x_base, chunk.point.y - glob_y_base);
+	} catch (e) {
+	window.alert(e);	
+	}
+}
+
+function renderActionPane(data,x,y) {
+	var panel = $('actionpane');
+	var dpX = $('datapane').getLeft();
+	var dpY = $('datapane').getTop();
+	panel.setHTML(data);
+	panel.setStyles({visibility:'visible', opacity: 0, 'left': (x*32-12)+dpX, 'top': (y*32-12)+dpY});
+	
+	// Halt events that hits this element
+	panel.addEvent('click', function(e){
+		e = new Event(e);
+		e.stop();
+	});
+	panel.addEvent('mousemove', function(e){
+		e = new Event(e);
+		e.stop();
+	});
+	panel.addEvent('mouseleave', function(e){
+		e = new Event(e);
+		disposeActionPane();
+		e.stop();
+	});
+
+	var fx = new Fx.Styles('actionpane', {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
+	fx.start({
+		'opacity': 0.8
+	}).chain(function() {
+		hoverShow(false);
+	});	
+	
+}
+
+
+
+// ======================================================
 //  Periodical Message Popper (Message-only Data feedback)
 // ======================================================
 var feeder_interval=5000;
@@ -848,6 +1037,9 @@ $(window).addEvent('load', function(e){
 	// Initialize waiter animation
 	initWaiter();
 	
+	// Initialize datapane
+	initDisplayBuffer();
+	
 	// Initialize mouse handler on datapane
 	$('datapane').addEvent('mousemove', function(e) {
 		e = new Event(e);							
@@ -855,12 +1047,16 @@ $(window).addEvent('load', function(e){
 		// Get DataPane left offset
 		var dpX = $('datapane').getLeft();
 		var dpY = $('datapane').getTop();
+		
 		// Calculate cell X,Y
 		var bxP = Math.ceil((e.event.clientX-dpX)/32)-1;
 		var byP = Math.ceil((e.event.clientY-dpY)/32)-1;
 		var xP = bxP+glob_x_base;
 		var yP = byP+glob_y_base;
 		var Overlay = ""; var DicEntry = "";
+
+		// Collision test with action grids
+		hitTestRegion(xP,yP);
 
 		// Obdain Hover info from navigation grid
 		if ($defined(nav_grid[xP])) {
@@ -909,8 +1105,12 @@ $(window).addEvent('load', function(e){
 		var xP = Math.ceil((e.event.clientX-dpX)/32)+glob_x_base-1;
 		var yP = Math.ceil((e.event.clientY-dpY)/32)+glob_y_base-1;
 	
+		// If we have no active rect, hit test regions
 		if (rectinfo.url == '') {
-			gridClick(xP,yP);
+			//gridClick(xP,yP);
+			hitTestRegion(xP,yP);
+
+		// Preform grid operations if active
 		} else {
 			gloryIO(rectinfo.url+'&x='+xP+'&y='+yP);
 			if (rectinfo.clickdispose) {

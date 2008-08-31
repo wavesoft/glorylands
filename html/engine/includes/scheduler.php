@@ -11,7 +11,7 @@
 // ===========================================
 
 // Put an event on the schedule chain
-function gl_schedule_event($event_id, $description, $timeout, $userid = false) {
+function gl_schedule_event($event_id, $description, $timeout, $event_data = false,  $userid = false) {
 	global $sql;
 	
 	// Get current user ID, if user id is not set
@@ -28,8 +28,8 @@ function gl_schedule_event($event_id, $description, $timeout, $userid = false) {
 	$triggertime += $timeout;
 	
 	// Append the event into schedule stack
-	$ans=$sql->query("INSERT INTO `system_scheduler` (`timestamp`,`user`, `eventid`,  `description`) VALUES 
-				 ($triggertime, $userid, '".mysql_escape_string($event_id)."', '".mysql_escape_string($description)."')");
+	$ans=$sql->query("INSERT INTO `system_scheduler` (`timestamp`,`user`, `eventid`,  `description`, `data`) VALUES 
+				 ($triggertime, $userid, '".mysql_escape_string($event_id)."', '".mysql_escape_string($description)."', '".mysql_escape_string(serialize($event_data))."')");
 	return ($ans!=false);
 }
 
@@ -71,19 +71,19 @@ function gl_get_schedulees($userid = false) {
 	}
 	
 	// Get the information of the specific events
-	$ans=$sql->query("SELECT `description`, `eventid`, `timestamp` FROM `system_scheduler` WHERE `user` = $userid");
+	$ans=$sql->query("SELECT `description`, `index`, `data`, `timestamp` FROM `system_scheduler` WHERE `user` = $userid");
 	if (!$ans || $sql->emptyResults) return false;
 
 	// Prepare return array and return data
-	$ans = array();
-	while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
+	$ans = array();	
+	while ($row = $sql->fetch_array(MYSQL_ASSOC)) {
 		// Calculate time left
 		$timeleft = (int) $row['timestamp'];
-		$timeleft = time() - $timeleft;
+		$timeleft =  $timeleft - time();
 		
 		// Only if it is not expired, stack it on result
 		if ($timeleft>0) {
-			array_push($ans, array('id' => $row['eventid'], 'description' => $row['description'], 'time' => $timeleft));
+			array_push($ans, array('id' => $row['index'], 'description' => $row['description'], 'time' => $timeleft, 'data'=>unserialize($row['data'])));
 		}
 	}
 	return $ans;
@@ -98,14 +98,15 @@ function gl_pop_schedules() {
 	$ctime = time();
 	
 	// Get the index of the expired events
-	$ans=$sql->query("SELECT `index`,`eventid`,`user` FROM `system_scheduler` WHERE `timestamp` >= $ctime");
+	$ans=$sql->query("SELECT `index`,`eventid`,`user`,`data` FROM `system_scheduler` WHERE `timestamp` <= $ctime");
 	if (!$ans) return false;
+	if ($sql->emptyResults) return false;
 
 	// Get all the results
-	$buf=$sql->fetch_array_all(MYSQL_NUM);
+	$buf=$sql->fetch_array_all(MYSQL_ASSOC);
 
 	// Delete expired events
-	$ans=$sql->query("SELECT `index` FROM `system_scheduler` WHERE `timestamp` >= $ctime");
+	$ans=$sql->query("DELETE FROM `system_scheduler` WHERE `timestamp` <= $ctime");
 	if (!$ans) return false;
 	
 	// Return buffer
@@ -120,7 +121,7 @@ function gl_process_schedules() {
 	$ev = gl_pop_schedules();
 	if (!($ev === false)) {
 		foreach ($ev as $event) {
-			callEvent('system.schedule', $row['name'], $row['index']);
+			callEvent('system.schedule', $event['eventid'], unserialize($event['data']), $event['user']);
 		}
 	}
 }

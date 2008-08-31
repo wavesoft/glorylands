@@ -1,5 +1,6 @@
 <?php
 
+// Update linked views when map object changes position
 function hb_dynamic_grid_alter($ignore_guid, $x, $y, $map) {
 
 	global $sql, $_CONFIG;
@@ -42,5 +43,13 @@ function hb_dynamic_grid_alter($ignore_guid, $x, $y, $map) {
 	}
 	
 }
+
+// Hooks 'system.guid.update_end' and updates user session when changes are made on user's GUID
+function hb_update_user_session($guid, $group, $vars) {
+	if ($guid == $_SESSION[PLAYER][GUID]) {
+		$_SESSION[PLAYER][DATA] = gl_get_guid_vars($guid);
+	}
+}
+
 
 ?>

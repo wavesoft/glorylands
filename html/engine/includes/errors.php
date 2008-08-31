@@ -91,7 +91,7 @@ function fatalError($desc, $debuginfo = '', $debug = false) {
 	<div style="background-color:#FFC6C6; border:1px dashed #FF5555; font-family:Arial, Helvetica, sans-serif; font-size:12px">
 	<table>
 		<tr>
-			<td><img src="<?php echo $_CONFIG[GAME][REF_URL]; ?>/images/messagebox_critical.gif" /></td>
+			<td><img src="<?php echo $_CONFIG[GAME][REF_URL]; ?>/images/UI/msgbox-critical.gif" /></td>
 			<td><b>FATAL</b> Error: <br /><b><?php echo $desc; ?></b>
 <?php
 	if (isset($_REQUEST['debug']) || $debug) {
