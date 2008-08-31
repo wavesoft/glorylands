@@ -1,5 +1,20 @@
 <?php
 
+// Get object's variables
+$vars = gl_get_guid_vars($_REQUEST['guid']);
+if (isset($vars['x'], $vars['y'])) {
+	
+	$distance = gl_distance($_SESSION[PLAYER][DATA]['x'],$_SESSION[PLAYER][DATA]['y'],$vars['x'],$vars['y']);
+	if ($distance > 2) {
+		// We are too far away
+		$act_result = array(
+			'mode' => 'DROPDOWN',
+			'text' => '<small><em>(Too far away!)</em></small>'
+		);
+		return;
+	}
+}
+
 // Initialize reply stack
 $data = array(
 	array('url'=>'?a=info.guid&guid='.$_REQUEST['guid'], 'text'=>'<img src="images/UI/navbtn_help.gif" border="0" title="View information" />'),

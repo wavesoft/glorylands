@@ -88,9 +88,9 @@ if (!$quick) {
 	}
 	
 	// Update player information	
-	$_SESSION[PLAYER][DATA]['x'] = $Gx;
-	$_SESSION[PLAYER][DATA]['y'] = $Gy;
-	$_SESSION[PLAYER][DATA]['map'] = $map;
+	//$_SESSION[PLAYER][DATA]['x'] = $Gx;
+	//$_SESSION[PLAYER][DATA]['y'] = $Gy;
+	//$_SESSION[PLAYER][DATA]['map'] = $map;
 	gl_update_guid_vars($_SESSION[PLAYER][GUID], array('x'=>$Gx,'y'=>$Gy,'map'=>$map));
 }
 
@@ -218,6 +218,47 @@ if (!$quick) {
 
 // Notify infogrid on linked modules
 callEvent('map.infogrid', $nav_grid, $map_info['filename']);
+
+// Stack some tests
+/*
+	chunk.color = (str) [x,y]	: Display icons with the given color on given locations
+	chunk.x.m	= (int)			: Minimum X Value
+	chunk.x.M	= (int)			: Maximum X Value
+	chunk.y.m	= (int)			: Minimum Y Value
+	chunk.y.M	= (int)			: Maximum Y Value
+	chunk.center.x = (int)		: Center X offset
+	chunk.center.y = (int)		: Center Y offset	
+*/
+
+/*
+$obj = array(
+	'grid' => array(
+		0 => array(
+			array('c'=>'#33FF00', 'i'=>1),
+			array('c'=>'#00FF00', 'i'=>2, 't'=>'&uarr;'),
+			array('c'=>'#33FF00', 'i'=>3)
+			),
+		1 => array(
+			array('c'=>'#00FF00', 'i'=>4, 't'=>'&larr;'),
+			array(),
+			array('c'=>'#00FF00', 'i'=>6, 't'=>'&rarr;')
+			),
+		2 => array(
+			array('c'=>'#33FF00', 'i'=>7),
+			array('c'=>'#00FF00', 'i'=>8, 't'=>'&darr;'),
+			array('c'=>'#33FF00', 'i'=>9)
+			)
+	),
+	'x' => array('m'=>0, 'M'=>2),
+	'y' => array('m'=>0, 'M'=>2),
+	'center' => array('x' => $_SESSION[PLAYER][DATA]['x']-1 , 'y' => $_SESSION[PLAYER][DATA]['y']-1),
+	'show' => array('x' => $_SESSION[PLAYER][DATA]['x'] , 'y' => $_SESSION[PLAYER][DATA]['y']),
+	'action' => 'map.grid.get'
+);
+relayMessage(MSG_INTERFACE, 'RANGE', $obj);
+*/
+
+callEvent('map.render');
 
 if (!$quick) {
 	// Return result

@@ -19,14 +19,13 @@ $_CONFIG[DIRS][ALIAS] = array(
 	'OUTPUT.PROCESSOR' 	=> "/engine/outputprocessors",
 	'OUTPUT.FILE' 		=> "/engine/outputprocessors",
 	'IMAGE.CHAR' 		=> "/images/chars",
-	'IMAGE.ELEMENTS' 	=> "/images/elements",
+	'IMAGE.ELEMENT' 	=> "/images/elements",
 	'IMAGE.INVENTORY' 	=> "/images/inventory",
 	'IMAGE.PLAYER' 		=> "/images/players",
-	'IMAGE.PORTRAITS' 	=> "/images/portraits",
+	'IMAGE.PORTRAIT' 	=> "/images/portraits",
 	'IMAGE.SIGHTSEEN' 	=> "/images/sightseens",
 	'IMAGE.UI' 			=> "/images/ui",
 	'IMAGE.TILE' 		=> "/images/tiles",
-	'IMAGE.TILES' 		=> "/images/tiles",
 	'INTERFACE.INCLUDE'	=> "/includes",
 	'INTERFACE.THEME'	=> "/themes",
 	'DOCUMENTATION'		=> "/doc",
@@ -56,11 +55,10 @@ $_CONFIG[DIRS][NAMES] = array(
 	'IMAGE.ELEMENT'		=> "Gameobject Element Image",
 	'IMAGE.INVENTORY'	=> "Inventory item Image",
 	'IMAGE.PLAYER'		=> "Player image",
-	'IMAGE.PORTRAITS'	=> "NPC Portrait image",
+	'IMAGE.PORTRAIT'	=> "NPC Portrait image",
 	'IMAGE.SIGHTSEEN'	=> "Sightseen Image",
 	'IMAGE.UI'			=> "User Interface Image",
 	'IMAGE.TILE'		=> "Map tile",
-	'IMAGE.TILES'		=> "Map tile",
 	'INTERFACE.INCLUDE'	=> "Interface Element",
 	'INTERFACE.THEME'	=> "Interface Theme",
 	'DOCUMENTATION'		=> "Documentation",
@@ -78,6 +76,7 @@ $_CONFIG[DIRS][NAMES] = array(
 function DIROF($part, $notrail=false) {
 	global $_CONFIG;
 	$place='';
+	if (substr($part,-1)=='S') $part = substr($part, 0, -1); /* Remove 'S' in the end (ex. IMAGES instead of IMAGE) */
 	if (isset($_CONFIG[DIRS][ALIAS][$part])) $place = $_CONFIG[DIRS][ALIAS][$part];
 	if (!$notrail) $place.='/';
 	return $_CONFIG[GAME][BASE].$place;

@@ -131,26 +131,11 @@ button.blank {
 	  </table>	    
 	<br /></td>
   </tr>
-{if $error}
   <tr>
-    <td align="center" class="textframe"><font color="#FF0000">{$error}</font></td>
-  </tr>
-{/if}
-  <tr>
-    <td align="left" class="textframe"><h3>Create a new Character </h3>
-	  <form action="?a=interface.entry.newchar" method="post">
-	  <input type="hidden" name="action" value="create" />
-      <p>Please select one of the follow templates to use for your character: 
-	  <select name="template">
-{section name=id loop=$templates}
-		<option value="{$templates[id].template}">{$templates[id].race}</option>
-{/section}
-	  </select>
-	  </p>
-	  <p>Choose a name:	<input type="text" name="name" /></p>
-	  <p><input type="submit" /></p>
-	  </form>
-      <p>&nbsp;</p></td>
+    <td align="left" class="textframe"><h3>Create new account </h3>
+      <p>GloryLands is an open-data, massive multiplayer online game that is based on a continiously extensible world and innumerable items, quests and monsters. You can enter this world just using your web browser. No extra software or knowledge is required.</p>
+      <h4>&nbsp;</h4>
+    </td>
   </tr>
   <tr>
     <td colspan="2" align="center">&nbsp;</td>

@@ -20,8 +20,6 @@ $time_start = getmicrotime();
 
 ### Require some basic includes
 require_once($_CONFIG[GAME][BASE]."/engine/includes/base.php");
-include_once DIROF('DATA.ENGINE')."guid_dictionary.php";
-include_once DIROF('DATA.ENGINE')."template_dictionary.php";
 
 ### Detect the action that is about to be performed
 define("IN_PROCESS",true);
@@ -36,9 +34,6 @@ if (!$operation) {
 // Expire old users and set online current user
 gl_user_action();
 gl_expire_users();
-
-// Process time-cruicial events
-gl_process_schedules();
 
 // Prepare the return elements
 global $act_result, $act_operation, $act_interface, $act_profile, $_CONFIG;

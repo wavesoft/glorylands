@@ -1,5 +1,3 @@
-// JavaScript Document
-
 // Create elements
 var eChatFloat = false; 
 var eChatText = false;

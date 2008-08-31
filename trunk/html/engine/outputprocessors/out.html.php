@@ -69,10 +69,10 @@ if ($ans && !$sql->emptyResults) {
 		ob_end_clean();
 		
 		// Prepare the query to process afterwards to include any other required resources
-		if ($qres!='') $qres.=' AND ';
+		if ($qres!='') $qres.=' OR ';
 		$qres.="`module` = '".mysql_escape_string($mod['index'])."'";
 	}
-	
+		
 	// Obdain any other resources
 	$resources=array('javascript'=>'', 'stylesheet'=>'', 'header'=>'', 'footer'=>'');
 	$ans=$sql->query("SELECT * FROM `interface_module_resources` WHERE $qres");
@@ -80,8 +80,8 @@ if ($ans && !$sql->emptyResults) {
 		foreach ($_CONFIG[DIRS][ALIAS] as $key => $path) {
 			if ($path!='') $row['filename'] = str_replace('{'.$key.'}', $_CONFIG[GAME][REF_URL].$path ,$row['filename']);
 		}
-		if ($row['mode']=='CSS') $resources['stylesheet'].="<link href=\"{$row['filename']}\" rel=\"stylesheet\" type=\"text/css\" />";
-		if ($row['mode']=='JS') $resources['javascript'].="<script language=\"javascript\" src=\"{$row['filename']}\"></script>";
+		if ($row['mode']=='CSS') $resources['stylesheet'].="<link href=\"{$row['filename']}\" rel=\"stylesheet\" type=\"text/css\" />\n";
+		if ($row['mode']=='JS') $resources['javascript'].="<script language=\"javascript\" src=\"{$row['filename']}\"></script>\n";
 	}
 }
 $smarty->assign($resources);

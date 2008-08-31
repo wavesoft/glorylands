@@ -31,6 +31,13 @@ echo "\n</b>\n<font color=\"#00FF00\">Request data:</font>\n<b>";
 print_r($_REQUEST);
 echo "\n</b>\n<font color=\"#00FF00\">Session data:</font>\n<b>";
 print_r($_SESSION);
+echo "\n</b>\n<font color=\"#00FF00\">Chained messages:</font>\n<b>";
+print_r(popMessages(MSG_INTERFACE));
+echo "\n</b>\n<font color=\"#00FF00\">Included files:</font>\n<b>";
+$ar = get_included_files();
+asort($ar,SORT_STRING);
+print_r($ar);
+
 ?>
 </b>
 </pre>

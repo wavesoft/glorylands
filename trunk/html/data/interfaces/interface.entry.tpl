@@ -117,23 +117,23 @@ button.blank {
 <table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
     <td class="textframe" align="center"><img src="images/UI/gl_chaos.png" width="226" height="226" /></td>
-    <td rowspan="2" align="center" valign="top" class="panelframe">
+    <td width="215" rowspan="2" align="center" valign="top" class="panelframe">
 	    <table width="100%"  border="0" cellspacing="0" cellpadding="0">
 	    <tr>
-			  <td width="18" height="44" background="images/UI/head_l.gif">&nbsp;</td>
-		  	  <td background="images/UI/head_rep.gif" class="sideTbl">Server Status </td>
+			  <td width="17" height="44" background="images/UI/head_l.gif">&nbsp;</td>
+		  	  <td width="169" background="images/UI/head_rep.gif" class="sideTbl">Server Status </td>
 			  <td width="18" background="images/UI/head_r.gif">&nbsp;</td>
-			</tr>
+		  </tr>
 			<tr>
 			  <td align="center" colspan="3" class="bluebk"><p>This game is under construction and the server is not open for the public yet!</p>
 			  <p><div style="background-image:url(images/UI/load_{$server_load_img}.gif); background-repeat:no-repeat; width:150px; height:15px; text-align: center; font-size:9px; color: #FFFFFF; font-weight: bold; padding-top:2px; border: none;">Server load: {$server_load_perc}%</div></p></td>
 			</tr>
-		  </table>	    
+	  </table>	    
 	<br />
 		  <table width="100%"  border="0" cellspacing="0" cellpadding="0">
 			<tr>
-			  <td width="18" height="44" background="images/UI/head_l.gif">&nbsp;</td>
-			  <td background="images/UI/head_rep.gif" class="sideTbl">Login</td>
+			  <td width="17" height="44" background="images/UI/head_l.gif">&nbsp;</td>
+			  <td width="169" background="images/UI/head_rep.gif" class="sideTbl">Login</td>
 			  <td width="18" background="images/UI/head_r.gif">&nbsp;</td>
 			</tr>
 			<tr>
@@ -201,15 +201,15 @@ button.blank {
           </table>	
           </form>        
 {/if}
-				</td>
+			  </td>
 			</tr>
     </table>
     <br />
 {if $player}
 	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
 		<tr>
-		  <td width="18" height="44" background="images/UI/head_l.gif">&nbsp;</td>
-		  <td background="images/UI/head_rep.gif" class="sideTbl">Player Info</td>
+		  <td width="17" height="44" background="images/UI/head_l.gif">&nbsp;</td>
+		  <td width="169" background="images/UI/head_rep.gif" class="sideTbl">Player Info</td>
 		  <td width="18" background="images/UI/head_r.gif">&nbsp;</td>
 		</tr>
 		<tr>
@@ -229,11 +229,10 @@ button.blank {
 			</p>
 {/if}
 			<p align="center"><button class="create" type="button" onclick="window.location='?a=interface.entry.newchar'"></button>
-		   </td>
+	      </td>
 		</tr>
 	  </table>	    
-{/if}
-    </td>
+{/if}    </td>
   </tr>
   <tr>
     <td align="left" class="textframe"><h3>Welcome to GloryLands MMORPG!</h3>

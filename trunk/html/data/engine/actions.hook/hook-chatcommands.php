@@ -25,6 +25,13 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 		
 		$answer = "You are on ($x, $y) at map #$map";
 		
+	} elseif ($cmd =='additem') {
+		
+		if (!isset($parameters[0])) {
+			$answer = 'Please specify an item to add';
+			return false;
+		}														
+		
 	} elseif ($cmd == 'spawn') {
 
 		if (!isset($parameters[0])) { $answer='';
@@ -92,7 +99,6 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 
 }
 
-
 function chat_notify_zidchange($zid, $map) {
 	global $sql;
 
@@ -100,7 +106,19 @@ function chat_notify_zidchange($zid, $map) {
 	$ans=$sql->query("DELETE FROM `mod_chat_channel_registrations` WHERE `user` = ".$_SESSION[PLAYER][GUID]." AND `channel` LIKE '#%'");
 	$ans=$sql->query("INSERT INTO `mod_chat_channel_registrations` (`user`, `channel`)  VALUES (".$_SESSION[PLAYER][GUID].", '#".$map."')");
 	relayMessage(MSG_INTERFACE,'CHAT','<font color=\"#00ff00\">You have joined chat area #'.$map.'</font>','System');
+	
+	return true;
 }
 
+$chat_initialized = false;
+function chat_module_initialize($lastop, $newop) {
+	global $_VER;
+	if (($newop == 'interface.main') && !$chat_initialized) {
+		relayMessage(MSG_INTERFACE,'CHAT','GloryLands Engine Version '.$_VER['ENGINE'],'System');
+		$chat_initialized = true; /* Send this only once */
+	}
+
+	return true;
+}
 
 ?>
