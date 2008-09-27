@@ -7,6 +7,7 @@ include "../config/diralias.php";
 include "../engine/data/event_chain.php";
 
 echo "<span id=\"waiter\" style=\"display:block;\">Please wait a moment. Filesystem is being searched...</span>";
+
 $events = array();
 
 function search_events($basedir) {
