@@ -518,20 +518,34 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 					var head_link = "";
 					var head_image = "";
 					var title = "";
+					
 					// Try to load data from object
 					if ($defined(obj.rollback)) rollback=obj.rollback;
 					if ($defined(obj.head_link)) head_link=obj.head_link;
 					if ($defined(obj.head_image)) head_image=obj.head_image;
 					if ($defined(obj.title)) title=obj.title;
+					
+					// Reset data grids used by GRID mode
+					nav_grid = [];
+					overlay_grid = [];
+					resetRegion();
+
+					// Dispose any visible misc layers
+					disposeDropDown();
+					disposeActionPane();
+					
 					// Display data buffer
 					displayBuffer(obj.text, rollback, head_link, head_image, title);
 					
+				// ## Placeholder for information mode ##
 				} else if (mode=='INFO') {
 					
+				// ## Placeholder for full-page mode ##
 				} else if (mode=='FULL') {
 					
 				} else if (mode=='BLANK') {
 					
+				// ## NOTHING handler ##
 				} else if (mode=='NONE') {
 					
 				// ## GRID Data for main window window ##

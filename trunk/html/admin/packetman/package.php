@@ -116,6 +116,7 @@ $row = $sql->fetch_array();
 <div class="navbar">
 <a href="packagefiles.php?guid=<?php echo $_GET['guid']; ?>"><img src="../images/folderdoc22.gif" border="0" align="absmiddle" /> Manage Files</a>
 <a href="packagemanifest.php?guid=<?php echo $_GET['guid']; ?>"><img src="../images/exec22.gif" border="0" align="absmiddle" /> Manage Manifest</a>
+<a href="package_disable.php?guid=<?php echo $_GET['guid']; ?>"><img src="../images/cancel22.gif" border="0" align="absmiddle" /> Disable this package</a>
 <a href="#"><img src="../images/save22.gif" border="0" align="absmiddle" /> Pack and download</a>
 <a href="#"><img src="../images/trash22.gif" border="0" align="absmiddle" /> Delete Package</a>
 </div>

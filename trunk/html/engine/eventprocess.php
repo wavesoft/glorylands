@@ -112,7 +112,24 @@ while ($operation != $last_operation) {
 	### Ok, the action can be executed, so.. Run it!
 	if ($act_valid) {
 		$act_result = array();
+		
+		// Include any custom pre-run result array
+		if (isset($act_profile['default_result'])) {
+			if (is_array($act_profile['default_result'])) {
+				$act_result = $act_profile['default_result']; /* Set default result from manifest */
+			}
+		}		
+
+		// Run the action		
 		include DIROF('SYSTEM.ENGINE')."actionprocess.php";
+
+		// Include any custom post-run result array
+		if (isset($act_profile['post_result'])) {
+			if (is_array($act_profile['post_result'])) {
+				$act_result = array_merge($act_result, $act_profile['post_result']); /* Update result */
+			}
+		}
+
 	} else {
 		$act_result = false;
 	}
