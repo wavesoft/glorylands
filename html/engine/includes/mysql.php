@@ -262,7 +262,7 @@ class db {
 	  * Performs a query and returns true if the results are not empty
 	  *
 	  * @param string $query	The query to execute
-	  * @return bool|resource	Returns false in case of error or the resultset of the executed query
+	  * @return bool			Returns false in case of error or empty resultset, or true otherways
 	  */
 	function poll($query) {
 	    $this->errPosition = "performing polling query '<strong>{$query}</strong>'";

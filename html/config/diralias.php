@@ -11,11 +11,8 @@ $_CONFIG[DIRS][ALIAS] = array(
 
 	'ACTION.MANIFEST' 	=> "/data/engine/actions.manifest",
 	'ACTION.LIBRARY' 	=> "/data/engine/actions.lib",
+	'DATA.HOOK'			=> "/data/engine/actions.hook",
 	'ACTION' 			=> "/data/engine/actions",
-	'SYSTEM.MANAGER' 	=> "/engine/managers",
-	'SYSTEM.INCLUDE' 	=> "/engine/includes",
-	'SYSTEM.ENGINE' 	=> "/engine",
-	'SYSTEM' 			=> "",
 	'OUTPUT.PROCESSOR' 	=> "/engine/outputprocessors",
 	'OUTPUT.FILE' 		=> "/engine/outputprocessors",
 	'IMAGE.CHAR' 		=> "/images/chars",
@@ -34,8 +31,12 @@ $_CONFIG[DIRS][ALIAS] = array(
 	'DATA.ENGINE'		=> "/engine/data",
 	'DATA.INTERFACE'	=> "/data/interfaces",
 	'DATA.MODULE'		=> "/data/modules",
-	'DATA.HOOK'			=> "/data/engine/actions.hook",
-	'DATA.IMAGE'		=> "/images"
+	'DATA.IMAGE'		=> "/images",
+	'SYSTEM.MANAGER' 	=> "/engine/managers",
+	'SYSTEM.INCLUDE' 	=> "/engine/includes",
+	'SYSTEM.ENGINE' 	=> "/engine",
+	'SYSTEM.ADMIN' 		=> "/admin",
+	'SYSTEM' 			=> ""					/* Note: blank entries must be to the end! */
 
 	);
 
@@ -45,10 +46,12 @@ $_CONFIG[DIRS][NAMES] = array(
 	'ACTION.MANIFEST'	=> "Action Profile",
 	'ACTION.LIBRARY'	=> "Action Library",
 	'SYSTEM.MANAGER'	=> "URI Manager",
+	'SYSTEM.ENGINE'		=> "Engine module",
+	'SYSTEM.INCLUDE'	=> "Engine include",
+	'SYSTEM.ADMIN'		=> "System administration",
+	'SYSTEM'			=> "System file",
 	'ACTION.INCLUDE'	=> "Engine Library",
 	'ACTION' 			=> "Action",			/* Note: class root name always to the end! */
-	'SYSTEM.ENGINE'		=> "Engine module",
-	'SYSTEM'			=> "System file",
 	'OUTPUT.PROCESSOR'	=> "Output processor",
 	'OUTPUT.FILE'		=> "Output system file",
 	'IMAGE.CHAR'		=> "Charachter Image",
@@ -80,5 +83,12 @@ function DIROF($part, $notrail=false) {
 	if (isset($_CONFIG[DIRS][ALIAS][$part])) $place = $_CONFIG[DIRS][ALIAS][$part];
 	if (!$notrail) $place.='/';
 	return $_CONFIG[GAME][BASE].$place;
+}
+function DESCOF($part) {
+	global $_CONFIG;
+	$name='Unknown';
+	if (substr($part,-1)=='S') $part = substr($part, 0, -1); /* Remove 'S' in the end (ex. IMAGES instead of IMAGE) */
+	if (isset($_CONFIG[DIRS][NAMES][$part])) $name = $_CONFIG[DIRS][NAMES][$part];
+	return $_CONFIG[GAME][NAMES].$name;
 }
 ?>

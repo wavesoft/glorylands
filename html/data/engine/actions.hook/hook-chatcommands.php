@@ -93,7 +93,105 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 		
 		$answer='';
 		gl_redirect('interface.entry', true);
+
+	} elseif (($cmd == 'varshow')||($cmd == 'showvar')) {
 		
+		if (!isset($parameters[0])) { $answer='';
+			relayMessage(MSG_INTERFACE, 'CHAT', '<font color="#FF0000">Please, specify a variable to display!</font>', '<font color="gold">debug</font>');
+			return false;
+		}
+		
+		$guid = $_SESSION[PLAYER][GUID];
+
+		if (isset($parameters[1])) { 
+			$guid = $parameters[1];
+		}
+		
+		$vars = gl_get_guid_vars($guid);
+		$var = $parameters[0];
+		if (!isset($vars[$var])) {
+			$answer = "Variable '$var' of object $guid is missing";
+		} else {
+			$answer = "Object $guid, var '$var' = ".print_r($vars[$var],true);
+		}
+
+	} elseif (($cmd == 'varset')||($cmd == 'setvar')||($cmd == 'set')) {
+		
+		if (!isset($parameters[0])) { $answer='';
+			relayMessage(MSG_INTERFACE, 'CHAT', '<font color="#FF0000">Please, specify a variable to edit!</font>', '<font color="gold">debug</font>');
+			return false;
+		}
+		if (!isset($parameters[1])) { $answer='';
+			relayMessage(MSG_INTERFACE, 'CHAT', '<font color="#FF0000">Please, specify a variable value!</font>', '<font color="gold">debug</font>');
+			return false;
+		}
+		
+		$guid = $_SESSION[PLAYER][GUID];
+
+		if (isset($parameters[2])) { 
+			$guid = $parameters[2];
+		}
+		
+		$var = $parameters[0];
+		$value = $parameters[1];
+		gl_update_guid_vars($guid, array($var => $value));
+
+		$vars = gl_get_guid_vars($guid);
+		$answer = "Object's $guid, var '$var' updated to ".print_r($vars[$var],true);
+		
+	} elseif (($cmd == 'delvar')||($cmd == 'vardel')) {
+		
+		if (!isset($parameters[0])) { $answer='';
+			relayMessage(MSG_INTERFACE, 'CHAT', '<font color="#FF0000">Please, specify a variable to edit!</font>', '<font color="gold">debug</font>');
+			return false;
+		}
+		
+		$guid = $_SESSION[PLAYER][GUID];
+
+		if (isset($parameters[1])) { 
+			$guid = $parameters[1];
+		}
+		
+		$var = $parameters[0];
+		$value = $parameters[1];
+		gl_update_guid_vars($guid, array($var => false));
+
+		$vars = gl_get_guid_vars($guid);
+		if (!isset($vars[$var])) {
+			$answer = "Object's $guid, var '$var' got missing :)";
+		} else {
+			$answer = "Object's $guid, var '$var' cannot be erased";
+		}
+		
+	} elseif (($cmd == 'listvar')||($cmd == 'varlist')||($cmd == 'vardump')) {
+		
+		$guid = $_SESSION[PLAYER][GUID];
+
+		if (isset($parameters[0])) { 
+			$guid = $parameters[0];
+		}
+		
+		$answer = "Variables of object $guid:<ul>\n";
+		$vars = gl_get_guid_vars($guid);
+		foreach ($vars as $name => $var) {
+			$answer .= "<li>$name</li>\n";
+		}
+		$answer .= "</ul>";
+		
+	} elseif ($cmd == 'help') {
+		
+		$answer="Commands that can be used:<ul>";
+		$answer.="<li><b>goto</b><i> x [y] [map]</i> : Move to new location</li>";
+		$answer.="<li><b>gps</b> : Show your current position</li>";
+		$answer.="<li><b>spawn</b><i> guid</i> : Place an object on map</li>";
+		$answer.="<li><b>instance</b><i> template [parent]</i> : Instance an object";
+		$answer.="<li><b>varshow</b><i> variable [guid]</i> : Display a GUID's variable";
+		$answer.="<li><b>varset</b><i> variable value [guid]</i> : Update a GUID's variable";
+		$answer.="<li><b>listvar</b><i> [guid]</i>: List GUID variables</li>";
+		$answer.="<li><b>delvar</b><i> variable [guid]</i>: Erase a GUID's variable</li>";
+		$answer.="<li><b>logout</b>: Log out charachter</li>";
+		$answer.="</ul>";
+
 	}
 	return true;	
 

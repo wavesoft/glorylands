@@ -34,6 +34,7 @@ define(GUID,"profile");
 define(DATA,"data");
 define(PROFILE,"profile");
 define(CHARS,"chars");
+define(TEMP,"temp");
 
 ### Start Session
 session_start();

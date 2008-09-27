@@ -1,4 +1,3 @@
-
 <table class="book" width="100%" height="100%" cellspacing="0" cellpadding="0">
 <tr>
 	<td colspan="3" style="background-image:url(images/UI/top-bg2.gif); height: 24px; background-position: bottom; background-repeat: repeat-x"></td>
