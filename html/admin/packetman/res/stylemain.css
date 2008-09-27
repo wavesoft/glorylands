@@ -1,0 +1,106 @@
+@charset "iso-8859-7";
+/* CSS Document */
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+a {
+	text-decoration: none;
+	color: #333333;
+}
+
+a:hover {
+	text-decoration: underline;
+	color: #003366;
+}
+
+label {
+	display: block;
+	width: 100%;
+}
+
+.state_active {
+	font-size: 12px;
+	color: #006600;
+	text-align: center;
+	vertical-align: middle;
+}
+.state_inactive {
+	font-size: 12px;
+	color: #666666;
+	text-align: center;
+	vertical-align: middle;
+}
+.state_incomplete {
+	font-size: 12px;
+	color: #FF6600;
+	text-align: center;
+	vertical-align: middle;
+}
+.state_uninstalling{
+	font-size: 12px;
+	color: #006699;
+	text-align: center;
+	vertical-align: middle;
+}
+.state_error {
+	font-size: 12px;
+	color: #FF0000;
+	text-align: center;
+	vertical-align: middle;
+}
+ul.dependencies {
+	padding-left: 15px;
+	margin-top: 0px;
+}
+.navbar {
+	border: solid 1px #999999;
+	background-color: #F2F2F2;
+	padding-top: 8px;
+	padding-bottom: 5px;
+	padding-left: 2px;
+}
+.navbar a {
+	padding: 8px;
+	color: #333333;
+}
+.filetable label {
+	width: 100%;
+	display: block;
+}
+.filetable tr td {
+	background-color: #DFDFFF;
+}
+.filetable tr:hover td {
+	background-color: #6699FF;
+}
+.filetable tr.head td {
+	background-color:#FF9900;
+}
+.filetable tr.folder td {
+	padding-left: 5px;
+	background-color: #FFFF99;
+}
+.filetable tr.disabled td {
+	padding-left: 5px;
+	color: #999999;
+	background-color: #F0F0F0;
+}
+.filetable tr.disabled:hover td {
+	padding-left: 5px;
+	color: #000000;
+	background-color: #FFFFFF;
+}
+.navbar a:hover {
+	padding: 8px;
+	background-color: #006699;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.centerblock {
+	background-color: #E9E9E9;
+	border: solid 1px #C5C5C5;
+	width: 90%;
+}
