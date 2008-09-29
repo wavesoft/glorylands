@@ -9,6 +9,7 @@
 <p>This is a temporary page. Developers should work on this</p>
 <h2>File/System Management</h2>
 <ul>
+<li><a href="packetman/">Advanced packet manager</a></li>
 <li><a href="packages.php">Manage system packages</a></li>
 <li><a href="maps.php">Manage Maps</a></li>
 </ul>
