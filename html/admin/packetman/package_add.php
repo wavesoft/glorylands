@@ -16,16 +16,17 @@ if ($_REQUEST['a'] == 'add_data') {
 
 	$name = mysql_escape_string($_REQUEST['p_name']);
 	$guid = mysql_escape_string($_REQUEST['p_guid']);
+	$type = mysql_escape_string($_REQUEST['p_type']);
 	$ctime = time();
 	
 	// Create data folder and folder structure
 	mkdir(DIROF('SYSTEM.ADMIN').'packages/'.$guid);
 	mkdir(DIROF('SYSTEM.ADMIN').'packages/'.$guid.'/disabled');
-	mkdir(DIROF('SYSTEM.ADMIN').'packages/'.$guid.'/uninstall');
+	mkdir(DIROF('SYSTEM.ADMIN').'packages/'.$guid.'/scripts');
 	mkdir(DIROF('SYSTEM.ADMIN').'packages/'.$guid.'/source');
 	
 	// Create database entry
-	$sql->query("INSERT INTO `system_packages` (`name`,`guid`,`require`,`type`,`installdate`) VALUES ('{$name}','{$guid}','a:0:{}','FILES',{$ctime})");
+	$sql->query("INSERT INTO `system_packages` (`name`,`guid`,`require`,`type`,`installdate`,`status`) VALUES ('{$name}','{$guid}','a:0:{}','{$type}',{$ctime},'ACTIVE')");
 	
 ?>
 <center>
@@ -34,6 +35,13 @@ if ($_REQUEST['a'] == 'add_data') {
 <p><a href="packagemanifest.php?guid=<?php echo $guid; ?>">Click here to go to the manifest management</a></p>
 </div>
 </center>
+<form action="navbar.php" target="left">
+<input type="hidden" name="rand" value="<?php echo md5(time().rand(0,100)); ?>" />
+<input type="hidden" name="guid" value="<?php echo $guid; ?>" />
+</form>
+<script language="javascript">
+document.forms[0].submit();
+</script>
 <?php
 
 } else {
@@ -55,6 +63,23 @@ if ($_REQUEST['a'] == 'add_data') {
 		<tr>
 			<td><b>Package Name:</b></td>
 			<td><input size="35" type="text" name="p_name" /></td>
+		</tr>
+		<tr>
+			<td><b>Package Type:</b></td>
+			<td>
+			<select name="p_type">
+				<option value="TILESET">Tileset</option>
+				<option value="MAP">World Map</option>
+				<option value="MODELSET">Model Set</option>
+				<option value="PLUGIN">System Plugin</option>
+				<option value="DATABASE">Database Parameters</option>
+				<option value="PATCH">Patch or bugfix</option>
+				<option value="COMPONENT">Engine component</option>
+				<option value="ADMIN">Administration component</option>
+				<option value="THEME">Interface theme</option>
+				<option value="MIXED">Mixed Types</option>
+			</select>
+			</td>
 		</tr>
 		<tr>
 			<td><b>Package GUID:</b></td>

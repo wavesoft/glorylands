@@ -4,7 +4,6 @@ ob_implicit_flush();
 global $events;
 include "../config/config.php";
 include "../config/diralias.php";
-include "../engine/data/event_chain.php";
 
 echo "<span id=\"waiter\" style=\"display:block;\">Please wait a moment. Filesystem is being searched...</span>";
 

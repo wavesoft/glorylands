@@ -94,9 +94,35 @@ function echoParam($name, $value, $displayname, $icon) {
 	echo "<td colspan=\"3\"><span style=\"display:none\" id=\"edit{$elmid}\"><input type=\"text\" onblur=\"commitEdit($elmid)\" style=\"width: 100%\" id=\"v{$elmid}\" /></span><div style=\"width: 100%\" id=\"view{$elmid}\" id=\"s{$elmid}\" ondblclick=\"makeEditable($elmid)\">$svalue</div><input type=\"hidden\" id=\"e{$elmid}\" name=\"$name\" value=\"$value\" /></td>";
 	echo "</tr>\n";
 }
+function echoDropdown($name, $value, $displayname, $icon, $values) {
+	global $elmid;
+	$elmid++;
+	$svalue = $value;
+	if ($svalue=='') $svalue='&nbsp;';
+	echo "<tr>";
+	echo "<td width=\"16\"><img src=\"../images/$icon\" /></td><td width=\"200\"><b>{$displayname}: </b></td>";
+	echo "<td colspan=\"3\"><span style=\"display:none\" id=\"edit{$elmid}\"><select onblur=\"commitEdit($elmid)\" style=\"width: 100%\" id=\"v{$elmid}\">";
+	foreach ($values as $value => $cname) {
+		echo "<option value=\"$value\">$cname</option>";
+	}
+	echo "</select></span><div style=\"width: 100%\" id=\"view{$elmid}\" id=\"s{$elmid}\" ondblclick=\"makeEditable($elmid)\">$svalue</div><input type=\"hidden\" id=\"e{$elmid}\" name=\"$name\" value=\"$value\" /></td>";
+	echo "</tr>\n";
+}
 
 echoParam("package[guid]", $row['guid'], "Package GUID", "parameter.gif");
 echoParam("package[name]", $row['name'], "Display Name", "parameter.gif");
+echoDropdown("package[type]", $row['type'], "Package Type", "parameter.gif", array(
+	"TILESET" => "Tileset",
+	"MAP" => "World Map",
+	"MODELSET" => "Model Set",
+	"PLUGIN" => "System Plugin",
+	"DATABASE" => "Database Parameters",
+	"PATCH" => "Patch or bugfix",
+	"COMPONENT" => "Engine component",
+	"ADMIN" => "Administration component",
+	"THEME" => "Interface theme",
+	"MIXED" => "Mixed Types"
+));
 echoParam("package[version]", $row['version'], "Version", "parameter.gif");
 echoParam("package[description]", $row['description'], "Description", "parameter.gif");
 echoParam("package[author]", $row['author'], "Author", "parameter.gif");
@@ -230,47 +256,67 @@ if ($sql->emptyResults) {
 </form>
 <br />
 
+<form action="package_installfiles.php" method="post" enctype="multipart/form-data">
+<input type="hidden" name="a" id="a" value="" />
+<input type="hidden" name="guid" value="<?php echo $guid; ?>" />
 <table width="100%" class="filetable" cellpadding="1" cellspacing="1">
 <tr class="head">
-	<td colspan="3">SQL Files</td>
+	<td colspan="5">Installation Files</td>
 </tr>
 <?php
-#################### SQL FILES #########################
+#################### INSTALL FILES #########################
 
-$ans = $sql->query("SELECT * FROM `system_package_sqlfiles` WHERE `package` = {$pid}");
+$ans = $sql->query("SELECT * FROM `system_packages_install` WHERE `package` = {$pid}");
 while ($info = $sql->fetch_array()) {
-$elmid++;
+	$elmid++;
+	if ($info['imode'] == 'SCRIPT') {
+		$type = "PHP Script";
+		$data = $info['data'];
+	} else if ($info['imode'] == 'INLINE') {
+		$type = "InLine Script";
+		$data = "[Data]";
+	} else if ($info['imode'] == 'SQL') {
+		$type = "SQL Script";
+		$data = $info['data'];
+	} 
 ?>
+
 <tr>
-	<td width="16"><input id="e<?php echo $elmid; ?>" type="checkbox" /></td>
-	<td width="16"><img src="../images/db.gif" /></td>
-	<td><label for="e<?php echo $elmid; ?>"><?php echo $row['file']; ?></label></td>
+	<td width="16"><input id="e<?php echo $elmid; ?>" name="file[<?php echo $info['index']; ?>]" type="checkbox" /></td>
+	<td width="16"><img src="../images/edit_add.gif" /></td>
+	<td width="60"><label for="e<?php echo $elmid; ?>"><em><?php echo $info['use']; ?></em></label></td>
+	<td width="100"><label for="e<?php echo $elmid; ?>"><b><?php echo $type ?></b></label></td>
+	<td><label for="e<?php echo $elmid; ?>"><?php echo $data; ?></label></td>
 </tr>
 <?php
 }
 if ($sql->emptyResults) {
 ?>
 <tr>
-	<td colspan="3"><em>(No SQL Files)</em></td>
+	<td colspan="5"><em>(No SQL Files)</em></td>
 </tr>
 <?php
 }
 //======================================================
 ?>
 <tr class="folder">
-	<td colspan="3" align="right"><input type="file" /> <input type="submit" value="Upload File" /> <input type="button" value="Create New" /> <input type="button" value="Delete Selected" /> <input type="button" value="Edit Selected" /></td>
+	<td colspan="5" align="right"><input type="file" name="uploadfile" /> <input onclick="this.form.a.value='upload';" type="submit" value="Upload File" /> <input onclick="window.location='package_installfiles.php?a=add&guid=<?php echo $guid; ?>';" type="button" value="Create New" /> <input type="submit" onclick="this.form.a.value='delete';" value="Delete Selected" /> <input type="submit" onclick="this.form.a.value='edit';" value="Edit Selected" /></td>
 </tr>
 </table>
+</form>
 <br />
 
+<form action="package_uninstallfiles.php" method="post" enctype="multipart/form-data">
+<input type="hidden" name="a" id="a" value="" />
+<input type="hidden" name="guid" value="<?php echo $guid; ?>" />
 <table width="100%" class="filetable" cellpadding="1" cellspacing="1">
 <tr class="head">
-	<td colspan="5">Uninstall Information</td>
+	<td colspan="5">Uninstallation Files</td>
 </tr>
 <?php
 #################### UNINSTALL ########################
 
-$ans = $sql->query("SELECT * FROM `system_package_sqlfiles` WHERE `package` = {$pid}");
+$ans = $sql->query("SELECT * FROM `system_packages_uninstall` WHERE `package` = {$pid}");
 while ($info = $sql->fetch_array()) {
 	$elmid++;
 	if ($info['umode'] == 'SCRIPT') {
@@ -279,18 +325,15 @@ while ($info = $sql->fetch_array()) {
 	} else if ($info['umode'] == 'INLINE') {
 		$type = "InLine Script";
 		$data = "[Data]";
-	} else if ($info['umode'] == 'DICT') {
-		$type = "Dictionary";
+	} else if ($info['umode'] == 'SQL') {
+		$type = "SQL Script";
 		$data = $info['data'];
-	} else if ($info['umode'] == 'HOOK') {
-		$sqldata = unserialize($info['data']);
-		$type = "Dictionary";
-		$data = $sqldata['function']."() on ".$sqldata['file'];
 	} 
 ?>
 <tr>
-	<td width="16"><input id="e<?php echo $elmid; ?>" type="checkbox" /></td>
-	<td width="16"><img src="../images/bin.gif" /></td>
+	<td width="16"><input id="e<?php echo $elmid; ?>" name="file[<?php echo $info['index']; ?>]" type="checkbox" /></td>
+	<td width="16"><img src="../images/edit_remove.gif" /></td>
+	<td width="60"><label for="e<?php echo $elmid; ?>"><em><?php echo $info['use']; ?></em></label></td>
 	<td width="100"><label for="e<?php echo $elmid; ?>"><b><?php echo $type ?></b></label></td>
 	<td><label for="e<?php echo $elmid; ?>"><?php echo $data; ?></label></td>
 </tr>
@@ -305,9 +348,10 @@ if ($sql->emptyResults) {
 }//======================================================
 ?>
 <tr class="folder">
-	<td colspan="5" align="right"><input type="file" /> <input type="submit" value="Upload File" /> <input type="button" value="Create New" /> <input type="button" value="Delete Selected" /> <input type="button" value="Edit Selected" /></td>
+	<td colspan="5" align="right"><input type="file" name="uploadfile" /> <input onclick="this.form.a.value='upload';" type="submit" value="Upload File" /> <input onclick="window.location='package_uninstallfiles.php?a=add&guid=<?php echo $guid; ?>';" type="button" value="Create New" /> <input type="submit" onclick="this.form.a.value='delete';" value="Delete Selected" /> <input type="submit" onclick="this.form.a.value='edit';" value="Edit Selected" /></td>
 </tr>
 </table>
+</form>
 <br />
 
 </body>

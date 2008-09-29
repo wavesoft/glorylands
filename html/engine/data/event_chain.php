@@ -8,10 +8,10 @@ $EventChain = array(
 'map.updategrid'=>array( array('hook-chatcommands.php', 'chat_notify_zidchange')) ,
 'interface.dropdown'=>array( array('hook-admin.php', 'admin_hook_dropdown')) ,
 'grid.alter'=>array( array('hook-base.php', 'hb_dynamic_grid_alter')) ,
-'map.render'=>array( array('hook-distance.php', 'renderPhase')) ,
 'system.init_operation'=>array( array('hook-distance.php', 'opinitTranslateID'), array('hook-chatcommands.php', 'chat_module_initialize'), array('hook-sidebar.php', 'sidebar_data_initialize')) ,
-'system.clientpoll' =>array( array('hook-sidebar.php', 'sidebar_data_feed')),
-'system.schedule' =>array( array('hook-itemuse.php', 'itemuse_schedule_hook')),
-'system.guid.update_end'=>array( array('hook-base.php','hb_update_user_session'))
+'system.clientpoll'=>array( array('hook-sidebar.php', 'sidebar_data_feed')) ,
+'system.schedule'=>array( array('hook-itemuse.php', 'itemuse_schedule_hook')) ,
+'system.guid.update_end'=>array( array('hook-base.php', 'hb_update_user_session')) ,
+'map.render'=>array( array('hook-distance.php', 'renderphase')) 
 );
 ?>

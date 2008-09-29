@@ -5,6 +5,7 @@
   *
   * <pre>
   * ----------------------- Revision History ---------------------------
+  * v.2.5	- Added replaceRow function to extend addRow
   * v.2.4	- Added query_and_get_value function to query and get a value
   * v.2.3	- Added Script Run function
   * v.2.2	- Added Poll function
@@ -22,7 +23,7 @@
   * @subpackage Includes
   * @author John Haralampidis <johnys2@gmail.com>
   * @copyright Copyright (C) 2007-2008, John Haralampidis
-  * @version 2.4
+  * @version 2.5
   */
 
 
@@ -244,6 +245,7 @@ class db {
 	  *
 	  * @param string $table	The table name to add the data
 	  * @param array $data		An one-dimensional array that contains the field names (as keys) and the field values to add
+	  * @param bool $replace	If TRUE the import query will be built using REPLACE INTO instead of INSERT INTO
 	  * @return bool|resource	Returns false in case of error or the resultset of the executed query
 	  */
 	function addRow($table, $data) {
@@ -255,7 +257,28 @@ class db {
 			$vars .= "`{$name}`";
 			$vals .= "'".mysql_escape_string($value)."'";
 		}
+		
 		return $this->query("INSERT INTO `{$table}` ({$vars}) VALUES ({$vals})");
+	}
+
+	/**
+	  * Replace or insert a new row on specified table
+	  *
+	  * @param string $table	The table name to add the data
+	  * @param array $data		An one-dimensional array that contains the field names (as keys) and the field values to add
+	  * @return bool|resource	Returns false in case of error or the resultset of the executed query
+	  */
+	function replaceRow($table, $data, $replace=false) {
+		$vars = ""; $vals = "";
+		foreach ($data as $name => $value) {
+			if ($vars != "") $vars .= ", ";
+			if ($vals != "") $vals .= ", ";
+			
+			$vars .= "`{$name}`";
+			$vals .= "'".mysql_escape_string($value)."'";
+		}
+		
+		return $this->query("REPLACE INTO `{$table}` ({$vars}) VALUES ({$vals})");
 	}
 
 	/**

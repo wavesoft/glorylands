@@ -35,14 +35,35 @@ if ($_REQUEST['a'] == 'add_data') {
 		$last++;
 		$value = $last;
 	}
-
-	$sql->addRow('system_dictionaries', array(
-		'group' => $group,
-		'name' => $_REQUEST['d_variable'],
-		'value' => $value,
-		'mode' => $mode,
-		'package' => $pid
-	));
+	
+	// Check if we should add or update the entry
+	$addrow = true;
+	if (isset($_REQUEST['d_index'])) {
+		if ($_REQUEST['d_index']!='') {
+			$index = (int) $_REQUEST['d_index']; /* Exploit protection */
+			$package = $sql->query_and_get_value("SELECT `package` FROM `system_dictionaries` WHERE `index` = $index");
+			$addrow = ($package != 0);
+		}
+	}
+	
+	// Perform insert or update
+	if ($addrow) {
+		$sql->addRow('system_dictionaries', array(
+			'group' => $group,
+			'name' => $_REQUEST['d_variable'],
+			'value' => $value,
+			'mode' => $mode,
+			'package' => $pid
+		));
+	} else {
+		$sql->editRow('system_dictionaries', '`index` = '.$index, array(
+			'group' => $group,
+			'name' => $_REQUEST['d_variable'],
+			'value' => $value,
+			'mode' => $mode,
+			'package' => $pid
+		));	
+	}
 
 	?>
 	<center>
@@ -153,7 +174,7 @@ if ($_REQUEST['a'] == 'add_data') {
 ?>
 <tr>
 	<td width="16"><img src="../images/comment.gif" /></td>
-	<td><a href="?a=add_data&guid=<?php echo $guid; ?>&d_variable=<?php echo urlencode($info['name']); ?>&d_value=<?php echo urlencode($info['value']); ?>&d_group=<?php echo urlencode($info['group']); ?><?php echo $dynamic ?>"><b><?php echo $info['name'] ?></b> = '<em><?php echo $info['value'] ?></em>'</a></td>
+	<td><a href="?a=add_data&guid=<?php echo $guid; ?>&d_variable=<?php echo urlencode($info['name']); ?>&d_value=<?php echo urlencode($info['value']); ?>&d_group=<?php echo urlencode($info['group']); ?>&d_index=<?php echo urlencode($info['index']); ?><?php echo $dynamic ?>"><b><?php echo $info['name'] ?></b> = '<em><?php echo $info['value'] ?></em>'</a></td>
 </tr>
 <?			
 		}
@@ -167,7 +188,7 @@ if ($_REQUEST['a'] == 'add_data') {
 </tr>
 </table>
 <br />
-<input type="button" value="&lt;&lt; Back" onclick="window.history.go(-1);" />
+<input type="button" value="&lt;&lt; Back" onclick="window.location='packagemanifest.php?guid=<?php echo $guid; ?>';" />
 <?php
 }else if ($_REQUEST['a'] == 'edit') {
 ?>
@@ -227,7 +248,7 @@ if ($_REQUEST['a'] == 'add_data') {
 	</td>
 </tr>
 </table>
-<input type="button" value="&lt;&lt; Back" onclick="window.history.go(-1);" /> <input type="submit" value="Update Dictionary" />
+<input type="button" value="&lt;&lt; Back" onclick="window.location='packagemanifest.php?guid=<?php echo $guid; ?>';" /> <input type="submit" value="Update Dictionary" />
 </form>
 <?php
 }else if ($_REQUEST['a'] == 'edit_data') {
