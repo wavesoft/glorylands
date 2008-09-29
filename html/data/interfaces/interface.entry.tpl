@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-7" />
-<title>GloryLands :: Chaos Milestone</title>
+<title>GloryLands :: Oasis Milestone</title>
 {literal}
 <style type="text/css">
 <!--
@@ -116,7 +116,7 @@ button.blank {
 <body bgcolor="#000000">
 <table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
-    <td class="textframe" align="center"><img src="images/UI/gl_chaos.png" width="226" height="226" /></td>
+    <td class="textframe" align="center"><img src="images/UI/gl_oasis.png" width="226" height="226" /></td>
     <td width="215" rowspan="2" align="center" valign="top" class="panelframe">
 	    <table width="100%"  border="0" cellspacing="0" cellpadding="0">
 	    <tr>
