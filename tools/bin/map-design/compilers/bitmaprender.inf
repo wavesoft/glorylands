@@ -1,0 +1,5 @@
+[plugin]
+
+progid=WVGLBitmapRender.Main
+dll=bitmap.dll
+name=Bitmap Render

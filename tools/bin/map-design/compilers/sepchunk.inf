@@ -1,0 +1,5 @@
+[plugin]
+
+progid=WVGLSepChunkModel.Main
+dll=sepchunk.dll
+name=Separated JSON/PHP Chunk Model
