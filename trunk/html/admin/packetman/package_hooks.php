@@ -23,14 +23,35 @@ $row = $sql->fetch_array();
 $pid = $row['index'];
 
 if ($_REQUEST['a'] == 'add_data') {
+	
+	// Check if we should add or update the entry
+	$addrow = true;
+	if (isset($_REQUEST['h_index'])) {
+		if ($_REQUEST['h_index']!='') {
+			$index = (int) $_REQUEST['h_index']; /* Exploit protection */
+			$package = $sql->query_and_get_value("SELECT `package` FROM `system_hooks` WHERE `index` = $index");
+			$addrow = ($package != 0);
+		}
+	}
 
-	$sql->addRow('system_hooks', array(
-		'hook' => $_REQUEST['h_hook'],
-		'filename' => $_REQUEST['h_file'],
-		'function' => $_REQUEST['h_function'],
-		'active' => 'YES',
-		'package' => $pid
-	));
+	// Insert new or update value
+	if ($addrow) {
+		$sql->addRow('system_hooks', array(
+			'hook' => $_REQUEST['h_hook'],
+			'filename' => $_REQUEST['h_file'],
+			'function' => $_REQUEST['h_function'],
+			'active' => 'YES',
+			'package' => $pid
+		));
+	} else {
+		$sql->editRow('system_hooks', '`index` = '.$index, array(
+			'hook' => $_REQUEST['h_hook'],
+			'filename' => $_REQUEST['h_file'],
+			'function' => $_REQUEST['h_function'],
+			'active' => 'YES',
+			'package' => $pid
+		));
+	}
 
 	?>
 	<center>
@@ -144,7 +165,7 @@ if ($_REQUEST['a'] == 'add_data') {
 			</td>
 		</tr>
 	</table>
-	<input type="submit" value="Add Dependency" /> <input type="button" value="Update event list" onclick="window.location='?a=add&guid=<?php echo $guid; ?>&flushevents=1';" />
+	<input type="submit" value="Add Hook" /> <input type="button" value="Update event list" onclick="window.location='?a=add&guid=<?php echo $guid; ?>&flushevents=1';" />
 	</form>
 	</fieldset>
 	</p>
@@ -160,10 +181,15 @@ if ($_REQUEST['a'] == 'add_data') {
 </tr>
 <?
 		foreach ($handlers as $handler) {
+					
+			// Get event index from SQL
+			$index = $sql->query_and_get_value("SELECT `index` FROM `system_hooks` WHERE 
+			  `hook` = '{$event}' AND `filename` = '{$handler[0]}' AND `function` = '{$handler[1]}'
+			");
 ?>
 <tr>
 	<td width="16"><img src="../images/file.gif" /></td>
-	<td><a href="?a=add_data&guid=<?php echo $guid; ?>&h_file=<?php echo urlencode($handler[0]); ?>&h_function=<?php echo urlencode($handler[1]); ?>&h_hook=<?php echo urlencode($event); ?>"><em><b><?php echo $handler[1]; ?>()</b></em> on <em><?php echo $handler[0]; ?><em></a></td>
+	<td><a href="?a=add_data&guid=<?php echo $guid; ?>&h_file=<?php echo urlencode($handler[0]); ?>&h_function=<?php echo urlencode($handler[1]); ?>&h_hook=<?php echo urlencode($event); ?>&h_index=<?php echo urlencode($index); ?>"><em><b><?php echo $handler[1]; ?>()</b></em> on <em><?php echo $handler[0]; ?></em></a></td>
 </tr>
 <?			
 		}
@@ -177,7 +203,7 @@ if ($_REQUEST['a'] == 'add_data') {
 </tr>
 </table>
 <br />
-<input type="button" value="&lt;&lt; Back" onclick="window.history.go(-1);" />
+<input type="button" value="&lt;&lt; Back" onclick="window.location='packagemanifest.php?guid=<?php echo $guid; ?>';" />
 <?php
 }else if ($_REQUEST['a'] == 'edit') {
 ?>
@@ -223,7 +249,7 @@ if ($_REQUEST['a'] == 'add_data') {
 	</td>
 </tr>
 </table>
-<input type="button" value="&lt;&lt; Back" onclick="window.history.go(-1);" /> <input type="submit" value="Update Hook" />
+<input type="button" value="&lt;&lt; Back" onclick="window.location='packagemanifest.php?guid=<?php echo $guid; ?>';" /> <input type="submit" value="Update Hook" />
 </form>
 <?php
 }else if ($_REQUEST['a'] == 'edit_data') {

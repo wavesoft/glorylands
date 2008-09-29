@@ -19,16 +19,21 @@ include "../../engine/includes/base.php";
 </tr>
 <tr>
 	<td align="center">
-	<form method="get" target="main" action="package.php">
-	<select name="guid" onchange="this.form.submit();">
+	<form method="get" target="main" action="package.php" onsubmit="document.forms[1].guid.value=document.forms[0].guid.value; document.forms[1].submit();">
+	<select name="guid" onchange="this.form.submit(); document.forms[1].guid.value=this.value; document.forms[1].submit();">
 	<?php
 	
 	$ans = $sql->query("SELECT * FROM `system_packages`");
 	while ($row = $sql->fetch_array_fromresults($ans)) {
-		echo "<option value=\"{$row['guid']}\">{$row['name']}</option>\n";
+		$sel='';
+		if ($row['guid'] == $_REQUEST['guid']) {
+			$sel='selected="selected"';
+		}
+		echo "<option value=\"{$row['guid']}\" {$sel}>{$row['name']}</option>\n";
 	}
 	?>
-	</select>
+	</select>&nbsp;
+	<input style="width: 15px; height:17px; font-size: 9px;" type="submit" value="&rArr;" />
 	</form>
 	</td>
 </tr>
@@ -41,6 +46,23 @@ include "../../engine/includes/base.php";
 <tr>
 	<td><hr /></td>
 </tr>
+<?php
+if (isset($_REQUEST['guid'])) {
+?>
+<tr>
+	<td>
+	<a href="packagefiles.php?guid=<?php echo $_REQUEST['guid'] ?>" target="main"><img src="../images/file.gif" border="0"  align="absmiddle" /> Package file list</a><br />
+	<a href="packagemanifest.php?guid=<?php echo $_REQUEST['guid'] ?>" target="main"><img src="../images/parameter.gif" border="0"  align="absmiddle" /> Package manifest</a><br />
+	<a href="package.php?guid=<?php echo $_REQUEST['guid'] ?>" target="main"><img src="../images/comment.gif" border="0"  align="absmiddle" /> Package home</a>
+	</td>
+</tr>
+<?php
+}
+?>
 </table>
+<form action="navbar.php" target="left">
+<input type="hidden" name="rand" value="<?php echo md5(time().rand(0,100)); ?>" />
+<input type="hidden" name="guid" value="" />
+</form>
 </body>
 </html>

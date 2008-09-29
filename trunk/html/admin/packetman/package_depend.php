@@ -86,7 +86,7 @@ if ($_REQUEST['a'] == 'add') {
 </tr>
 </table>
 <br />
-<input type="button" value="&lt;&lt; Back" onclick="window.history.go(-1);" />
+<input type="button" value="&lt;&lt; Back" onclick="window.location='packagemanifest.php?guid=<?php echo $guid; ?>';" />
 <?php
 }else if ($_REQUEST['a'] == 'add_data') {
 	if ($row['require'] == '') {
@@ -178,7 +178,7 @@ if ($_REQUEST['a'] == 'add') {
 	</td>
 </tr>
 </table>
-<input type="button" value="&lt;&lt; Back" onclick="window.history.go(-1);" /> <input type="submit" value="Update Dependencies" />
+<input type="button" value="&lt;&lt; Back" onclick="window.location='packagemanifest.php?guid=<?php echo $guid; ?>';" /> <input type="submit" value="Update Dependencies" />
 </form>
 <?php
 }else if ($_REQUEST['a'] == 'edit_data') {

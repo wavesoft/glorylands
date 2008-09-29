@@ -24,7 +24,7 @@ if ($sql->emptyResults) die("Cannot find package with guid {$guid}");
 $row = $sql->fetch_array();
 $pid = $row['index'];
 
-echo "Disabling package <b>".$row['name']."</b>...\n\n";
+echo "Enabling packet <b>".$row['name']."</b>...\n\n";
 
 // Make sure the filesystem is ready to receive the disabled data
 $root = DIROF('SYSTEM.ADMIN').'/packages/'.$guid;
@@ -34,27 +34,27 @@ if (!is_dir($dest)) mkdir($dest);
 $scripts = $root.'/scripts';
 if (!is_dir($scripts)) mkdir($scripts);
 
-// Running disable scripts
-echo "Preparing for hybernate...";
-if (package_run_uninstall($pid, $scripts, true)) {
+// Restore the manifest
+echo "Restoring data...";
+if (package_restore_manifest($pid, $dest)) {
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";
 	die("Operation interrupted!");
 }
 
-// Archie the data
-echo "Archiving data...";
-if (package_archive_manifest($pid, $dest, true)) {
+// Restore the files
+echo "Restoring files...";
+if (package_restore_files($pid, $dest, true)) {
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";
 	die("Operation interrupted!");
 }
 
-// Archive the files
-echo "Archiving files...";
-if (package_archive_files($pid, $dest, true, true)) {
+// Run enable scripts
+echo "Awaking package...";
+if (package_run_install($pid, $scripts, true)) {
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";
@@ -62,7 +62,7 @@ if (package_archive_files($pid, $dest, true, true)) {
 }
 
 // Update packet status
-$sql->query("UPDATE `system_packages` SET `status` = 'INACTIVE' WHERE `index` = $pid");
+$sql->query("UPDATE `system_packages` SET `status` = 'ACTIVE' WHERE `index` = $pid");
 
 ?>
 </pre>

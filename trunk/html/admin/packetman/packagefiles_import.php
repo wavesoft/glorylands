@@ -155,7 +155,7 @@ if ($_REQUEST['a'] == 'selimport') {
 </tr>
 </table>
 <br />
-<input type="button" value="&lt;&lt; Back" onclick="window.history.go(-1);" />
+<input type="button" value="&lt;&lt; Back" onclick="window.location='packagefiles.php?guid=<?php echo $guid; ?>';" />
 <?php
 }
 ?>

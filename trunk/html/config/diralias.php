@@ -2,9 +2,9 @@
 global $_CONFIG;
 
 # Constants
-define(DIRS,'DIRS');
-define(ALIAS,'ALIAS');
-define(NAMES,'NAMES');
+define('DIRS','DIRS');
+define('ALIAS','ALIAS');
+define('NAMES','NAMES');
 
 # Define directory alias info
 $_CONFIG[DIRS][ALIAS] = array(

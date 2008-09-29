@@ -21,14 +21,13 @@ function doAction(action, confirmMsg) {
 
 <body>
 <?php
-
 if ($_POST['a'] == 'delete') {
 	?>
 	<center>
 	<div class="centerblock" align="center">
 	<?php
 	$count=0;
-	foreach ($_POST['files'] as $index => $ack) {
+	foreach ($_POST['remove'] as $index => $ack) {
 		$filename = $sql->query_and_get_value("SELECT `filename` FROM `system_files` WHERE `index` = $index");
 		//unlink($filename);
 		//$sql->query("DELETE FROM `system_files` WHERE `index` = $index");
@@ -48,7 +47,7 @@ if ($_POST['a'] == 'delete') {
 	<div class="centerblock" align="center">
 	<?php
 	$count=0;
-	foreach ($_POST['files'] as $index => $ack) {
+	foreach ($_POST['remove'] as $index => $ack) {
 		$sql->query("DELETE FROM `system_files` WHERE `index` = $index");
 		$count++;
 	}

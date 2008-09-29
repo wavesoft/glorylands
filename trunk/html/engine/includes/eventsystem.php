@@ -1,5 +1,4 @@
 <?php
-include_once DIROF('DATA.ENGINE')."event_chain.php";
 
 // -------------------------------------------------------
 //                     Call Chained Evens

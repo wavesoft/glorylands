@@ -114,11 +114,23 @@ $row = $sql->fetch_array();
 </tr>
 </table>
 <div class="navbar">
+<?php 
+if ($row['status'] == 'INACTIVE') {
+?>
+<a href="package_enable.php?guid=<?php echo $_GET['guid']; ?>"><img src="../images/ok22.gif" border="0" align="absmiddle" /> Enable this package</a>
+<a href="#"><img src="../images/save22.gif" border="0" align="absmiddle" /> Pack and download</a>
+<a href="package_delete.php?guid=<?php echo $_GET['guid']; ?>"><img src="../images/trash22.gif" border="0" align="absmiddle" /> Delete Package</a>
+<?php 
+} else {
+?>
 <a href="packagefiles.php?guid=<?php echo $_GET['guid']; ?>"><img src="../images/folderdoc22.gif" border="0" align="absmiddle" /> Manage Files</a>
 <a href="packagemanifest.php?guid=<?php echo $_GET['guid']; ?>"><img src="../images/exec22.gif" border="0" align="absmiddle" /> Manage Manifest</a>
 <a href="package_disable.php?guid=<?php echo $_GET['guid']; ?>"><img src="../images/cancel22.gif" border="0" align="absmiddle" /> Disable this package</a>
 <a href="#"><img src="../images/save22.gif" border="0" align="absmiddle" /> Pack and download</a>
-<a href="#"><img src="../images/trash22.gif" border="0" align="absmiddle" /> Delete Package</a>
+<a href="package_delete.php?guid=<?php echo $_GET['guid']; ?>"><img src="../images/trash22.gif" border="0" align="absmiddle" /> Delete Package</a>
+<?php 
+}
+?>
 </div>
 </body>
 </html>
