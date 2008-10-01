@@ -31,7 +31,7 @@ session_start();
 global $EventChain, $GUIDGroupOf, $GUIDReverseOf;
 
 //#@# Keep this for debug=========
-unset($_SESSION[DATA][DYNAMIC]);
+//unset($_SESSION[DATA][DYNAMIC]);
 //================================
 
 if (!isset($_SESSION[DATA][DYNAMIC])) {

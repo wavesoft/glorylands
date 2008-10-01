@@ -16,38 +16,46 @@ function doAction(action, confirmMsg) {
 	document.forms[0].a.value = action;
 	document.forms[0].submit();
 }
+function selectAll(maxid, selection) {
+	for (var i=1; i<=maxid; i++) {	
+		var e = document.getElementById('f'+i);
+		e.checked = selection;
+	}
+}
 </script>
 </head>
 
 <body>
 <?php
-if ($_POST['a'] == 'delete') {
+
+//echo "<pre>".print_r($_REQUEST,true)."</pre>";
+
+if ($_REQUEST['a'] == 'delete') {
 	?>
 	<center>
 	<div class="centerblock" align="center">
 	<?php
 	$count=0;
-	foreach ($_POST['remove'] as $index => $ack) {
+	foreach ($_POST['files'] as $index => $ack) {
 		$filename = $sql->query_and_get_value("SELECT `filename` FROM `system_files` WHERE `index` = $index");
-		//unlink($filename);
-		//$sql->query("DELETE FROM `system_files` WHERE `index` = $index");
+		unlink($filename);
+		$sql->query("DELETE FROM `system_files` WHERE `index` = $index");
 		$count++;
 	}
 	?>
 	<p><b><?php echo $count; ?></b> files were deleted and removed from database</p>
-	<p style="color: #FF0000;"><em>(For debugging protection, no erase action is taken)</em></p>
 	</div>
 	</center>
 	<br />
 	<?php
 	
-} elseif ($_POST['a'] == 'exclude') {
+} elseif ($_REQUEST['a'] == 'exclude') {
 	?>
 	<center>
 	<div class="centerblock" align="center">
 	<?php
 	$count=0;
-	foreach ($_POST['remove'] as $index => $ack) {
+	foreach ($_POST['files'] as $index => $ack) {
 		$sql->query("DELETE FROM `system_files` WHERE `index` = $index");
 		$count++;
 	}
@@ -126,12 +134,14 @@ while ($row = $sql->fetch_array_fromresults($ans, MYSQL_ASSOC)) {
 	$groups[$row['type']] = $ar;
 }
 
+$i = 0;
 foreach ($groups as $group => $files) {
 	$groupdesc = DESCOF($group);
 	echo "<tr class=\"folder\"><td colspan=\"4\">$groupdesc <em>($group)</em></td></tr>\n";
 	foreach ($files as $file) {
+		$i++;
 		if ($file[2] === false) {
-			echo "<tr><td style=\"background-color: #FF3333\" width=\"15\"><input type=\"checkbox\" title=\"Delete\" id=\"f{$file[1]}\" name=\"remove[{$file[1]}]\"></td><td><label for=\"f{$file[1]}\">{$file[0]}</label></td><td align=\"center\"><em>(Missing)</em></td><td align=\"center\"><em>(Missing)</em></td></tr>\n";
+			echo "<tr><td style=\"background-color: #FF3333\" width=\"15\"><input type=\"checkbox\" title=\"Delete\" id=\"f{$i}\" name=\"files[{$file[1]}]\"></td><td><label for=\"f{$i}\">{$file[0]}</label></td><td align=\"center\"><em>(Missing)</em></td><td align=\"center\"><em>(Missing)</em></td></tr>\n";
 		} else {
 			$ccol = "#FFFF33";
 			$check = "<img src=\"../images/critical.gif\" title=\"File changed since the install\">";
@@ -139,7 +149,7 @@ foreach ($groups as $group => $files) {
 				$check = "<img src=\"../images/ok.gif\" title=\"Hash check OK\">";
 				$ccol = "#66FF66";
 			}
-			echo "<tr><td style=\"background-color: {$ccol}\" width=\"15\"><input type=\"checkbox\" title=\"Delete\" id=\"f{$file[1]}\" name=\"files[{$file[1]}]\"></td><td><label for=\"f{$file[1]}\">{$file[0]}</label></td><td align=\"center\">{$check}</td><td>{$file[2]}</td></tr>\n";
+			echo "<tr><td style=\"background-color: {$ccol}\" width=\"15\"><input type=\"checkbox\" title=\"Delete\" id=\"f{$i}\" name=\"files[{$file[1]}]\"></td><td><label for=\"f{$i}\">{$file[0]}</label></td><td align=\"center\">{$check}</td><td>{$file[2]}</td></tr>\n";
 		}
 	}
 }
@@ -156,11 +166,14 @@ echo "<tr class=\"folder\"><td colspan=\"2\">Total Files:</td><td align=\"center
 
 ?>
 </table>
+<a href="javascript:void(null);" onclick="selectAll(<?php echo $i; ?>, true);"> Select All </a> | 
+<a href="javascript:void(null);" onclick="selectAll(<?php echo $i; ?>, false);"> Select None </a>
+<br /><br />
 </form>
 <div class="navbar">
-<a href="#" onclick="doAction('delete','Warning! This action is not undoable! The selected files are going to be removed permanately!');"><img src="../images/trash22.gif" border="0" align="absmiddle" /> Delete Selected Files</a>
-<a href="#" onclick="doAction('exclude','');"><img src="../images/db_remove.gif" border="0" align="absmiddle" /> Exclude Selected Files</a>
-<a href="#"><img src="../images/db_comit.gif" border="0" align="absmiddle" /> Update file hashes</a>
+<a href="javascript:void(null);" onclick="doAction('delete','Warning! This action is not undoable! The selected files are going to be removed permanately!');"><img src="../images/trash22.gif" border="0" align="absmiddle" /> Delete Selected Files</a>
+<a href="javascript:void(null);" onclick="doAction('exclude','');"><img src="../images/db_remove.gif" border="0" align="absmiddle" /> Exclude Selected Files</a>
+<a href="?guid=<?php echo $_REQUEST['guid']; ?>&a=hashupdate"><img src="../images/db_comit.gif" border="0" align="absmiddle" /> Update file hashes</a>
 <a href="packagefiles_import.php?guid=<?php echo $_REQUEST['guid']; ?>"><img src="../images/db_add.gif" border="0" align="absmiddle" /> Import Files</a>
 </div>
 </body>

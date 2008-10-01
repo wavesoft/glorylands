@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-7" />
-<title>Untitled Document</title>
+<title>GloryLands Advanced Package Manager</title>
 </head>
 
 <frameset rows="*" cols="253,*" framespacing="0" frameborder="no" border="0">

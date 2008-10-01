@@ -61,6 +61,11 @@ if (!isset($_REQUEST['ack'])) {
 		package_uninstall_db($pid);
 		echo "<font color=\"green\">ok</font>\n";
 
+		echo "Removing local cache...";
+		package_clear_dir($root);
+		rmdir($root);
+		echo "<font color=\"green\">ok</font>\n";
+
 		echo "\nUninstallation completed successfully!";		
 		
 		// Javascript: Update left bar
@@ -82,6 +87,6 @@ if (!isset($_REQUEST['ack'])) {
 }
 ?>
 </pre>
-<input type="button" value="&lt;&lt; Back" onclick="window.location='package.php?guid=<?php echo $guid; ?>'" />
+<input type="button" value="&lt;&lt; Back" onclick="window.location='home.php'" />
 </body>
 </html>

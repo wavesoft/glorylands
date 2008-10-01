@@ -61,6 +61,13 @@ if ($_REQUEST['a'] == 'gen_edit') {
 	<p>The package parameters are updated</p>
 	</div>
 	</center>
+	<form action="navbar.php" target="left">
+	<input type="hidden" name="rand" value="<?php echo md5(time().rand(0,100)); ?>" />
+	<input type="hidden" name="guid" value="<?php echo $guid; ?>" />
+	</form>
+	<script language="javascript">
+	document.forms[0].submit();
+	</script>
 	<?php
 }
 
