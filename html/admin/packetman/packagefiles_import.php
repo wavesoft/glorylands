@@ -96,6 +96,32 @@ if ($_REQUEST['a'] == 'selimport') {
 </center>
 <?php
 
+} elseif ($_REQUEST['a'] == 'pattern') {
+
+	$basedir = DIROF($_REQUEST['dest']);
+	$count = 0;
+	foreach (glob($basedir.$_REQUEST['pattern']) as $filename) {
+		$count++;
+
+		// Import file
+		$sql->addRow('system_files', array(
+			'type' => $_REQUEST['dest'],
+			'package' => $pid,
+			'filename' => $filename,
+			'version' => 1,
+			'hash' => md5_file($filename)
+		));
+	}
+
+?>
+<center>
+<div class="centerblock" align="center">
+<p><b><?php echo $count; ?></b> files imported into the package <b><?php echo $row['name']; ?></b></p>
+<p><a href="packagefiles.php?guid=<?php echo $guid; ?>">Click here to go back to the package files management</a></p>
+</div>
+</center>
+<?php
+
 } else {
 	// Clear selected file cache
 	unset($_SESSION[TEMP]['checked_files']);
@@ -120,8 +146,38 @@ if ($_REQUEST['a'] == 'selimport') {
 	</p>
 	
 	<p>
+	<fieldset><legend>Select files by matching pattern</legend>
+	<form action="" method="post">
+	<input type="hidden" name="a" value="pattern" />
+	<table>
+	<tr>
+		<td><b>Match pattern:</b></td>
+		<td><input type="text" name="pattern" /></td>
+	</tr>
+	<tr>
+		<td><b>Search on:</b></td>
+		<td>
+		<select name="dest">
+		<?php
+		foreach ($_CONFIG[DIRS][NAMES] as $alias => $name) {
+		echo "<option value=\"$alias\">$name</option>";
+		}
+		?>
+		</select>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2"><input type="submit" value="Import files matching this pattern" /></td>
+	</tr>
+	</table>
+	</form>
+	</fieldset>
+	</p>
+
+	<p>
 	<fieldset><legend>Upload from your machine</legend>
 	<form action="" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="a" value="upload" />
 	<table>
 	<tr>
 		<td><b>Filename:</b></td>

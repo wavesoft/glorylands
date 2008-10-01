@@ -40,7 +40,7 @@ if (package_restore_manifest($pid, $dest)) {
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";
-	die("Operation interrupted!");
+	die("Operation interrupted! Errors:\n".$package_error);
 }
 
 // Restore the files
@@ -49,7 +49,7 @@ if (package_restore_files($pid, $dest, true)) {
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";
-	die("Operation interrupted!");
+	die("Operation interrupted! Errors:\n".$package_error);
 }
 
 // Run enable scripts
@@ -58,7 +58,13 @@ if (package_run_install($pid, $scripts, true)) {
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";
-	die("Operation interrupted!");
+	die("Operation interrupted! Errors:\n".$package_error);
+}
+
+// Display warnings
+if ($package_error!='') {
+	echo "\nWarnings:\n";
+	echo $package_error;
 }
 
 // Update packet status

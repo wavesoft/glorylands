@@ -40,7 +40,7 @@ include "../../engine/includes/base.php";
 <tr height="50">
 	<td align="left" valign="middle">
 	<a href="package_add.php" target="main" title="Create new package"><img src="../images/edit_add.gif" border="0"  align="absmiddle" /> Create New</a><br />
-	<a href="package_upload.php" target="main" title="Upload Package"><img src="../images/agt_update_drivers.gif" border="0"  align="absmiddle" /> Install package</a><br />
+	<a href="packageinstall.php" target="main" title="Upload Package"><img src="../images/agt_update_drivers.gif" border="0"  align="absmiddle" /> Install package</a><br />
 	</td>
 </tr>
 <tr>

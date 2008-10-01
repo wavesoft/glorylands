@@ -28,6 +28,8 @@ require_once("config/config.php");
 require_once($_CONFIG[GAME][BASE]."/engine/includes/base.php");
 include_once DIROF('DATA.ENGINE')."guid_dictionary.php";
 include_once DIROF('DATA.ENGINE')."template_dictionary.php";
+include_once DIROF('SYSTEM.ADMIN')."/packetman/scripts/packetgen.php";
+include_once DIROF('SYSTEM.ADMIN')."/packetman/scripts/packetman.php";
 define("NOZIP",true);
 ob_implicit_flush();
 

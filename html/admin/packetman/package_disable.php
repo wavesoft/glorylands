@@ -40,7 +40,7 @@ if (package_run_uninstall($pid, $scripts, true)) {
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";
-	die("Operation interrupted!");
+	die("Operation interrupted! Errors:\n".$package_error);
 }
 
 // Archie the data
@@ -49,7 +49,7 @@ if (package_archive_manifest($pid, $dest, true)) {
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";
-	die("Operation interrupted!");
+	die("Operation interrupted! Errors:\n".$package_error);
 }
 
 // Archive the files
@@ -58,7 +58,13 @@ if (package_archive_files($pid, $dest, true, true)) {
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";
-	die("Operation interrupted!");
+	die("Operation interrupted! Errors:\n".$package_error);
+}
+
+// Display warnings
+if ($package_error!='') {
+	echo "\nWarnings:\n";
+	echo $package_error;
 }
 
 // Update packet status
