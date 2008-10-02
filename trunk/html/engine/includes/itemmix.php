@@ -569,6 +569,28 @@ function gl_mix_visualize($data, $short = false, $list = false) {
 }
 
 /**
+  * Check if an item is usable
+  *
+  * This function attempts to load all the parameters an object contains returns false
+  * if they are blank
+  *
+  * @param int 	$guid 	The object's GUID
+  * @return bool 		Returns TRUE if the object contains usable parameters
+  */
+function gl_item_is_usable($guid) {
+
+	// And the object's mix variables
+	$mix_vars = gl_get_item_mixdata($guid);
+	
+	// Check for errors on data
+	if (!$mix_vars) return false;
+	if (sizeof($mix_vars['data'])==0) return false;
+	
+	// No errors found
+	return true;
+}
+
+/**
   * Use an object
   *
   * This function loads all the parameters an object contains and tries to execute them.
@@ -624,7 +646,7 @@ function gl_use_item($guid, $target = false) {
 	// Apply changes on user variables
 	foreach ($modifier as $mod => $offset) {
 	
-		echo "Modifying $mod by $offset ";
+//		echo "Modifying $mod by $offset ";
 	
 		// Apply offset on modifier
 		$user_vars[$mod] += $offset;
@@ -635,7 +657,7 @@ function gl_use_item($guid, $target = false) {
 			$tmod = $mod;
 			if (isset($timeouts['*'])) $tmod = '*';
 		
-			echo "Timeouting it with $tmod at ".$timeouts[$tmod];
+//			echo "Timeouting it with $tmod at ".$timeouts[$tmod];
 
 			if (isset($rollback[$tmod])) {
 				array_push($rollback[$tmod],
@@ -663,7 +685,7 @@ function gl_use_item($guid, $target = false) {
 			$rollback_text[$tmod] = $text;
 		}
 
-		echo "\n";
+//		echo "\n";
 	}
 	
 	// Apply damage calculations

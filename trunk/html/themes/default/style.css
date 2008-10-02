@@ -365,6 +365,7 @@ div.bag_container li img {
 	height: 40px;
 	left: 3px;
 	top: 3px;
+	cursor: move;
 }
 div.bag_container li a {
 	position: absolute;

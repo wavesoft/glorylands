@@ -50,7 +50,9 @@ if (!$filelist) {
 
 // Archive the files
 echo "Building manifest...";
-if (package_build_manifest($pid, $cache, $package)) {
+$manifestfiles = package_build_manifest($pid, $cache, $package);
+$filelist = array_merge($filelist, $manifestfiles);
+if ($manifestfiles) {
 	array_push($filelist, $cache.'/package.xml');
 	echo "<font color=\"green\">ok</font>\n";
 } else {

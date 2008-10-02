@@ -17,6 +17,77 @@ $package_error = '';
 
 
 /**
+  * Local function to test if a string is a local dir
+  *
+  * The check is made by looking if the string exists in the DIROF alias
+  *
+  * @param string $dir		The directory to check
+  * @return bool		 	Returns TRUE if the directory is a system file
+  */
+function is_sysdir($dir) {
+	global $_CONFIG;
+	$dir = strtolower($dir);
+	foreach ($_CONFIG[DIRS][ALIAS] as $alias => $path) {
+		$fullpath = strtolower($_CONFIG[GAME][BASE].$path);
+		if ($dir == $fullpath) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+  * Check if the specified folder is empty
+  *
+  * @param string $dir		The directory to check
+  * @return bool		 	Returns TRUE if the directory is empty
+  */
+function is_emptydir($dir) {
+	global $_CONFIG;
+	$d = dir($dir);	
+	while (false !== ($entry = $d->read())) {
+		if (($entry!='.') && ($entry!='..')) {
+			return false;
+		}
+	}
+	$d->close();
+	return true;
+}
+
+/**
+  * Create and remove the directory and it's parents if they are emtpy and non-system
+  *
+  * @param string $filename	The filename whose folder to remove
+  */
+function package_remove_emptydir($parent_dir) {
+	global $_CONFIG;
+	
+	// As long as this is not a system directory, and it is not empty, erase it
+	$erase = true;
+	while ($erase) {	
+		
+		// Reached system dir?
+		if (is_sysdir($parent_dir)) $erase=false;
+		
+		// Reached non-empty dir?
+		if (!is_emptydir($parent_dir)) $erase=false;
+
+		// Quit in case of off-server dir
+		// (Don't ask how this is going to happen.. just taking precautions :P)
+		if (strtolower(substr($parent_dir,0,strlen($_CONFIG[GAME][BASE]))) != strtolower($_CONFIG[GAME][BASE])) $erase=false;
+		
+		// Everything is still ok? Remove dir...
+		if ($erase) {
+			rmdir($parent_dir);
+		}
+		
+		// Move to parent
+		$parent_dir = dirname($parent_dir);
+	}
+		
+}
+
+/**
   * Create the directory tree
   *
   * @param string $dir		The source package ID
@@ -190,6 +261,9 @@ function package_archive_files($pid, $dest_dir, $relative=true, $move=false) {
 	// The mapping file provides the information required to rebuild the package structure
 	$f = fopen($dest_dir.'/files.map','w');
 	
+	// Cache of directories used
+	$dirsused = array();
+	
 	// Start copying and mapping files
 	$i=0;
 	while ($file = $sql->fetch_array_fromresults($ans)) {
@@ -207,6 +281,7 @@ function package_archive_files($pid, $dest_dir, $relative=true, $move=false) {
 			// Remove source data if told so
 			if ($move) {
 				if (unlink($file['filename'])) {
+					$dirsused[dirname($file['filename'])] = true;
 					$sql->query("DELETE FROM `system_files` WHERE `index` = ".$file['index']);
 				} else {
 					$package_error.=" &bull; Error deleting file $fname\n";
@@ -216,6 +291,11 @@ function package_archive_files($pid, $dest_dir, $relative=true, $move=false) {
 		} else {		
 			$package_error.=" &bull; Error copying file {$fname} to {$dest_dir}/{$shortname}\n";
 		}
+	}
+	
+	// Remove emptied directories used
+	foreach ($dirsused as $dir => $ack) {
+		package_remove_emptydir($dir);	
 	}
 	
 	// Close mapped file
@@ -254,6 +334,10 @@ function package_restore_files($pid, $src_dir, $import=false) {
 		$fname = trim(package_path_expand($row[2], $ftype));
 		$fversion = $row[1];
 		$shortname = $row[0];		
+		
+		// Make sure parent directory exists
+		$parentdir = dirname($fname);
+		if (!is_dir($parentdir)) package_create_dirtree($parentdir);
 		
 		// Restore the file
 		if (copy($src_dir.'/'.$shortname, $fname)) {
@@ -585,16 +669,19 @@ function package_uninstall_files($pid) {
 		return false;
 	};
 	
+	// Check what directories are used
+	$dirsused = array();
+	
 	// Remove files
 	while ($row = $sql->fetch_array(MYSQL_ASSOC)) {
 		unlink($row['filename']);
+		$dirsused[dirname($row['filename'])] = true;
 	}
 
-	// Remove package cache directories
-	$guid = $info['guid'];
-	$package_dir = DIROF('SYSTEM.ADMIN').'packages/'.$guid;
-	package_clear_dir($package_dir);
-	rmdir($package_dir);
+	// Remove emptied directories used
+	foreach ($dirsused as $dir => $ack) {
+		package_remove_emptydir($dir);	
+	}
 	
 	// Everything is ok
 	return true;

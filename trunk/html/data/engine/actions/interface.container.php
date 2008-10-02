@@ -34,6 +34,7 @@ $act_result = array(
 	
 	'_my'=>array(
 		'objects' => $objects,
+		'parent' => $_REQUEST['guid']
 	)
 );
 

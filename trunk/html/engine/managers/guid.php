@@ -2,10 +2,9 @@
 
 class mgr_guid {
 
-	
 	var $vars;
 	
-	function mgr_guid($value) {				
+	function mgr_guid($guid) {				
 		
 	}
 	
