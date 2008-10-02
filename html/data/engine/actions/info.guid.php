@@ -49,7 +49,8 @@ $act_result = array(
 		'info' => $transvar,
 		'icon' => $icon,
 		'icon_width' => $ico_w,
-		'icon_height' => $ico_h
+		'icon_height' => $ico_h,
+		'guid' => $_REQUEST['guid']
 	)
 );
 

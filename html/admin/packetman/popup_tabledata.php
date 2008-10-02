@@ -14,6 +14,15 @@ include "../../engine/includes/base.php";
 <?php
 if (isset($_REQUEST['table']) && isset($_REQUEST['key'])) {
 
+	// Find the auto increment
+	$sql->query("SHOW COLUMNS FROM `".$_REQUEST['table']."` WHERE `extra` = 'auto_increment'");
+	if ($sql->emptyResults) {
+		$indexkey = '';
+	} else {
+		$indexkey = $sql->fetch_array(MYSQL_NUM);
+		$indexkey = $indexkey[0];
+	}
+
 	$struct = '';
 	foreach ($_REQUEST['entry'] as $keyv => $ack) {
 
@@ -27,8 +36,10 @@ if (isset($_REQUEST['table']) && isset($_REQUEST['key'])) {
 			$struct .= "DELETE FROM `".$_REQUEST['table']."` WHERE ";
 			$where='';
 			foreach ($row as $key => $value) {
-				if ($where!='') $where.=' AND ';
-				$where .= "`$key` = '".$value."'";
+				if ($key != $indexkey) {
+					if ($where!='') $where.=' AND ';
+					$where .= "`$key` = '".$value."'";
+				}
 			}
 			$struct.=$where;
 		} else {
@@ -36,10 +47,12 @@ if (isset($_REQUEST['table']) && isset($_REQUEST['key'])) {
 			$names = '';
 			$values = '';
 			foreach ($row as $key => $value) {
-				if ($names!='') $names.=',';
-				$names.='`'.$key.'`';
-				if ($values!='') $values.=',';
-				$values.="'".mysql_escape_string($value)."'";
+				if ($key != $indexkey) {
+					if ($names!='') $names.=',';
+					$names.='`'.$key.'`';
+					if ($values!='') $values.=',';
+					$values.="'".mysql_escape_string($value)."'";
+				}
 			}
 			$struct .= "($names) VALUES ($values)";
 		}

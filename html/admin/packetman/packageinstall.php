@@ -5,6 +5,7 @@ include "../../config/config.php";
 include "../../engine/includes/base.php"; 
 include "scripts/packetman.php"; 
 include "scripts/packetgen.php"; 
+$g_pcltar_lib_dir = $_CONFIG[GAME][BASE]."/admin/includes/lib";
 include "../includes/lib/pclzip.lib.php";
 include "../includes/lib/pcltar.lib.php";
 ?>
@@ -65,7 +66,7 @@ if ($_REQUEST['a'] == 'upload') {
 			echo "<font color=\"green\">done</font>\n";
 		}
 	
-	} elseif (strtolower(substr($file['name'],-7)) == '.tar.gz') {	
+	} elseif ((strtolower(substr($file['name'],-7)) == '.tar.gz') || (strtolower(substr($file['name'],-4)) == '.tgz')) {	
 		// GZip TAR Archive
 	
 		echo "<b>GZip</b> Detected. Deflating...";	

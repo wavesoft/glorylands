@@ -719,6 +719,8 @@ function processDictionary() {
 	var images = new Array();
 	for (img in data_dictionary) {
 		if ($defined(img)) {
+			im = new String(img);
+			img = im.substring(0, img.length-3)+'png';
 			images.push('images/tiles/'+img);
 		} else {
 			images.push('images/tiles/blank.gif');
@@ -857,12 +859,17 @@ function hoverShow(text,x,y) {
 }
 
 var dropdownInfo={visible:false};
-function dropdownShow(x,y,guid) {
+function dropdownShow(x,y,guid,position,parent_guid) {
+	if (!parent_guid) parent_guid=0;
 	var layer = $('dropdownLayer');
 	layer.setHTML('<img src="images/UI/loading2.gif" align="absmiddle" />');
-	layer.setStyles({visibility:'visible', 'left':x+5, 'top':y+5});
+	layer.setStyles({visibility:'visible', 'left':x-5, 'top':y-5});
 	dropdownInfo.visible=true;
-	gloryIO('?a=interface.dropdown&guid='+guid, false, true);
+	gloryIO('?a=interface.dropdown&guid='+guid+'&pos='+position+'&parent='+parent_guid, false, true);
+	layer.focus();
+	layer.addEvent('mouseleave', function() {
+		disposeDropDown();								
+	});
 }
 function disposeDropDown(){
 	var layer = $('dropdownLayer');
@@ -1101,7 +1108,7 @@ $(window).addEvent('load', function(e){
 		e = new Event(e);
 		if (hoveredItem!=false) {
 			// Display the dropdown menu
-			dropdownShow(e.event.clientX,e.event.clientY,hoveredItem.g);	
+			dropdownShow(e.event.clientX,e.event.clientY,hoveredItem.g,'MAP');
 		} else {
 			// Clicked over no item
 			disposeDropDown();	

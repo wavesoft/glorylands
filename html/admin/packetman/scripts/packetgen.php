@@ -91,7 +91,7 @@ function package_gather_files($pid, $dest_dir) {
   * @param int $pid				The source package ID
   * @param string $dest_dir		The directory to store the files to
   * @param string $package_root	The package's local storage directory
-  * @return bool		 		Returns TRUE if successfull or FALSE on error
+  * @return bool|array	 		Returns the files created in an array or FALSE on error
   */
 function package_build_manifest($pid, $dest_dir, $package_root) {
 	global $sql;
@@ -101,6 +101,9 @@ function package_build_manifest($pid, $dest_dir, $package_root) {
 	if (!$ans) return false;
 	if ($sql->emptyResults) return false;
 	$info = $sql->fetch_array();
+
+	// Prepare file cache
+	$files = array();
 
 	// Find package's local scripts directory
 	$package_scripts = $package_root."/scripts";
@@ -151,6 +154,7 @@ function package_build_manifest($pid, $dest_dir, $package_root) {
 			
 			// Import file
 			copy($package_scripts.'/'.$row['data'], $scripts.'/'.$row['data']);
+			array_push($files, $scripts.'/'.$row['data']);
 		
 			// Import XML
 			if ($row['imode'] == 'SCRIPT') {
@@ -176,6 +180,7 @@ function package_build_manifest($pid, $dest_dir, $package_root) {
 			
 			// Import file
 			copy($package_scripts.'/'.$row['data'], $scripts.'/'.$row['data']);
+			array_push($files, $scripts.'/'.$row['data']);
 		
 			// Import XML
 			if ($row['umode'] == 'SCRIPT') {
@@ -225,7 +230,8 @@ function package_build_manifest($pid, $dest_dir, $package_root) {
 	unlink($dest_dir.'/package.xml.part');
 
 	// Everything was OK
-	return true;
+	array_push($files, $dest_dir.'/package.xml');
+	return $files;
 }
 
 ?>

@@ -41,7 +41,7 @@ if (callEvent('interface.dropdown', $data, $_REQUEST['guid'])) {
 	// Reply data
 	$act_result = array(
 		'mode' => 'DROPDOWN',
-		'text' => $text
+		'text' => "Called by ".$_REQUEST['pos']." and parent ".$_REQUEST['parent']." <br />".$text
 	);
 	
 } else {

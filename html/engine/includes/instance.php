@@ -146,7 +146,7 @@ function gl_get_guid_template($guid) {
 	if ($parts['template']) return $guid;
 	
 	// Search for guid's template
-	$ans = $sql->query("SELECT `template` FROM `{$parts['group']}_template`");
+	$ans = $sql->query("SELECT `template` FROM `{$parts['group']}_template` WHERE `index` = ".$parts['index']);
 	if (!$ans) return false;
 	if ($sql->emptyResults) return false;
 	$row = $sql->fetch_array(MYSQL_NUM);	
@@ -491,6 +491,9 @@ function gl_delete_guid($guid) {
 	$ans = $sql->query("DELETE FROM `{$parts['group']}_instance` WHERE `guid` = {$guid}");
 	if (!$ans) return false;
 	if ($sql->affectedRows == 0)  return false;
+	
+	// Notify plugins that this GUID is deleted
+	callEvent('system.guid.deleted', $guid);
 	return true;
 
 }

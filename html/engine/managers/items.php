@@ -8,6 +8,7 @@ class mgr_items {
 	// Initialization string is the item index on database	
 	function mgr_items($parm) {
 		global $sql;
+		
 		if (is_numeric($parm)) {
 			// It is unit ID
 			$sql->query("SELECT * FROM `item_template` WHERE `index` = $parm");
