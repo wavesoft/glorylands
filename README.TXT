@@ -147,3 +147,10 @@
  GloryLands is written by John Haralampidis <wavesoft@users.sourceforge.net>
  Since the game is really big, any help will be really appreciated ;)
 
+ =======================================================================
+  5.Copyright Notice
+ =======================================================================
+ 
+ The game graphics are found on the internet by free to use (or claiming so) material.
+ If you think that there might be a copyright violation please let me know 
+ as soon as possible on <wavesoft@users.sourceforge.net>
