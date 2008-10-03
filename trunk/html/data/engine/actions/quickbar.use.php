@@ -25,6 +25,7 @@ if ($kind == 'char') {
 		gl_do('interface.container', array('guid'=>$guid));
 	} elseif ($vars['class'] == 'CONSUMABLE') {
 		gl_use_item($guid);
+		gl_delete_guid($guid);
 	} else {
 		gl_do('info.guid', array('guid'=>$guid));
 	}

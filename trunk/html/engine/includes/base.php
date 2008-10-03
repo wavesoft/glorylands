@@ -27,6 +27,8 @@ include_once DIROF('SYSTEM.INCLUDE')."instance.php";
 include_once DIROF('SYSTEM.INCLUDE')."glfunctions.php";
 include_once DIROF('SYSTEM.INCLUDE')."scheduler.php";
 include_once DIROF('SYSTEM.INCLUDE')."itemmix.php";
+include_once DIROF('SYSTEM.INCLUDE')."spawnsystem.php";
+include_once DIROF('SYSTEM.INCLUDE')."dynupdate.php";
 
 ### Connect to DB
 global $sql;
@@ -37,6 +39,7 @@ include_once DIROF('SYSTEM.INCLUDE')."session.php";
 
 ### Process any scheduled evens
 gl_process_schedules();
+gl_spawn_check();
 
 ### Start output compression
 if (!defined("NOZIP")) {

@@ -1,8 +1,8 @@
 <?php
 return Array(
    "helpers" => false,
-   "managers" => array('guid'),
-   "lib" => array('itemmanager.lib'),
+   "managers" => false,
+   "lib" => array(),
    "default_outmode" => "json"
 );
 ?>

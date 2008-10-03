@@ -105,7 +105,7 @@ updateTableCache();
 echo "OK<br />\n";
 
 echo "Updating <b>guid_dictionary.php</b>...";
-updateDictionaryCache();
+//updateDictionaryCache();
 echo "OK<br />\n";
 
 echo "<br />\n<h2>Completed!</h2>";

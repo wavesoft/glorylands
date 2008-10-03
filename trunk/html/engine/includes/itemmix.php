@@ -102,12 +102,8 @@ function gl_get_item_mixdata($guid) {
   * @return bool		Returns TRUE if successfull
   */
 function gl_set_item_mixdata($guid, $data) {
-	// Obdain all the object variables
-	$object_vars = gl_get_guid_vars($guid);
-	if ($object_vars === false) return false;
-
 	// Update data
-	$object_vars['mixinfo'] = $data;
+	$object_vars = array('mixinfo' => $data);
 	gl_update_guid_vars($guid, $object_vars);
 	return true;
 }
@@ -672,14 +668,14 @@ function gl_use_item($guid, $target = false) {
 			// Calculate text to display
 			$text = "";
 			if (isset($rollback_text[$tmod])) {
-				$text = $rollback_text[$tmod].' and ';
+				$text = $rollback_text[$tmod].', ';
 			}			
 			$text.=$mod;
 			if ($offset>0) {
-				$text.=' increased by ';
+				$text.='+ ';
 				$text.=$offset;
 			} else {
-				$text.=' decreased by ';
+				$text.='- ';
 				$text.=-$offset;
 			}
 			$rollback_text[$tmod] = $text;

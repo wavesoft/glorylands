@@ -1,6 +1,9 @@
 // The currently dragging host element
 var qb_currently_dragging=null;
+// The list of drop destinations
+var droppables = [];
 
+// Function to make an object moevable from the quick bar
 function qb_makeqbutton(element, guid, slot) {
 	
 	// Add context menu and required parameters
@@ -29,6 +32,8 @@ function qb_init_droppables() {
 			'drop': function(el, obj){
 				this.setStyle('opacity', 1);
 				var guid = el.getProperty('guid');
+				var host_guid = el.getProperty('host');
+				var host_view = el.getProperty('hostview');
 				var slot = drop.getProperty('slot');
 				
 				// Do not accept elements if I am already filled
@@ -42,7 +47,7 @@ function qb_init_droppables() {
 					var childguid = children[0].getProperty('guid');
 					if (childguid != guid) {
 						// Notify system for a button change
-						gloryIO('?a=quickbar.mix&guid1='+guid+'&guid2='+childguid+'&slot='+slot);
+						gloryIO('?a=quickbar.mix&guid1='+guid+'&guid2='+childguid+'&slot='+slot+'&host='+host_guid+'&view='+host_view);
 					}
 										
 					return;	
@@ -68,7 +73,7 @@ function qb_init_droppables() {
 				}
 
 				// Notify system for a button change
-				gloryIO('?a=quickbar.move&guid='+guid+'&slot='+slot);
+				gloryIO('?a=quickbar.move&guid='+guid+'&slot='+slot+'&host='+host_guid+'&view='+host_view);
 			}
 		});
 	});	
@@ -80,7 +85,12 @@ $(window).addEvent('load', function(e) {
 });
 
 // Function to make an object draggable to the sidebar
-function qb_makedraggable(element, guid, moveable) {
+// Element	: The HTML DOM element to make draggable
+// Guid		: The GUID this item provides
+// Moevable : If TRUE the item will be moved instead of cloned
+// Host_guid: The GUID of the hosting object (Ex. a container)
+// Host_view: The type of the visual representation of the hosting object (Ex. as GUID info, as a container etc...)
+function qb_makedraggable(element, guid, moveable, host_guid, host_view) {
 	var item = $(element);
 	
 	if (!moveable) {
@@ -96,6 +106,8 @@ function qb_makedraggable(element, guid, moveable) {
 				.setStyles(this.getCoordinates()) // this returns an object with left/top/bottom/right, so its perfect
 				.setStyles({'opacity': 0.7, 'position': 'absolute', 'z-index': 500000})
 				.setProperty('guid', guid)
+				.setProperty('host', host_guid)
+				.setProperty('hostview', host_view)
 				.addEvent('emptydrop', function() {
 					this.remove();
 				}).inject(document.body);
@@ -124,6 +136,8 @@ function qb_makedraggable(element, guid, moveable) {
 				.setStyles(this.getCoordinates()) // this returns an object with left/top/bottom/right, so its perfect
 				.setStyles({'opacity': 0.7, 'position': 'absolute', 'z-index': 500000})
 				.setProperty('guid', guid)
+				.setProperty('host', host_guid)
+				.setProperty('hostview', host_view)
 				.addEvent('emptydrop', function() {	
 					var ccoord = this.getCoordinates();
 					this.remove();
@@ -131,13 +145,13 @@ function qb_makedraggable(element, guid, moveable) {
 					if ((Math.abs(ccoord.left-startcoord.left)>5) || (Math.abs(ccoord.top-startcoord.top)>5)) {
 						qb_currently_dragging.remove();
 						qb_currently_dragging=null;
-						gloryIO('?a=quickbar.remove&guid='+guid+'&slot='+this.getProperty('slot'));
+						gloryIO('?a=quickbar.remove&guid='+guid+'&slot='+this.getProperty('slot')+'&host='+host_guid+'&view='+host_view);
 					}
 				})
 				.addEvent('mouseup', function() {	
 					var ccoord = this.getCoordinates();
 					if ((Math.abs(ccoord.left-startcoord.left)<=5) && (Math.abs(ccoord.top-startcoord.top)<=5)) {
-						gloryIO('?a=quickbar.use&guid='+guid+'&slot='+this.getProperty('slot'));
+						gloryIO('?a=quickbar.use&guid='+guid+'&slot='+this.getProperty('slot')+'&host='+host_guid+'&view='+host_view);
 					}
 				})
 				.inject(document.body);

@@ -38,18 +38,37 @@ function hb_dynamic_grid_alter($ignore_guid, $x, $y, $map) {
 	while ($row = $sql->fetch_array_fromresults($ans, MYSQL_NUM)) {
 		if ($row[0]!=$ignore_guid) {
 			// Tell the client to update the grid
-			postMessage_once(MSG_INTERFACE, $row[0], 'UPDATEGRID');
+			postMessage_once(MSG_INTERFACE, $row[0], 'UPDATEGRID', 'UPDATEGRID');
 		}
 	}
 	
 }
 
-// Hooks 'system.guid.update_end' and updates user session when changes are made on user's GUID
+// Hooks 'system.guid.update_end' and updates all the related material
 function hb_update_user_session($guid, $group, $vars) {
+
+	// If the GUID is the player's GUID, update the local session
 	if ($guid == $_SESSION[PLAYER][GUID]) {
 		$_SESSION[PLAYER][DATA] = gl_get_guid_vars($guid);
+		return true;
 	}
+		
+	// Perform Dynamic Updates
+	gl_dynupdate_update($guid);
+	gl_dynupdate_update(gl_get_guid_parent($guid));
+	return true;
+
 }
 
+// Hooks 'system.guid.deleted' and updates all the related material
+function hb_guid_deleted($guid) {
 
+
+	// Perform Dynamic Updates
+	gl_dynupdate_update($guid);
+	$parent = gl_get_guid_parent($guid);
+	if ($parent!=0) gl_dynupdate_update($parent);
+	
+	return true;
+}
 ?>

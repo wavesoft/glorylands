@@ -42,6 +42,7 @@ $act_result = array(
 	'mode' => 'POPUP',
 	'title' => 'Information for '.$vars['name'].' (#'.$_REQUEST['guid'].')',
 	'width' => 430,
+	'guid' => $_REQUEST['guid'],
 	
 	'_my' => array(
 		'name' => strtoupper($vars['name'][0]).strtolower(substr($vars['name'],1)),
@@ -53,5 +54,9 @@ $act_result = array(
 		'guid' => $_REQUEST['guid']
 	)
 );
+
+// This window has a dynamic update possibility, so register it
+// on the DynUPDATE system
+gl_dynupdate_create($root_guid, '?a=info.guid&guid='.$_REQUEST['guid']);
 
 ?>
