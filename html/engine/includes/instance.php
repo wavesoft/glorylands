@@ -38,6 +38,49 @@
   */
 
 /**
+  * Find the parent GUID
+  *  
+  * Instead of getting all the GUID variables and then isolating the PARENT, this 
+  * function quickly detects the item's parent
+  *
+  * @param int $guid 	The GUID whose parent is to be found
+  * @return int 		Returns the parent GUID
+  */
+function gl_get_guid_parent($guid) {
+	global $sql;
+	
+	// Detect GUID group table
+	$info = gl_analyze_guid($guid);
+
+	$ans=$sql->query("SELECT `parent` FROM `{$info['group']}_instance` WHERE `guid` = $guid");
+	if (!$ans) return 0;
+	if ($sql->emptyResults) return 0;
+	
+	// Return the parent
+	$row = $sql->fetch_array_fromresults($ans,MYSQL_NUM);
+	return $row[0];
+	
+}
+/**
+  * Find the root GUID
+  *  
+  * This function traverses through the item's parents till the root item is found
+  *
+  * @param int $guid 	The source GUID whose root is to be found
+  * @return int 		Returns the root GUID
+  */
+function gl_traceback_owner($guid) {
+	$vars = gl_get_guid_vars($guid);
+	$owner = $guid;
+	
+	if (!isset($vars['parent'])) return $owner;
+	if ($vars['parent']!=0) {
+		$owner = gl_traceback_owner($vars['parent']);
+	}
+	return $owner;
+}
+
+/**
   * Check if the given number is a valid GUID
   *  
   * The check is performed by checking if the number contains an existing 
@@ -129,6 +172,43 @@ function gl_analyze_guid($GUID) {
 	);
 }
 
+
+/**
+  * Count the number of the children in that have the same parent GUID
+  *  
+  * This function automatically detects the instance table by the specified GUID and
+  * searches for a matched parent field. If you don't want automatic detection, you
+  * can specify a custom group
+  *
+  * @param int $parent 		The parent GUID whose children are to be counted
+  * @param string $group	An optional parameter that specifies the instance group to check for children
+  * @return int 			Returns the number of children
+  */
+function gl_count_guid_children($parent, $group=false) {
+	global $sql;
+	
+	// Detect group if not specified
+	if (!$group) {
+	
+		// Analyze GUID
+		$parts = gl_analyze_guid($parent);
+		if (!$parts['group']) return false;
+		
+		// Set group
+		$group = $parts['group'];
+	
+	} 
+	
+	// Search the GUID table for items
+	$ans=$sql->query("SELECT COUNT(*) FROM `{$group}_instance` WHERE `parent` = ".$parent);
+	if (!$ans) return false;
+	$row=$sql->fetch_array(MYSQL_NUM);
+	
+	// Return the result
+	return $row[0];
+}
+
+
 /**
   * Obdain a guid's template group
   *
@@ -146,7 +226,7 @@ function gl_get_guid_template($guid) {
 	if ($parts['template']) return $guid;
 	
 	// Search for guid's template
-	$ans = $sql->query("SELECT `template` FROM `{$parts['group']}_template` WHERE `index` = ".$parts['index']);
+	$ans = $sql->query("SELECT `template` FROM `{$parts['group']}_instance` WHERE `index` = ".$parts['index']);
 	if (!$ans) return false;
 	if ($sql->emptyResults) return false;
 	$row = $sql->fetch_array(MYSQL_NUM);	
@@ -486,14 +566,15 @@ function gl_delete_guid($guid) {
 	$parts = gl_analyze_guid($guid);
 	if (!$parts['group']) return false;		// Group not exists? Cannot continue...
 	if (!$parts['instance']) return false;	// Is not an instance? Template variables 
-	
+
+	// Notify plugins that this GUID is deleted
+	callEvent('system.guid.deleted', $guid);
+
 	// Delete the table
 	$ans = $sql->query("DELETE FROM `{$parts['group']}_instance` WHERE `guid` = {$guid}");
 	if (!$ans) return false;
 	if ($sql->affectedRows == 0)  return false;
-	
-	// Notify plugins that this GUID is deleted
-	callEvent('system.guid.deleted', $guid);
+		
 	return true;
 
 }

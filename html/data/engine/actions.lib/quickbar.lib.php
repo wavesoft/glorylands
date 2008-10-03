@@ -1,5 +1,9 @@
 <?php
 
+function qb_update_hostview($host, $viewmode) {
+	gl_do($viewmode, array('guid' => $host));
+}
+
 function qb_update_view() {
 	global $sql;
 	

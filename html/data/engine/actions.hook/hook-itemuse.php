@@ -1,5 +1,4 @@
 <?php
-
 // We need this library, so include it
 include_once(DIROF('ACTION.LIBRARY')."/quickbar.lib.php");
 
@@ -31,15 +30,18 @@ function itemuse_quickbar_init() {
 }
 
 function itemuse_guid_deleted($guid) {
+	global $sql;
+
 	// When a GUID is deleted, remove the appropriate Quickbar button
-	$sql->query("DELTE FROM `mod_quickbar_slots` WHERE `guid` = ".$guid);
+	$ans=$sql->query("DELETE FROM `mod_quickbar_slots` WHERE `guid` = ".$guid);
+	if (!$ans) relayMessage(MSG_INTERFACE,'MSGBOX',$sql->getError());
 	qb_update_view();
 }
 
 function itemuse_dropdown(&$data, $guid) {
 	// Add pickup handler
 	array_push($data, array(
-		'url'=>'?a=item.use&guid='.$_REQUEST['guid'], 
+		'url'=>'?a=item.pickup&guid='.$_REQUEST['guid'], 
 		'text'=>'<img src="images/UI/navbtn_take.gif" border="0" title="Pickup item" />'
 	));
 }

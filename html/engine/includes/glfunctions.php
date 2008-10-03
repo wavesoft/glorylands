@@ -96,6 +96,9 @@ function gl_user_logout() {
 	$sql->query("UPDATE `char_instance` SET `online` = 0 WHERE `account` = ".$_SESSION[PLAYER][PROFILE]['index']);
 	$sql->query("UPDATE `users_accounts` SET `online` = 0 WHERE `index` = ".$_SESSION[PLAYER][PROFILE]['index']);
 	
+	// Cleanup user dynamic updates
+	gl_dynupdate_cleanup();
+	
 	// Cleanup session
 	unset($_SESSION[PLAYER]);
 	session_destroy();

@@ -102,7 +102,7 @@ if ($_REQUEST['a'] == 'add_data') {
 							$buf = file_get_contents($f);
 							preg_match_all("/callEvent\(\'([\w.]+)\'/", $buf, $matches, PREG_SET_ORDER);
 							foreach ($matches as $val) {
-								array_push($events, $val[1]);
+								array_push($events, strtolower(trim($val[1])));
 							}
 						}
 					}

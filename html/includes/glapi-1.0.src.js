@@ -93,7 +93,7 @@ function showStatus(text,timeout) {
 // =====================================================
 var winCache = [];
 var lastZ=1000;
-function createWindow(header, content, x, y, w, h) {
+function createWindow(header, content, x, y, w, h, guid) {
 	
 	// If window is not already visible, create a new
 	if (!winCache[header]) {
@@ -155,12 +155,16 @@ function createWindow(header, content, x, y, w, h) {
 		eHead.appendChild(linkDispose);
 		$(linkDispose).addEvent('click', function(e){
 			e = new Event(e);
-			
+
+			// Notify server that the window is closed
+			gloryIO('?a=window.closed&guid='+guid,false,true);
+
 			// Remove body element
 			eBody.remove();
 
 			// Cleanup window variables
 			winCache[header] = false;
+						
 			e.stop();
 		});
 	
@@ -410,10 +414,13 @@ function handleMessages(msg) {
 				if ($defined(msg.message[i][3])) width=msg.message[i][3];
 				var left = (screen.width - width)/2;
 				var top = 120;
-				if ($defined(msg.message[i][4])) left=msg.message[i][4];
-				if ($defined(msg.message[i][5])) top=msg.message[i][5];
+				var guid = false;
+				if ($defined(msg.message[i][4])) if (msg.message[i][4]!=false) left=msg.message[i][4];
+				if ($defined(msg.message[i][5])) if (msg.message[i][5]!=false) top=msg.message[i][5];
+				if ($defined(msg.message[i][6])) if (msg.message[i][6]!=false) guid=msg.message[i][6];
+
 				// Display window
-				createWindow(msg.message[i][2], msg.message[i][1], left, top, width);
+				createWindow(msg.message[i][2], msg.message[i][1], left, top, width, false, guid);
 
 			// ## Perform a gloryIO Call ##
 			} else if (mType=='CALL') {
@@ -477,8 +484,11 @@ function handleMessages(msg) {
 //  through a JSON communication interface
 // ======================================================
 var data_io_time = 0;
-function gloryIO(url, data, silent, oncomplete_callback) {
+function gloryIO(url, data, silent, oncomplete_callback) {	
 	try {
+		// Reset feeder timer
+		reset_feeder();
+	
 		if (!silent) showStatus('Loading...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/UI/mouseloading.gif" />');
 	//	window.alert(url);
 		data_io_time = $time();
@@ -504,12 +514,17 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 					var left = 100;
 					var top = 20;
 					var width = 310;
+					var height = false;
+					var guid = false;
+
 					// Try to load data from object
 					if ($defined(obj.left)) left=obj.left;
 					if ($defined(obj.top)) top=obj.top;
 					if ($defined(obj.width)) width=obj.width;
+					if ($defined(obj.height)) width=obj.height;
+					if ($defined(obj.guid)) guid=obj.guid;
 					// Display window
-					createWindow(obj.title, obj.text, left, top, width);
+					createWindow(obj.title, obj.text, left, top, width, height, guid);
 					
 				// ## HTML Data for main window ##
 				} else if (mode=='MAIN') {
@@ -1030,6 +1045,16 @@ var feeder_interval=5000;
 var feeder_timer=0;
 var feeder_enabled=true;
 var iD = 0;
+
+// Called when a gloryIO event occured. This is used so we don't
+// overload the server by concurrent requests.
+function reset_feeder() {
+	if (feeder_timer) clearTimeout(feeder_timer);
+	if (feeder_enabled) {
+		feeder_timer=setTimeout(feeder, feeder_interval);
+	}
+}
+
 function feeder() {
 	// Every then and now, dump the messages currently
 	// stacked and waitting for me to get them
@@ -1037,10 +1062,7 @@ function feeder() {
 	iD++;
 	$('prompt').setHTML('Feeded: '+iD);
 	gloryIO('msgfeed.php',false,true,function(e) {
-		if (feeder_timer) clearTimeout(feeder_timer);
-		if (feeder_enabled) {
-			feeder_timer=setTimeout(feeder, feeder_interval);
-		}
+		reset_feeder();
 	});
 }
 

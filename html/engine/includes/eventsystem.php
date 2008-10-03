@@ -48,7 +48,10 @@ function message_backend($type, $user_guid, $data, $once) {
 	$row['type'] = $type;
 	$row['user'] = $user_guid;
 	$row['data'] = serialize($data);
-	if ($once) $sql->query("DELETE FROM `system_messages` WHERE `user` = '$user_guid' AND `type` = '$type'");
+	if ($once) {
+		$sql->query("DELETE FROM `system_messages` WHERE `onceid` = '$once' AND `user` = $user_guid");
+		$row['onceid'] = $once;
+	}
 	$sql->addRow('system_messages', $row);
 }
 
@@ -80,11 +83,12 @@ function postMessage($type, $user_guid) {
 }
 
 // Same as above, but makes sure only one message exists for the user
-function postMessage_once($type, $user_guid) {
+function postMessage_once($type, $user_guid, $once_id) {
 	$data = func_get_args();
 	array_shift($data);	
 	array_shift($data);	
-	message_backend($type, $user_guid, $data, true);
+	array_shift($data);	
+	message_backend($type, $user_guid, $data, $once_id);
 }
 
 // Return and erase all messages stacked up by now
