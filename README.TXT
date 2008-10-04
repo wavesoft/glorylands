@@ -74,7 +74,7 @@
 
      svn co https://glorylandsweb-b.svn.sourceforge.net/svnroot/glorylandsweb-b/trunk
 
- 2) Create a new database on your SQL server and import the sql/complete.sql file
+ 2) Create a new database on your SQL server and import the html/sql/glory.sql file
 
  3) Create a new SQL user with SELECT,DELETE,INSERT,UPDATE priviledges on the new database
 
