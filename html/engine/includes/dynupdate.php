@@ -42,7 +42,9 @@ function gl_dynupdate_create($guid, $updateurl) {
 	$userguid = $_SESSION[PLAYER][GUID];
 	
 	// Update SQL entry
-	$ans=$sql->query("REPLACE INTO `interface_openwin` (`player`, `guid`, `updateurl`) VALUES ($userguid, $guid, '".mysql_escape_string($updateurl)."')");
+	$ans=$sql->query("DELETE FROM `interface_openwin` WHERE `player` =  $userguid AND `guid` = $guid");
+	if (!$ans) return false;
+	$ans=$sql->query("INSERT INTO `interface_openwin` (`player`, `guid`, `updateurl`) VALUES ($userguid, $guid, '".mysql_escape_string($updateurl)."')");
 	if (!$ans) return false;
 	
 	// Everything went OK
@@ -107,7 +109,6 @@ function gl_dynupdate_update($guid) {
 	
 	// Notify player's browser to update it's window
 	while ($row=$sql->fetch_array_fromresults($ans, MYSQL_NUM)) {		
-		//relayMessage(MSG_INTERFACE,'MSGBOX',"Updating with url {$row[0]} browser of user {$row[1]}");
 	
 		// Send a message on the appropriate player
 		postMessage_once(MSG_INTERFACE,$row[1],'DYNUP:'.$guid,'CALL', $row[0]);

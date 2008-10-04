@@ -43,7 +43,12 @@ gl_spawn_check();
 
 ### Start output compression
 if (!defined("NOZIP")) {
-	ob_start("ob_gzhandler");
+	$zip = gl_get_compatible_zip_handler();
+	if (!$zip) {
+		ob_start();
+	} else {
+		ob_start($zip);
+	}
 }
 
 ?>
