@@ -557,7 +557,7 @@ CREATE TABLE `unit_instance` (
   `template` int(11) default NULL,
   `x` int(11) default NULL,
   `y` int(11) default NULL,
- map` int(11) default NULL,
+ `map` int(11) default NULL,
   `level` int(11) default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
