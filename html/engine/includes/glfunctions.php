@@ -197,6 +197,13 @@ function gl_distance($x1,$y1,$x2,$y2) {
 
 // Browser and server compression support detection
 function gl_get_compatible_zip_handler() {
+	
+	// Make sure we do not already have zlib compression enabled
+	// by the PHP ini. If we do so, using a second output compressor
+	// will destroy the stream
+	if (ini_get('zlib.output_compression')) {
+		return false;
+	}
 
 	// Enter a list of possible encodings and server handlers
 	// that might be available
