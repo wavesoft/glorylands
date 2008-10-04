@@ -22,8 +22,8 @@ if (!file_exists(DIROF('DATA.INTERFACE')."{$act_interface}.tpl")) {
 include DIROF('OUTPUT.FILE')."interfaces/libs/Smarty.class.php";
 $smarty = new Smarty;
 $smarty->template_dir = DIROF('DATA.INTERFACE',true);
-//$smarty->compile_dir = $_CONFIG[GAME][BASE]."/engine/outputprocessors/interfaces/cache";
-//$smarty->config_dir = $_CONFIG[GAME][BASE]."/engine/outputprocessors/interfaces/config";
+$smarty->compile_dir = DIROF('OUTPUT.PROCESSOR')."interfaces/cache";
+$smarty->config_dir = DIROF('OUTPUT.PROCESSOR')."interfaces/config";
 $smarty->compile_check = true;
 $smarty->debugging = false;
 
@@ -88,5 +88,17 @@ $smarty->assign($resources);
 $smarty->assign('modules', $modules);
 
 $smarty->display("{$act_interface}.tpl");
+
+// In case of global debug, display the debug console
+if (defined('GLOB_DEBUG')) {
+?>
+<div class="debug" style="width: 100%; border: dashed 2px #666666; background-color: #E9E9E9; color: #333333; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
+<a href="javascript:void(0);" onclick="var e=document.getElementById('debug_console'); if (e.style.display){e.style.display=''}else{e.style.display='none'};">Toggle Debug Console</a>
+<pre id="debug_console" style="display: none;">
+<?php echo $sql->getQueries() ?>
+</pre>
+</div>
+<?php
+}
 
 ?>
