@@ -45,6 +45,9 @@ if (isset($headers['X-Request']) && isset($_REQUEST['json']) && ($headers['X-Req
 	if ($arr) $_REQUEST = array_merge($_REQUEST, $arr);
 }
 
+// Prepare default values for some missing variables
+if (!isset($_REQUEST['m'])) $_REQUEST['m']=false;
+
 #[E]# Operation initiation
 callEvent('system.init_operation', $last_operation, $operation);
 

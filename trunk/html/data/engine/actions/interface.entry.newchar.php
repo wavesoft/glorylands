@@ -7,7 +7,7 @@ if ($_REQUEST['action']=='create') {
 	if ($tpl && $name) {
 		$guid = gl_instance_object(gl_make_guid($tpl, false, 'char'), array('name'=>$name, 'account'=>$_SESSION[PLAYER][PROFILE]['index']));
 		if (!$guid) {
-			$act_result['error']='Cannot instance charachter';
+			$act_result['error']='Cannot instance character';
 		} else {
 			$_SESSION[PLAYER][GUID]=$guid;
 			gl_redirect('interface.entry');

@@ -334,7 +334,7 @@ function gl_instance_object($guid, $vars = false) {
 		
 		// Get the last index inserted
 		$ans = $sql->query("SELECT `index` FROM `{$parts['group']}_instance` ORDER BY `index` DESC LIMIT 0,1");
-		if (!$ans) return;
+		if (!$ans) return false;
 		$row = $sql->fetch_array(MYSQL_NUM);
 		
 		// Update guid

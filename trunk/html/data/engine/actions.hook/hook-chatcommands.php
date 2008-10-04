@@ -210,7 +210,7 @@ function chat_notify_zidchange($zid, $map) {
 
 $chat_initialized = false;
 function chat_module_initialize($lastop, $newop) {
-	global $_VER;
+	global $_VER, $chat_initialized;
 	if (($newop == 'interface.main') && !$chat_initialized) {
 		relayMessage(MSG_INTERFACE,'CHAT','GloryLands Engine Version '.$_VER['ENGINE'],'System');
 		$chat_initialized = true; /* Send this only once */

@@ -75,6 +75,13 @@ class db {
 	 */
 	var $totQueries;
 
+	/**
+	 * If we have global debug enabled, this function will store the
+	 * queries being executed
+	 * @var int
+	 */
+	var $queryList;
+
 
 	/**
 	  * Initializes MySQL Class
@@ -102,6 +109,9 @@ class db {
 		// Select database
 		$this->errPosition = "selecting database '<strong>{$vdb}</strong>'";
 		if (!mysql_select_db($vdb, $id)) return false;
+		
+		// Initialize variables
+		$queryList = array();
 		return true;
 	}
 
@@ -115,8 +125,8 @@ class db {
 	    $this->errPosition = "performing query '<strong>{$text}</strong>'";
 		$result = mysql_query($text, $this->conID);
 		$this->totQueries++;
-		if (defined("GLOB_DEBUG")) echo "<br><Font color=green>".$this->totQueries.") ".$text."</font><br>";
 		if (!$result) {
+			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>false,'error'=>$this->getError());
 			$this->emptyResults = true;
 			return false;
 		}
@@ -124,9 +134,11 @@ class db {
 		if ((substr(strtoupper($text), 0 ,6) == "SELECT") || (substr(strtoupper($text), 0 ,4) == "SHOW")) { 
 			$this->numRows = mysql_num_rows($result);
 			$this->emptyResults = ($this->numRows == 0);
+			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>$this->numRows);
 		} else { 
 			$this->affectedRows = mysql_affected_rows();		
 			$this->emptyResults = ($this->affectedRows == 0);
+			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>$this->affectedRows);
 		}
 		return $result;
 	}	
@@ -291,8 +303,12 @@ class db {
 	    $this->errPosition = "performing polling query '<strong>{$query}</strong>'";
 		$result = mysql_query($query, $this->conID);
 		$this->totQueries++;
-		if (defined("GLOB_DEBUG")) echo "<br><Font color=green>".$this->totQueries.") ".$query."</font><br>";
-		if (!$result) return false;
+		if (!$result) {
+			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>false,'error'=>$this->getError());
+			return false;
+		} else {
+			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>mysql_num_rows($result));
+		}
 		$ans = (mysql_num_rows($result)!=0);
 		mysql_free_result($ans);
 		return $ans;
@@ -308,8 +324,12 @@ class db {
 	    $this->errPosition = "performing get value query '<strong>{$query}</strong>'";
 		$result = mysql_query($query, $this->conID);
 		$this->totQueries++;
-		if (defined("GLOB_DEBUG")) echo "<br><Font color=green>".$this->totQueries.") ".$query."</font><br>";
-		if (!$result) return false;
+		if (!$result) {
+			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>false,'error'=>$this->getError());
+			return false;
+		} else {
+			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>mysql_num_rows($result));
+		}
 		if (mysql_num_rows($result)==0) return "";
 		$row=mysql_fetch_array($result, MYSQL_NUM);
 		mysql_free_result($result);
@@ -399,6 +419,28 @@ class db {
 
 		return true;
 	}
+
+	/**
+	  * Visualize the queries being executed for debug purposes
+	  *
+	  * @return string	Returns an HTML formatted result with the queries and their status
+	  */
+	function getQueries() {
+		$ans = '<table border="1" width="100%">';
+		foreach ($this->queryList as $query) {
+			$ans .= '<tr><td>'.$query['query'].'</td>';
+			if ($query['result']) {
+				$ans .= '<td><font color="green">OK</font></td>';
+				$ans .= '<td>Returned/Affected '.$query['rows'].' rows</td>';
+			} else {
+				$ans .= '<td colspan="2">'.$query['error'].'</td>';
+			}
+			$ans .= '</tr>';
+		}
+		$ans .= '</table>';
+		return $ans;
+	}
+	 
 }
 
 ?>

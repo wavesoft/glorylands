@@ -50,21 +50,23 @@ function sidebar_data_feed() {
 ";
 	
 	// Check for scheduled events that need to be displaied
-	$sched = gl_get_schedulees();
+	$sched = gl_get_schedulees();	
 	$scbody = "";
-	foreach ($sched as $entry) {
-		if ($entry['description']!='') {
-			$cicon='';
-			if (isset($entry['data']['icon'])) {
-				$cicon = "<img src=\"images/".$entry['data']['icon']."\" />";
+	if ($sched && (sizeof($sched)>0)) {
+		foreach ($sched as $entry) {
+			if ($entry['description']!='') {
+				$cicon='';
+				if (isset($entry['data']['icon'])) {
+					$cicon = "<img src=\"images/".$entry['data']['icon']."\" />";
+				}
+				$scbody.="<tr><td align=\"left\" width=\"20\">$cicon</td><td>".$entry['description']."</td><td><b class=\"sidebar_timedown\">".sidebar_fix_time($entry['time'])."</b>\"</td></tr>\n";
 			}
-			$scbody.="<tr><td align=\"left\" width=\"20\">$cicon</td><td>".$entry['description']."</td><td><b class=\"sidebar_timedown\">".sidebar_fix_time($entry['time'])."</b>\"</td></tr>\n";
 		}
-	}
-	if ($scbody!='') {
-		$body.="<div class=\"sidebar_scrollable\"><table width=\"100%\" class=\"sidebar_evtable\">".$scbody."</table></div>";
-	} else {
-		$body.="<em>(None)</em>";
+		if ($scbody!='') {
+			$body.="<div class=\"sidebar_scrollable\"><table width=\"100%\" class=\"sidebar_evtable\">".$scbody."</table></div>";
+		} else {
+			$body.="<em>(None)</em>";
+		}
 	}
 	
 	$body.="</td></tr></table>";

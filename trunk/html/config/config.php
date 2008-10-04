@@ -2,21 +2,21 @@
 global $_CONFIG;
 
 ## Constants
-define(DB,'DB');
-define(HOST,'HOST');
-define(PASSWORD,'PASSWORD');
-define(DATABASE,'DATABASE');
-define(USER,'USER');
-define(GAME,'GAME');
-define(TITLE,'TITLE');
-define(THEME,'THEME');
-define(CHARSET,'CHARSET');
-define(BASE,'BASE');
-define(REF_URL,'REF_URL');
-define(TUNE,'TUNE');
-define(MAP_GRID_W,'MAP_GRID_W');
-define(MAP_GRID_H,'MAP_GRID_H');
-define(INDX_INTERFACE, 'INDX_INTERFACE');
+define('DB','DB');
+define('HOST','HOST');
+define('PASSWORD','PASSWORD');
+define('DATABASE','DATABASE');
+define('USER','USER');
+define('GAME','GAME');
+define('TITLE','TITLE');
+define('THEME','THEME');
+define('CHARSET','CHARSET');
+define('BASE','BASE');
+define('REF_URL','REF_URL');
+define('TUNE','TUNE');
+define('MAP_GRID_W','MAP_GRID_W');
+define('MAP_GRID_H','MAP_GRID_H');
+define('INDX_INTERFACE', 'INDX_INTERFACE');
 
 ### The database configuration
 $_CONFIG[DB][HOST] 			= "localhost";

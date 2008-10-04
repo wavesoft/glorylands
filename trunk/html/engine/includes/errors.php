@@ -104,31 +104,33 @@ function fatalError($desc, $debuginfo = '', $debug = false) {
 		if ($debuginfo!='') HTMLDebug($debuginfo);
 		HTMLBacktrace(debug_backtrace());
 	}
-	die();
+		
+	return;
 ?>	
 		</td>
 	</tr>
 	</table>
 	</div>
 <?php
+	
 }
 
 // Set The error handling function
 function glErrorHandler($errno, $errstr, $errfile, $errline) {
+
+	// Handle error
     switch ($errno) {
+
     case E_USER_ERROR:
-		@ob_end_clean();
         fatalError("System Error: [$errno] $errstr on $errfile line $errline");
         exit(1);
         break;
 
     case E_USER_WARNING:
-		@ob_end_clean();
         fatalError("Warning: [$errno] $errstr on $errfile line $errline");
         break;
 
     case E_USER_NOTICE:
-		@ob_end_clean();
         fatalError("Notice: [$errno] $errstr on $errfile line $errline");
         break;
 

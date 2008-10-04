@@ -15,14 +15,13 @@
 global $sql;
 
 ### Sesssion-wide constants
-define(PLAYER,"player");
-define(GUID,"guid");
-define(GUID,"profile");
-define(DATA,"data");
-define(PROFILE,"profile");
-define(CHARS,"chars");
-define(TEMP,"temp");
-define(DYNAMIC,"dynamic");
+define('PLAYER','player');
+define('GUID','guid');
+define('DATA','data');
+define('PROFILE','profile');
+define('CHARS','chars');
+define('TEMP','temp');
+define('DYNAMIC','dynamic');
 
 ### Start Session
 session_start();
