@@ -43,12 +43,18 @@
  -----------------------------------------------------------------------
 
  Server:
-  - Apache  or IIS webserver 
+
+  - Apache  or IIS webserver (Apache Recommended)
   - PHP5    or later
   - MySQL 5 or later
   - SVN Client (such as TortoiseSVN on windows or svn on linux)
+  - A PHP Accelerator is highly recommended, such as:
+      - eAccelerator (Tested)
+      - Alternative PHP Cache (APC)
+      - XCache
 
  Client:
+
   - Mozilla-Based browser (highly recommended)
   - Internet Explorer 7 or later
   
