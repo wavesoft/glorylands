@@ -466,16 +466,6 @@ CREATE TABLE `system_files` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
--- Table structure for system_group_dictionary
--- ----------------------------
-CREATE TABLE `system_group_dictionary` (
-  `index` int(11) NOT NULL,
-  `name` varchar(120) collate latin1_general_ci default NULL,
-  `package` varchar(32) collate latin1_general_ci default NULL,
-  PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
-
--- ----------------------------
 -- Table structure for system_hooks
 -- ----------------------------
 CREATE TABLE `system_hooks` (
@@ -732,11 +722,6 @@ INSERT INTO `system_dictionaries` VALUES ('2', 'GUID', 'UNIT', '1', 'FIXED', '0'
 INSERT INTO `system_dictionaries` VALUES ('3', 'GUID', 'ITEM', '2', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('4', 'GUID', 'NPC', '3', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('5', 'GUID', 'GAMEOBJECT', '4', 'FIXED', '0');
-INSERT INTO `system_group_dictionary` VALUES ('0', 'char', '0');
-INSERT INTO `system_group_dictionary` VALUES ('1', 'unit', '0');
-INSERT INTO `system_group_dictionary` VALUES ('2', 'item', '0');
-INSERT INTO `system_group_dictionary` VALUES ('3', 'npc', '0');
-INSERT INTO `system_group_dictionary` VALUES ('4', 'gameobject', '0');
 INSERT INTO `system_hooks` VALUES ('1', 'map.move', 'hook-portal.php', 'portal_map_move', 'YES', '0');
 INSERT INTO `system_hooks` VALUES ('2', 'chat.command', 'hook-chatcommands.php', 'chat_admin', 'YES', '0');
 INSERT INTO `system_hooks` VALUES ('3', 'map.updategrid', 'hook-chatcommands.php', 'chat_notify_zidchange', 'YES', '0');
