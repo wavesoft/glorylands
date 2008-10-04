@@ -195,4 +195,32 @@ function gl_distance($x1,$y1,$x2,$y2) {
 	return sqrt(pow(($x1-$x2),2) + pow(($y1-$y2),2));
 }
 
+// Browser and server compression support detection
+function gl_get_compatible_zip_handler() {
+
+	// Enter a list of possible encodings and server handlers
+	// that might be available
+	$z_handler = array(
+		'gzip' 		=> 'ob_gzhandler',
+		'deflate' 	=> 'ob_inflatehandler'
+	);
+	
+	// Check what encoding handlers the browser can support
+	$z_browser = array();
+	foreach (explode(",",$_SERVER['HTTP_ACCEPT_ENCODING']) as $encoding) {
+		$z_browser[$encoding] = true;
+	}
+	
+	// Detect and use one of the supported compression handlers
+	foreach ($z_handler as $encoding => $srv_handler) {
+		$browser_supported = $z_browser[$encoding];
+		$server_supported = function_exists($srv_handler);
+		
+		if ($browser_supported && $server_supported) return $srv_handler;
+	}
+	
+	// No zip handler detected? Return false
+	return false;
+}
+
 ?>

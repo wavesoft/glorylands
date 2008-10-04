@@ -69,7 +69,9 @@ function gl_spawn_check() {
 					
 					// Instance the object
 					$obj = gl_instance_object($row['guid'], $vars);
-					//relayMessage(MSG_INTERFACE,'MSGBOX', "Item spawned with GUID $obj using template ".$row['guid']." and vars \n".print_r($vars,true));
+
+					// Update it's container
+					gl_dynupdate_update($row['container']);
 					
 				}
 			}
