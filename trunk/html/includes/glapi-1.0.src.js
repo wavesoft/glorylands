@@ -734,8 +734,8 @@ function processDictionary() {
 	var images = new Array();
 	for (img in data_dictionary) {
 		if ($defined(img)) {
-			im = new String(img);
-			img = im.substring(0, img.length-3)+'png';
+			//im = new String(img);
+			//img = im.substring(0, img.length-3)+'png';
 			images.push('images/tiles/'+img);
 		} else {
 			images.push('images/tiles/blank.gif');
