@@ -31,7 +31,7 @@ $object_vars = gl_get_guid_vars($root_guid);
 // Build the result
 $act_result = array(
 	'mode' => 'POPUP',
-	'title' => 'Contents of '.$object_vars['name'],
+	'title' => 'Contents of '.$object_vars['name'].' <small>(#'.$root_guid.')</small>',
 	'width' => 230,
 	'guid' => $root_guid,
 	

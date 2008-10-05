@@ -28,6 +28,17 @@ function qb_update_view() {
 			<td><div slot="8">'.$slot[8].'</div></td>
 			<td><div slot="9">'.$slot[9].'</div></td>
 			<td><div slot="10">'.$slot[10].'</div></td>
+			<td><div slot="11">'.$slot[11].'</div></td>
+			<td><div slot="12">'.$slot[12].'</div></td>
+			<td><div slot="13">'.$slot[13].'</div></td>
+			<td><div slot="14">'.$slot[14].'</div></td>
+			<td><div slot="15">'.$slot[15].'</div></td>
+			<td><div slot="16">'.$slot[16].'</div></td>
+			<td><div slot="17">'.$slot[17].'</div></td>
+			<td><div slot="18">'.$slot[18].'</div></td>
+			<td><div slot="19">'.$slot[19].'</div></td>
+			<td><div slot="20">'.$slot[20].'</div></td>
+			<td><div slot="21">'.$slot[21].'</div></td>
 		</tr>
 	</table>
 	';
