@@ -143,6 +143,6 @@ function glErrorHandler($errno, $errstr, $errfile, $errline) {
 }
 
 // set to the user defined error handler
-$old_error_handler = set_error_handler("glErrorHandler");
+//$old_error_handler = set_error_handler("glErrorHandler");
 
 ?>

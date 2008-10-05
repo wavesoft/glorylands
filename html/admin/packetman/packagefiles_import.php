@@ -25,7 +25,7 @@ $pid = $row['index'];
 
 if ($_REQUEST['a'] == 'selimport') {
 
-	function findBaseType($base) {
+	function getBaseType(&$base) {
 		global $_CONFIG;				
 		$pathparts = explode("/",$base);		
 		foreach ($_CONFIG[DIRS][ALIAS] as $alias => $apath) {
@@ -58,20 +58,25 @@ if ($_REQUEST['a'] == 'selimport') {
 		} else {
 			$filename = $_CONFIG[GAME][BASE].'/'.$base.'/'.$file;
 		}
-		$type = findBaseType($base);
-		
+		$type = getBaseType($base);
+
 		// In case the file is directory, use traverseModel 
 		// and do not import this entry
 		if (is_dir($filename)) {
 			traverseDir($filename,$base.'/'.$file);
 			return;
 		}
+
+		// Find the relative file name
+		$base = DIROF($type);
+		$shortname = substr($filename, strlen($base));
+		if (substr($shortname,-1)=='/') $shortname=substr($shortname,0,-1);
 		
 		// Import file
 		$sql->addRow('system_files', array(
 			'type' => $type,
 			'package' => $pid,
-			'filename' => $filename,
+			'filename' => $shortname,
 			'version' => 1,
 			'hash' => md5_file($filename)
 		));
@@ -81,9 +86,13 @@ if ($_REQUEST['a'] == 'selimport') {
 	}
 	
 	$count = 0;
-	foreach ($_SESSION[TEMP]['checked_files'] as $base => $files) {
-		foreach ($files as $file => $ack) {
-			importFile($base, $file);
+	if (isset($_SESSION[TEMP]['checked_files'])) {
+		foreach ($_SESSION[TEMP]['checked_files'] as $base => $files) {
+			if (is_array($files)) {
+				foreach ($files as $file => $ack) {
+					importFile($base, $file);
+				}
+			}
 		}
 	}
 	
@@ -102,15 +111,25 @@ if ($_REQUEST['a'] == 'selimport') {
 	$count = 0;
 	foreach (glob($basedir.$_REQUEST['pattern']) as $filename) {
 		$count++;
+		
+		// Import only files
+		if (is_file($filename)) {
+	
+			// Find the relative file name
+			$base = DIROF($_REQUEST['dest']);
+			$shortname = substr($filename, strlen($base));
+			if (substr($shortname,-1)=='/') $shortname=substr($shortname,0,-1);
+	
+			// Import file
+			$sql->addRow('system_files', array(
+				'type' => $_REQUEST['dest'],
+				'package' => $pid,
+				'filename' => $shortname,
+				'version' => 1,
+				'hash' => md5_file($filename)
+			));
 
-		// Import file
-		$sql->addRow('system_files', array(
-			'type' => $_REQUEST['dest'],
-			'package' => $pid,
-			'filename' => $filename,
-			'version' => 1,
-			'hash' => md5_file($filename)
-		));
+		}
 	}
 
 ?>
@@ -160,7 +179,7 @@ if ($_REQUEST['a'] == 'selimport') {
 		<select name="dest">
 		<?php
 		foreach ($_CONFIG[DIRS][NAMES] as $alias => $name) {
-		echo "<option value=\"$alias\">$name</option>";
+		echo "<option value=\"$alias\">$name ($alias)</option>";
 		}
 		?>
 		</select>
@@ -189,7 +208,7 @@ if ($_REQUEST['a'] == 'selimport') {
 		<select name="dest">
 		<?php
 		foreach ($_CONFIG[DIRS][NAMES] as $alias => $name) {
-		echo "<option value=\"$alias\">$name</option>";
+		echo "<option value=\"$alias\">$name ($alias)</option>";
 		}
 		?>
 		</select>

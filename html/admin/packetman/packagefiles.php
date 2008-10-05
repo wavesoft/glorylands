@@ -37,7 +37,9 @@ if ($_REQUEST['a'] == 'delete') {
 	<?php
 	$count=0;
 	foreach ($_POST['files'] as $index => $ack) {
-		$filename = $sql->query_and_get_value("SELECT `filename` FROM `system_files` WHERE `index` = $index");
+		$ans = $sql->query("SELECT `filename`,`type` FROM `system_files` WHERE `index` = $index");
+		$row = $sql->fetch_array(MYSQL_ASSOC);
+		$filename = DIROF($row['type']).$row['filename'];
 		unlink($filename);
 		$sql->query("DELETE FROM `system_files` WHERE `index` = $index");
 		$count++;
@@ -119,6 +121,7 @@ while ($row = $sql->fetch_array_fromresults($ans, MYSQL_ASSOC)) {
 	if (!$ar) $ar = array();
 
 	$fsz = false;
+	$row['filename'] = DIROF($row['type']).$row['filename'];
 	if (is_file($row['filename'])) {
 		$fsz = filesize($row['filename']);
 		$sz_total += $fsz;

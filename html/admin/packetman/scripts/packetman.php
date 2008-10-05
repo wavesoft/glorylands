@@ -126,7 +126,9 @@ function package_copy_file($pid, $type, $src, $dst_dir) {
 	if (!is_dir($dst_dir)) package_create_dirtree($dst_dir);
 	
 	// Copy the file
-	$fname = $dst_dir.'/'.basename($src);
+	$reffile = $dst_dir.'/'.basename($src);
+	if (substr($reffile,0,1)=='/') $reffile = substr($reffile,1);
+	$fname = DIROF($type).$reffile;
 	$ans=copy($src, $fname);
 	
 	// If the copy failed, do not import the file into SQL
@@ -137,7 +139,7 @@ function package_copy_file($pid, $type, $src, $dst_dir) {
 		// Import file entry into SQL
 		$sql->addRow('system_files', array(
 			'package' => $pid,
-			'filename' => $fname,
+			'filename' => $reffile,
 			'type' => $type,
 			'version' => 1,
 			'hash' => md5_file($src)
@@ -241,11 +243,10 @@ function package_path_expand($filepath, &$usedalias) {
   *
   * @param int $pid 		The source package index
   * @param string $dest_dir	The destination directory (without trailling slash)
-  * @param bool $relative	If TRUE the mapping file will contain relative paths rather than absolute
   * @param bool $move		If TRUE the source files and SQL entries will be removed
   * @return bool		 	Returns true on success or false otherways
   */
-function package_archive_files($pid, $dest_dir, $relative=true, $move=false) {
+function package_archive_files($pid, $dest_dir, $move=false) {
 	global $sql, $package_error;
 	$package_error='';
 	
@@ -268,19 +269,18 @@ function package_archive_files($pid, $dest_dir, $relative=true, $move=false) {
 	$i=0;
 	while ($file = $sql->fetch_array_fromresults($ans)) {
 		// Get some information
-		$fname = $file['filename'];
+		$fname = DIROF($file['type']).$file['filename'];
 		$shortname = 'file'.$i++;
 		
 		// Archive the file
 		if (copy($fname, $dest_dir.'/'.$shortname)) {
 				
 			// Insert a mapping file entry
-			if ($relative) $fname=package_path_alias($fname);
-			fwrite($f, $shortname.'='.$file['version'].'='.$fname."\n");
+			fwrite($f, $shortname.'='.$file['version'].'='.$file['type'].'='.$file['filename']."\n");
 			
 			// Remove source data if told so
 			if ($move) {
-				if (unlink($file['filename'])) {
+				if (unlink($fname)) {
 					$dirsused[dirname($file['filename'])] = true;
 					$sql->query("DELETE FROM `system_files` WHERE `index` = ".$file['index']);
 				} else {
@@ -331,25 +331,25 @@ function package_restore_files($pid, $src_dir, $import=false) {
 	
 		// Get some information
 		$row = explode("=",$row);
-		$fname = trim(package_path_expand($row[2], $ftype));
-		$fversion = $row[1];
 		$shortname = $row[0];		
+		$fversion = $row[1];
+		$ftype = $row[2];
+		$fname = str_replace("\n",'',$row[3]);
 		
 		// Make sure parent directory exists
 		$parentdir = dirname($fname);
 		if (!is_dir($parentdir)) package_create_dirtree($parentdir);
 		
 		// Restore the file
-		if (copy($src_dir.'/'.$shortname, $fname)) {
+		if (copy($src_dir.'/'.$shortname, DIROF($ftype).$fname)) {
 			// Import data if told so
 			if ($import) {
-				//echo "Importing file $fname, with type $ftype into package $pid\n";
 				$ans=$sql->addRow('system_files', array(
 					'type' => $ftype,
 					'package' => $pid,
 					'filename' => $fname,
 					'version' => $fversion,
-					'hash' => md5_file($fname)
+					'hash' => md5_file(DIROF($ftype).$fname)
 				));
 				if (!$ans) {
 					$package_error.=" &bull; Error copying file {$src_dir}/{$shortname} to {$fname}\n";
@@ -392,7 +392,7 @@ function package_archive_manifest($pid, $dest_dir, $move=false) {
 		$package_error.=" &bull; ".$sql->getError()."\n";
 		return false;
 	};
-	if ($sql->emptyResult) {
+	if ($sql->emptyResults) {
 		$package_error.=" &bull; Cannot find plugin with index #{$pid}\n";
 		return false;
 	};
@@ -406,8 +406,10 @@ function package_archive_manifest($pid, $dest_dir, $move=false) {
 	
 	// Obdain dictionary entries
 	$ans=$sql->query("SELECT * FROM `system_dictionaries` WHERE `package` = $pid");
-	if (!$ans) return false;
-	if ($sql->emptyResult) return false;
+	if (!$ans) {
+		$package_error.=" &bull; ".$sql->getError()."\n";
+		return false;
+	};
 	$rows = $sql->fetch_array_all(MYSQL_ASSOC);
 	foreach ($rows as $index => $row) {
 		unset($row['index']);
@@ -424,9 +426,10 @@ function package_archive_manifest($pid, $dest_dir, $move=false) {
 
 	// Obdain hook entries
 	$ans=$sql->query("SELECT * FROM `system_hooks` WHERE `package` = $pid");
-	if (!$ans) return false;
-	if ($sql->emptyResult) return false;
-	$rows = $sql->fetch_array_all(MYSQL_ASSOC);
+	if (!$ans) {
+		$package_error.=" &bull; ".$sql->getError()."\n";
+		return false;
+	};
 	foreach ($rows as $index => $row) {
 		unset($row['index']);
 		$rows[$index] = $row;
@@ -442,8 +445,10 @@ function package_archive_manifest($pid, $dest_dir, $move=false) {
 
 	// Obdain sql file entries
 	$ans=$sql->query("SELECT * FROM `system_packages_install` WHERE `package` = $pid");
-	if (!$ans) return false;
-	if ($sql->emptyResult) return false;
+	if (!$ans) {
+		$package_error.=" &bull; ".$sql->getError()."\n";
+		return false;
+	};	
 	$rows = $sql->fetch_array_all(MYSQL_ASSOC);
 	foreach ($rows as $index => $row) {
 		unset($row['index']);
@@ -460,8 +465,10 @@ function package_archive_manifest($pid, $dest_dir, $move=false) {
 
 	// Obdain uninstall entries
 	$ans=$sql->query("SELECT * FROM `system_packages_uninstall` WHERE `package` = $pid");
-	if (!$ans) return false;
-	if ($sql->emptyResult) return false;
+	if (!$ans) {
+		$package_error.=" &bull; ".$sql->getError()."\n";
+		return false;
+	};	
 	$rows = $sql->fetch_array_all(MYSQL_ASSOC);
 	foreach ($rows as $index => $row) {
 		unset($row['index']);
@@ -655,7 +662,7 @@ function package_uninstall_files($pid) {
 	$package_error='';
 	
 	// Get package information
-	$ans=$sql->query("SELECT * FROM `system_packages` WHERE `package` = $pid");
+	$ans=$sql->query("SELECT * FROM `system_packages` WHERE `index` = $pid");
 	if (!$ans) {
 		$package_error.=" &bull; ".$sql->getError()."\n";
 		return false;
@@ -674,7 +681,7 @@ function package_uninstall_files($pid) {
 	
 	// Remove files
 	while ($row = $sql->fetch_array(MYSQL_ASSOC)) {
-		unlink($row['filename']);
+		unlink(DIROF($row['type']).$row['filename']);
 		$dirsused[dirname($row['filename'])] = true;
 	}
 
@@ -889,7 +896,7 @@ function package_install($src_dir, $dst_dir, $pinfo) {
 				
 				$file = $vals[$id]['value'];
 				if ($subdir=='/') $subdir='';
-				$target_path = DIROF($type,true).$subdir;
+				$target_path = $subdir;
 				
 				if (!$recurse) {
 					package_copy_file($pid, $type, $src_dir."/".$file, $target_path);
