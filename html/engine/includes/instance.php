@@ -17,7 +17,7 @@
   *           ITEM INDEX         CATEGORY INDEX     GUID TYPE
   *
   * GUID Type is: 	0 - for Template reference (used to create instances)
-  *	                 1 - for Instance reference (an instanced, playable object)
+  *	                1 - for Instance reference (an instanced, playable object)
   *
   * </pre>
   *

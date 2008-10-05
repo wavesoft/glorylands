@@ -36,7 +36,7 @@ if (isset($_REQUEST['guid'])) {
 </tr>
 <tr>
 	<th>Type:</th>
-	<td><?php echo $parts['instance']?"<font color=\"green\">Instance</font>":"<font color=\"red\">Template</font>"; ?></td>
+	<td><?php echo $parts['instance']?"<font color=\"green\">Instance</font>":"<font color=\"#FF6600\">Template</font>"; ?></td>
 </tr>
 <tr>
 	<th>Group:</th>
@@ -46,15 +46,25 @@ if (isset($_REQUEST['guid'])) {
 if ($parts['instance']) {
 
 	$ans = $sql->query("SELECT `template` FROM `{$parts['group']}_instance` WHERE `index` = ".$parts['index']);
-	if (!$ans) return false;
-	if ($sql->emptyResults) return false;
-	$row = $sql->fetch_array(MYSQL_NUM);	
+	if (!$ans) die($sql->getError());
+	if ($sql->emptyResults) {
 
 ?>
 <tr>
 	<th>Entry Index:</th>
 	<td><?php echo $parts['index']; ?></td>
 </tr>
+<tr>
+	<th>Template Index:</th>
+	<td><font color="red">Template not found</font></td>
+</tr>
+<?php
+	
+	} else {
+	
+		$row = $sql->fetch_array(MYSQL_NUM);	
+
+?>
 <tr>
 	<th>Template Index:</th>
 	<td><?php echo $row[0]; ?></td>
@@ -64,6 +74,7 @@ if ($parts['instance']) {
 	<td><b><?php echo gl_get_guid_template($_REQUEST['guid']); ?></b></td>
 </tr>
 <?php
+	}
 } else {
 ?>
 <tr>
