@@ -94,10 +94,11 @@
 
  6) You now have a clean, running version of the game, but you should install some game
     packages in order to play it. The current SVN version contains some testing data that
-    requires the following packages to be installed (those packages are found on the
-    dev/packages/tilesets directory):
+    requires the following packages to be installed:
 
    Navigate on the http://<game root>/admin/packetman to install those files
+
+    [dev/packages/tilesets]
 
    - chars-latest.zip
    - tileset-abandoned-building-v2.zip
@@ -108,6 +109,14 @@
    - tileset-z-field-ext-v2.zip
    - tileset-z-plains-ext-v2.zip
    - tileset-z-snow-v2.zip
+
+    [dev/packages/testdata]
+
+   - luskan_village-v1.zip
+
+   TIP: You can install many packages in a single upload by uploading a zip
+        that contains the archives you want to install. The packages are installed
+        alphabetically.
 
  =======================================================================
   3.How to play GloryLands
