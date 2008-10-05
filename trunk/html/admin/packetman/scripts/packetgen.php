@@ -45,9 +45,9 @@ function package_gather_files($pid, $dest_dir) {
 	$i=0;
 	while ($file = $sql->fetch_array_fromresults($ans)) {
 		// Get file information
-		$fname = $file['filename'];
+		$fname = DIROF($file['type']).$file['filename'];
 		$ftype = strtolower($file['type']);
-		$relativename = str_replace(DIROF($file['type']),'',$fname);
+		$relativename = $file['filename'];
 		$path_parts = pathinfo($relativename);
 		$shortname = $path_parts['basename'];
 		

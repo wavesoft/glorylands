@@ -27,7 +27,7 @@ $pid = $row['index'];
 echo "Disabling package <b>".$row['name']."</b>...\n\n";
 
 // Make sure the filesystem is ready to receive the disabled data
-$root = DIROF('SYSTEM.ADMIN').'/packages/'.$guid;
+$root = DIROF('SYSTEM.ADMIN').'packages/'.$guid;
 if (!is_dir($root)) mkdir($root);
 $dest = $root.'/disabled';
 if (!is_dir($dest)) mkdir($dest);

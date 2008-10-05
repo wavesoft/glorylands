@@ -310,7 +310,7 @@ class db {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>mysql_num_rows($result));
 		}
 		$ans = (mysql_num_rows($result)!=0);
-		mysql_free_result($ans);
+		mysql_free_result($result);
 		return $ans;
 	}
 	
