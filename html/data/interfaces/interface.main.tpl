@@ -104,8 +104,8 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 </td></tr></table>
 </div>
 <table width="100%">
- <tr>
-  <td align="left" width="788" >
+ <tr height="536">
+  <td align="left" width="788" valign="top">
 	<table class="backload" cellspacing="0" cellpadding="0">
 	<tr height="12">
 		<td class="br1_lt" width="10">&nbsp;</td>
@@ -118,8 +118,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 		<div style="position: relative; width: 768px; height: 512px; display: block; left:0px; top: 0px;" id="datapane">
 		<!-- Datapane Contents -->
 		</div>		
-		<div style="position: absolute; visibility: hidden; padding: 12px;" id="actionpane"></div>
-		</td>
+		<div style="position: absolute; visibility: hidden; padding: 12px;" id="actionpane"></div>		</td>
 		<td class="br1_r" width="10"></td>
 	</tr>
 	<tr height="12">
@@ -128,7 +127,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 		<td class="br1_rb" width="10"></td>
 	</tr>
 	</table>   </td>
-   <td valign="top" align="center">
+   <td align="center" valign="top">
    <table width="100%" height="534" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="center" valign="top">
@@ -141,8 +140,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 			<tr>
 				<td class="br1_l" width="10">&nbsp;</td>
 				<td>
-				{$modules.0}
-				</td>
+				{$modules.0}				</td>
 				<td class="br1_r" width="10"></td>
 			</tr>
 			<tr height="12">
@@ -150,8 +148,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 				<td class="br1_b"></td>
 				<td class="br1_rb" width="10"></td>
 			</tr>
-			</table>
-		</td>
+			</table>		</td>
 	</tr>
 	<tr>
 		<td>
@@ -167,8 +164,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 				<a href="#" onclick="javascript:gloryIO('?a=admin.addobj');" title="Place a building"><img border="0" src="images/UI/navbtn_repair.gif" /></a>
 				<a href="#" onclick="javascript:gloryIO('?a=interface.inventory');" title="Open Inventory"><img border="0" src="images/UI/navbtn_explore.gif" /></a>
 				<a href="#" onclick="javascript:gloryIO('?a=interface.ad.swapchar');" title="Change Characther"><img border="0" src="images/UI/navbtn_act.gif" /></a>
-				{$modules.1}		
-				</td>
+				{$modules.1}				</td>
 				<td class="br1_r" width="10"></td>
 			</tr>
 			<tr height="12">
@@ -176,8 +172,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 				<td class="br1_b"></td>
 				<td class="br1_rb" width="10"></td>
 			</tr>
-			</table>
-		</td>
+			</table>		</td>
 	</tr>
 	<tr>
 		<td align="center" valign="bottom">
@@ -190,8 +185,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 			<tr>
 				<td class="br1_l" width="10">&nbsp;</td>
 				<td>
-				{$modules.2}
-				</td>
+				{$modules.2}				</td>
 				<td class="br1_r" width="10"></td>
 			</tr>
 			<tr height="12">
@@ -199,16 +193,16 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 				<td class="br1_b"></td>
 				<td class="br1_rb" width="10"></td>
 			</tr>
-			</table>
-		</td>
+			</table>		</td>
 	</tr>
    </table>   </td>
  </tr>
+ 
  <tr>
-   <td colspan="2" align="left">{$modules.3}</td>
+   <td colspan="2" align="center">{$modules.4}</td>
   </tr>
 </table>
 <div style="" id="prompt"></div>
-{$modules.4}
+{$modules.5}
 </body>
 </html>
