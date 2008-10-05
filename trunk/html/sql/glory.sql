@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: test
 Target Host: localhost
 Target Database: test
-Date: 4/10/2008 12:46:06 נל
+Date: 5/10/2008 11:25:42 לל
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -37,7 +37,7 @@ CREATE TABLE `char_instance` (
   `WIS` int(11) default NULL,
   `CHA` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for char_template
@@ -78,7 +78,7 @@ CREATE TABLE `data_maps` (
   `filename` varchar(80) collate latin1_general_ci default NULL,
   `z-base` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for data_maps_teleports
@@ -94,7 +94,7 @@ CREATE TABLE `data_maps_teleports` (
   `message` varchar(120) collate latin1_general_ci default NULL,
   `locks` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for data_mix_defaults
@@ -109,7 +109,7 @@ CREATE TABLE `data_mix_defaults` (
   `dropchance` int(4) default NULL,
   `attennuation` float(11,2) default '-1.00',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for data_mix_iconrules
@@ -182,7 +182,7 @@ CREATE TABLE `data_spawn` (
   `successrate` int(1) default '100',
   `variables` text collate latin1_general_ci,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for data_spawn_times
@@ -192,7 +192,7 @@ CREATE TABLE `data_spawn_times` (
   `spawn_id` int(11) default NULL,
   `last_spawn` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for gameobject_instance
@@ -213,7 +213,7 @@ CREATE TABLE `gameobject_instance` (
   `model` varchar(40) collate latin1_general_ci default NULL,
   `mixhash` varchar(40) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for gameobject_template
@@ -253,7 +253,7 @@ CREATE TABLE `interface_module_assign` (
   `position` int(11) default NULL,
   `weight` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for interface_module_resources
@@ -264,7 +264,7 @@ CREATE TABLE `interface_module_resources` (
   `mode` enum('CSS','JS','HEADER','FOOTER') collate latin1_general_ci default NULL,
   `filename` varchar(120) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for interface_modules
@@ -275,16 +275,17 @@ CREATE TABLE `interface_modules` (
   `description` text collate latin1_general_ci,
   `filename` varchar(120) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for interface_openwin
 -- ----------------------------
 CREATE TABLE `interface_openwin` (
+  `index` int(11) NOT NULL auto_increment,
   `guid` int(11) NOT NULL default '0' COMMENT 'The GUID the window is associated with',
   `player` int(11) default '0',
   `updateurl` varchar(250) collate latin1_general_ci default NULL COMMENT 'The reply message to update the content',
-  PRIMARY KEY  (`guid`)
+  PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Contains the player''s open pop-up windows.Used for DynUpdate';
 
 -- ----------------------------
@@ -302,7 +303,7 @@ CREATE TABLE `item_instance` (
   `item_variables` longtext collate latin1_general_ci,
   `mixhash` varchar(40) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Contains all the initialization instances that must be done';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Contains all the initialization instances that must be done';
 
 -- ----------------------------
 -- Table structure for item_template
@@ -345,7 +346,7 @@ CREATE TABLE `locks_global` (
   `timeout` int(11) default NULL,
   `description` varchar(250) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for locks_private
@@ -366,7 +367,7 @@ CREATE TABLE `mod_chat_channel_registrations` (
   `user` int(11) default NULL,
   `channel` varchar(30) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for mod_quickbar_slots
@@ -377,7 +378,7 @@ CREATE TABLE `mod_quickbar_slots` (
   `slot` int(11) default NULL,
   `guid` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for npc_instance
@@ -395,7 +396,7 @@ CREATE TABLE `npc_instance` (
   `visible` tinyint(1) default NULL,
   `state` enum('NORMAL','GHOST','INVISIBLE') collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for npc_template
@@ -438,7 +439,7 @@ CREATE TABLE `system_dictionaries` (
   `mode` enum('FIXED','DYNAMIC') collate latin1_general_ci default NULL,
   `package` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=46 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_events
@@ -463,7 +464,7 @@ CREATE TABLE `system_files` (
   `version` int(11) default NULL,
   `hash` varchar(32) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_hooks
@@ -476,7 +477,7 @@ CREATE TABLE `system_hooks` (
   `active` enum('YES','NO') collate latin1_general_ci default 'YES',
   `package` int(11) default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=112 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_messages
@@ -489,7 +490,7 @@ CREATE TABLE `system_messages` (
   `data` text collate latin1_general_ci,
   `onceid` varchar(20) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_packages
@@ -508,7 +509,7 @@ CREATE TABLE `system_packages` (
   `require` mediumtext collate latin1_general_ci,
   `status` enum('ACTIVE','INACTIVE','INCOMPLETED','BUGGY','UNINSTALLINIG') collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_packages_install
@@ -520,7 +521,7 @@ CREATE TABLE `system_packages_install` (
   `use` enum('INSTALL','ENABLE') collate latin1_general_ci default 'INSTALL',
   `data` varchar(120) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_packages_uninstall
@@ -532,7 +533,7 @@ CREATE TABLE `system_packages_uninstall` (
   `use` enum('UNINSTALL','DISABLE') collate latin1_general_ci default 'UNINSTALL',
   `data` text collate latin1_general_ci,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_scheduler
@@ -545,7 +546,7 @@ CREATE TABLE `system_scheduler` (
   `description` varchar(250) collate latin1_general_ci default NULL,
   `data` text collate latin1_general_ci,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for unit_instance
@@ -557,10 +558,10 @@ CREATE TABLE `unit_instance` (
   `template` int(11) default NULL,
   `x` int(11) default NULL,
   `y` int(11) default NULL,
- `map` int(11) default NULL,
+  `map` int(11) default NULL,
   `level` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for unit_template
@@ -607,43 +608,11 @@ CREATE TABLE `users_accounts` (
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `char_template` VALUES ('1', 'map=1&x=5&y=5&visible=1&state=NORMAL', 'Human', 'portraits/clans_alchemist.gif', null, 'This is a human player. It is said that human players tend to have better abilities on trade operations that any other race.');
-INSERT INTO `char_template` VALUES ('2', 'map=4&x=5&y=5&visible=1&state=NORMAL', 'Elf', 'portraits/neutral_elfranger.gif', null, 'This is an elf player.');
+INSERT INTO `char_template` VALUES ('1', 'map=1&x=5&y=5&visible=1&state=NORMAL&model=bizarre36.o&INT=10&STR=50&DEX=10&CON=3&WIS=3&CHA=20', 'Human', 'portraits/clans_alchemist.gif', null, 'This is a human player. It is said that human players tend to have better abilities on trade operations that any other race.');
+INSERT INTO `char_template` VALUES ('2', 'map=4&x=5&y=5&visible=1&state=NORMAL&model=cape-grise.o&INT=40&STR=10&DEX=10&CON=50&WIS=50&CHA=10', 'Elf', 'portraits/neutral_elfranger.gif', null, 'This is an elf player.');
 INSERT INTO `char_vardesc` VALUES ('race', 'Race', '0', '0', '(Unknown)', 'RAW', null);
 INSERT INTO `char_vardesc` VALUES ('money', 'Money', '0', '1', '42', 'MONEY', null);
 INSERT INTO `char_vardesc` VALUES ('itelligence', 'Itelligence', '0', '1', '10', 'SCRIPT', 'if ($var > 90) {\r\n	$color=\'red\';\r\n} elseif ($var > 50) {\r\n	$color=\'blue\';\r\n} elseif ($var > 30) {\r\n	$color=\'green\';\r\n} else {\r\n	$color=\'grey\';\r\n}\r\nreturn \"<font color=\\\"$color\\\">$var %</font>\";');
-INSERT INTO `data_maps` VALUES ('1', 'Luskan Village', 'Luskan is a small village on the eastern side of mount Solomir. It is an old and very small village that is mostly consisted of old people and visitors.\r\nIt is said that the village was founded because of a sacred spring that was located nearby. That spring was said that had healing powers and could cure almost any diseace! Nevertheless, no one has ever head of it again for many, many years. Only the legend and some ancient ruins remains nowadays to remind the people the past days...', 'Luskan is a small village on the eastern side of mount Solomir. It is an old and very small village that is mostly consisted of old people and visitors.\r\nIt is said that the village was founded because of a sacred spring that was located nearby. That spring was said that had healing powers and could cure almost any diseace! Nevertheless, no one has ever head of it again for many, many years. Only the legend and some ancient ruins remains nowadays to remind the people the past days...', 'z-field-ext-1-2.gif', 'luskan-vlg', '50');
-INSERT INTO `data_maps` VALUES ('2', 'Well', 'A hidden area under the central well of Luskan Village!', null, 'z-dungeon-caves-1-5.gif', 'luskan-well', '-10');
-INSERT INTO `data_maps` VALUES ('3', 'Well Room', 'A secret room by the well', null, 'z-dungeon-caves-1-5.gif', 'luskan-well-2', '-10');
-INSERT INTO `data_maps` VALUES ('4', 'Unknown Area', 'You fell from a hole on a room above your head. You are now standing on a dark cave with a water stream.', null, 'z-field-ext-1-2.gif', 'luskan-well-3', '-20');
-INSERT INTO `data_maps` VALUES ('5', 'Luskan Calste Dungeon', 'This is the secret dungeon of the Luskan Castle. It is said that many precious treasures are hidden down there!', null, 'z-castle-int-1-3.gif', 'luskan-castle-1', '-20');
-INSERT INTO `data_maps` VALUES ('6', 'Temporary Test Map', null, null, 'z-field-ext-1-2.gif', 'test', '0');
-INSERT INTO `data_maps` VALUES ('7', 'Cuhlkah Village', null, null, 'z-snow-0-0.gif', 'snow2', '0');
-INSERT INTO `data_maps_teleports` VALUES ('1', '16', '8', '1', '6', '4', '2', 'You have found a secret room under the well!', '0');
-INSERT INTO `data_maps_teleports` VALUES ('2', '8', '3', '2', '16', '9', '1', 'You are up on the surface again!', '0');
-INSERT INTO `data_maps_teleports` VALUES ('3', '3', '3', '2', '3', '19', '3', 'A Secret room under the well', '0');
-INSERT INTO `data_maps_teleports` VALUES ('4', '3', '19', '3', '3', '4', '2', 'You are back to the well', '0');
-INSERT INTO `data_maps_teleports` VALUES ('5', '8', '16', '3', '8', '8', '4', 'You fell into the hole!', '0');
-INSERT INTO `data_maps_teleports` VALUES ('6', '8', '13', '3', '8', '8', '4', 'You fell into the hole!', '0');
-INSERT INTO `data_maps_teleports` VALUES ('7', '44', '5', '4', '6', '9', '5', 'You found a secret entrance', '0');
-INSERT INTO `data_maps_teleports` VALUES ('8', '45', '5', '4', '7', '9', '5', 'You found a secret entrance', '0');
-INSERT INTO `data_maps_teleports` VALUES ('9', '6', '9', '5', '44', '5', '4', 'You are back to the underground cave', '0');
-INSERT INTO `data_maps_teleports` VALUES ('10', '7', '9', '5', '45', '5', '4', 'You are back to the underground cave', '0');
-INSERT INTO `data_mix_defaults` VALUES ('1', '264', 'MODIFIER', 'STR', '30', '30', '70', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('2', '264', 'MODIFIER', 'DEX', '10', '80', '0', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('3', '264', 'TIMEOUT', 'STR', '40', '100', '0', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('4', '264', 'TIMEOUT', 'DEX', '40', '100', '0', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('5', '264', 'CLASS', 'CONSUMABLE', null, '50', '50', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('6', '256', 'TIMEOUT', '*', '86400', '150', '50', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('7', '256', 'CLASS', 'RAGENT', null, '50', '50', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('9', '264', 'GROUP', '1', null, null, null, '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('10', '256', 'GROUP', '2', null, null, null, '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('11', '1284', 'GROUP', '1', null, null, null, '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('12', '1284', 'MODIFIER', 'STR', '500', '10', '90', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('13', '1284', 'MODIFIER', 'DEX', '500', '10', '90', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('14', '1284', 'TIMEOUT', '*', '30', '5', '10', '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('16', '1284', 'CLASS', 'CONSUMABLE', null, null, null, '-1.00');
-INSERT INTO `data_mix_defaults` VALUES ('17', '1284', 'MODIFIER', 'HP', '-100', '20', '5', '-1.50');
 INSERT INTO `data_mix_iconrules` VALUES ('1', '1', 'CLASS', 'CONSUMABLE', null, 'EXISTS');
 INSERT INTO `data_mix_iconrules` VALUES ('2', '1', 'MODIFIER', 'HP', '20', 'LESS');
 INSERT INTO `data_mix_iconrules` VALUES ('3', '2', 'CLASS', 'CONSUMABLE', null, 'EXISTS');
@@ -674,42 +643,18 @@ INSERT INTO `data_religions` VALUES ('17', 'St. Cuthbert', '', null, null, null,
 INSERT INTO `data_religions` VALUES ('18', 'Vecna', '', null, null, null, null, null);
 INSERT INTO `data_religions` VALUES ('19', 'Wee Jas', '', null, null, null, null, null);
 INSERT INTO `data_religions` VALUES ('20', 'Yondalla', '', null, null, null, null, null);
-INSERT INTO `data_spawn` VALUES ('1', '12297', '1284', '1', '2', '1', '100', null);
-INSERT INTO `data_spawn_times` VALUES ('1', '1', '1223069402');
-INSERT INTO `gameobject_instance` VALUES ('1', '12553', 'a:2:{s:11:\"displayname\";s:6:\"Object\";s:11:\"description\";s:51:\"This is a bag found somewere on the Luskan Village.\";}', '1', '0', 'Ena saki', '40', '11', '0', '1', '1', '1', 'b_saki.o', null);
-INSERT INTO `gameobject_instance` VALUES ('2', '9737', 'a:1:{s:0:\"\";N;}', '1', '0', 'Object', '76', '13', '0', '7', '1', '1', 'aebre-bouche.o', null);
-INSERT INTO `gameobject_instance` VALUES ('3', '9993', 'a:1:{s:0:\"\";N;}', '1', '0', 'Object', '79', '15', '0', '7', '1', '1', 'blondinnet-bracelet.o', null);
-INSERT INTO `gameobject_instance` VALUES ('4', '11017', 'a:3:{s:11:\"displayname\";s:6:\"Object\";s:4:\"icon\";s:37:\"inventory/Trash-Empty-128x128 (2).png\";s:11:\"description\";s:48:\"An open barrel found by a well on Luskan Village\";}', '1', '0', 'Round Barrel', '48', '16', '0', '1', '1', '1', 'b_obj-barrel2.o', null);
-INSERT INTO `gameobject_instance` VALUES ('5', '12297', 'a:2:{s:11:\"displayname\";s:6:\"Object\";s:11:\"description\";s:70:\"This is a bag found somewere on the Luskan Village. It contains skata.\";}', '1', '0', 'Ena saki', '40', '11', '0', '1', '1', '1', 'b_saki.o', null);
-INSERT INTO `gameobject_instance` VALUES ('6', '17161', 'a:3:{s:11:\"displayname\";s:6:\"Object\";s:4:\"icon\";s:30:\"inventory/Spell_Holy_Power.jpg\";s:11:\"description\";s:172:\"This is a picture of a strange old man with a helmet. A text below the picture says:Toti is one of the gratest mayors ever in Liaque town. Noone has ever beat him in a war!\";}', '1', '0', 'Picture of Toti the Great', '32', '10', '1', '6', '1', '1', 'Map Object-Note.o', null);
-INSERT INTO `gameobject_instance` VALUES ('7', '18697', 'a:3:{s:11:\"displayname\";s:6:\"Object\";s:11:\"description\";s:7:\"A boat!\";s:4:\"icon\";s:34:\"inventory/Ellas-Greece-128x128.png\";}', '1', '0', 'Boat', '10', '-1', '1', '6', '1', '1', 'Field-Boat 1.o', null);
-INSERT INTO `gameobject_instance` VALUES ('8', '18953', 'a:6:{s:11:\"displayname\";s:6:\"Object\";s:11:\"description\";s:7:\"A boat!\";s:4:\"icon\";s:27:\"UI/Ellas-Greece-128x128.png\";s:12:\"templatename\";s:14:\"Testing Object\";s:7:\"subname\";s:18:\"(Developing Usage)\";s:7:\"mixinfo\";a:2:{s:5:\"group\";s:1:\"1\";s:4:\"data\";a:5:{i:0;a:6:{s:3:\"typ\";s:8:\"MODIFIER\";s:3:\"mod\";s:3:\"STR\";s:3:\"ofs\";s:2:\"30\";s:3:\"grv\";s:2:\"30\";s:3:\"drp\";s:2:\"70\";s:3:\"att\";s:5:\"-1.00\";}i:1;a:6:{s:3:\"typ\";s:8:\"MODIFIER\";s:3:\"mod\";s:3:\"DEX\";s:3:\"ofs\";s:2:\"10\";s:3:\"grv\";s:2:\"80\";s:3:\"drp\";s:1:\"0\";s:3:\"att\";s:5:\"-1.00\";}i:2;a:6:{s:3:\"typ\";s:7:\"TIMEOUT\";s:3:\"mod\";s:3:\"STR\";s:3:\"ofs\";s:2:\"40\";s:3:\"grv\";s:3:\"100\";s:3:\"drp\";s:1:\"0\";s:3:\"att\";s:5:\"-1.00\";}i:3;a:6:{s:3:\"typ\";s:7:\"TIMEOUT\";s:3:\"mod\";s:3:\"DEX\";s:3:\"ofs\";s:2:\"40\";s:3:\"grv\";s:3:\"100\";s:3:\"drp\";s:1:\"0\";s:3:\"att\";s:5:\"-1.00\";}i:4;a:6:{s:3:\"typ\";s:5:\"CLASS\";s:3:\"mod\";s:10:\"CONSUMABLE\";s:3:\"ofs\";N;s:3:\"grv\";s:2:\"50\";s:3:\"drp\";s:2:\"50\";s:3:\"att\";s:5:\"-1.00\";}}}}', '1', '0', 'Boat', '10', '7', '1', '6', '1', '1', 'Field-Boat 1.o', null);
-INSERT INTO `gameobject_instance` VALUES ('9', '19209', 'a:2:{s:11:\"displayname\";s:6:\"Object\";s:0:\"\";N;}', '1', '0', 'Left Statue', '3', '15', '1', '6', '1', '1', 'Castle General-Statue1.o', null);
 INSERT INTO `gameobject_template` VALUES ('1', 'z=0&visible=1&model=&level=1&displayname=Object', 'Testing Object', '(Developing Usage)', 'inventory/INV_Misc_Bag_08.jpg', null, null);
 INSERT INTO `gameobject_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'SCRIPT', 'return \"<font size=\\\"-1\\\">\".gl_mix_visualize($var,true, true).\"</font>\";');
-INSERT INTO `interface_module_assign` VALUES ('1', 'interface.main', 'CHATWIN', '2', '10');
-INSERT INTO `interface_module_assign` VALUES ('4', 'interface.main', 'SIDEBAR', '0', '1');
-INSERT INTO `interface_module_assign` VALUES ('5', 'interface.main', 'QUICKBAR', '1', '10');
-INSERT INTO `interface_module_resources` VALUES ('1', 'CHATWIN', 'JS', '{DATA.MODULE}/mod_chat/chatapi.js');
-INSERT INTO `interface_module_resources` VALUES ('2', 'CHATWIN', 'CSS', '{DATA.MODULE}/mod_chat/styles/style.css');
-INSERT INTO `interface_module_resources` VALUES ('3', 'SIDEBAR', 'JS', '{DATA.MODULE}/mod_sidebar/sidebar-feed.js');
-INSERT INTO `interface_module_resources` VALUES ('4', 'SIDEBAR', 'CSS', '{DATA.MODULE}/mod_sidebar/style.css');
-INSERT INTO `interface_module_resources` VALUES ('5', 'QUICKBAR', 'CSS', '{DATA.MODULE}/mod_quickbar/quickbar.css');
-INSERT INTO `interface_module_resources` VALUES ('6', 'QUICKBAR', 'JS', '{DATA.MODULE}/mod_quickbar/quickbar.js');
-INSERT INTO `interface_modules` VALUES ('CHATWIN', 'Chat Window', 'Cross-player chat window and system message receiver for any User Interface', 'chat');
-INSERT INTO `interface_modules` VALUES ('SIDEBAR', 'Side Bar', 'A sidebar that displays the user\'s current statistics', 'sidebar');
-INSERT INTO `interface_modules` VALUES ('QUICKBAR', 'Qucik Access Bar', 'A bar with 12 buttons with droppable/customizable ability that allows user to hold there items and actions', 'quickbar');
 INSERT INTO `item_template` VALUES ('1', null, 'Light Sword', 'A quite light sword, mostly used by dwarfs', 'WEAPON', 'ONEHAND-SWORD', 'inventory/INV_Sword_04.jpg', '1', '2', '1');
 INSERT INTO `item_template` VALUES ('2', null, 'Woodsman Sword', 'A Wooden excercising sword', 'WEAPON', 'TWOHAND-SWORD', 'inventory/INV_Sword_05.jpg', '2', '20', '0');
 INSERT INTO `item_template` VALUES ('3', 'slots=10', 'Woolen Bag', 'A bag made of wool. This bag can carry up to 10 items', 'CONTAINER', 'GENERIC', 'inventory/INV_Misc_Bag_08.jpg', '1', '5', '0');
 INSERT INTO `item_template` VALUES ('4', null, 'Dragon Book', 'One of the sacrest books of the Wulz\'ar Kingdom!', 'BOOK', null, 'inventory/INV_Misc_Book_10.jpg', '3', '20', '20');
-INSERT INTO `item_template` VALUES ('5', null, 'Flame Furry', 'This is an edible, soft orb with a shiny, fiery spirit around it!', 'CONSUMABLE', 'GEM', 'inventory/Spell_Fire_LavaSpawn.jpg', '4', '100', '10');
+INSERT INTO `item_template` VALUES ('5', null, 'Aggressive Shit', 'This is shit. Purely shit :-P', 'CONSUMABLE', 'GEM', 'inventory/Spell_Fire_LavaSpawn.jpg', '4', '100', '10');
 INSERT INTO `item_vardesc` VALUES ('quality', 'Quality', '0', '1', 'Common', 'ALIAS', '0=%3Cfont+color%3D%23666666%3EJunk%3C%2Ffont%3E&1=%3Cfont+color%3D%23009900%3ENormal%3C%2Ffont%3E&2=%3Cfont+color%3D%230033CC%3ERare%3C%2Ffont%3E&3=%3Cfont+color%3D%23663399%3ELegendary%3C%2Ffont%3E&4=%3Cfont+color%3D%23FF9900%3EEpic%3C%2Ffont%3E&5=%3Cfont+color%3D%23FF0000%3EHeroic%3C%2Ffont%3E');
 INSERT INTO `item_vardesc` VALUES ('class', 'Class', '0', '1', 'Unknown', 'SCRIPT', '$name = ucfirst(strtolower($var));\r\nif ($var==\'CONTAINER\') {\r\n  $name .= \" <a href=\\\"javascript:gloryIO(\'?a=interface.container&guid=\".$guid.\"\');\\\"><small><em>(Open)<em></small></a>\";\r\n}\r\nreturn $name;\r\n');
 INSERT INTO `item_vardesc` VALUES ('parent', 'Is On', '0', '0', null, 'GUID', null);
 INSERT INTO `item_vardesc` VALUES ('subclass', 'Subclass', '0', '0', 'Unknown', 'SCRIPT', 'return ucfirst(strtolower($var));');
 INSERT INTO `item_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'SCRIPT', 'return \"<font size=\\\"-1\\\">\".gl_mix_visualize($var,true, true).\"</font>\";');
-INSERT INTO `locks_global` VALUES ('1', null, null, null, null);
 INSERT INTO `npc_template` VALUES ('1', 'level=3&model=zombie-vert.o&state=NORMAL&visible=1', 'Wuz Grub', 'ORC', 'WARRIOR', 'portraits/lod_cultist.gif', 'CHAT,QUEST', 'HUMANOID', 'Wuz Grub is one of the finest warriors of the stratholme kingdom');
 INSERT INTO `npc_template` VALUES ('2', 'level=3&model=samurai-maitre.o&state=NORMAL&visible=1', 'Joe Amaroth', 'HUMAN', 'PALADIN', 'portraits/clans_kingsguard.gif', 'CHAT', 'HUMANOID', 'Joe Amaroth is a kingsguard!');
 INSERT INTO `npc_vardesc` VALUES ('name', 'Name', '1', '0', null, 'RAW', null);
@@ -722,29 +667,12 @@ INSERT INTO `system_dictionaries` VALUES ('2', 'GUID', 'UNIT', '1', 'FIXED', '0'
 INSERT INTO `system_dictionaries` VALUES ('3', 'GUID', 'ITEM', '2', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('4', 'GUID', 'NPC', '3', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('5', 'GUID', 'GAMEOBJECT', '4', 'FIXED', '0');
-INSERT INTO `system_hooks` VALUES ('1', 'map.move', 'hook-portal.php', 'portal_map_move', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('2', 'chat.command', 'hook-chatcommands.php', 'chat_admin', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('3', 'map.updategrid', 'hook-chatcommands.php', 'chat_notify_zidchange', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('4', 'interface.dropdown', 'hook-admin.php', 'admin_hook_dropdown', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('5', 'grid.alter', 'hook-base.php', 'hb_dynamic_grid_alter', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('6', 'system.init_operation', 'hook-distance.php', 'opinitTranslateID', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('7', 'system.init_operation', 'hook-chatcommands.php', 'chat_module_initialize', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('8', 'system.clientpoll', 'hook-sidebar.php', 'sidebar_data_feed', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('9', 'system.schedule', 'hook-itemuse.php', 'itemuse_schedule_hook', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('10', 'system.guid.update_end', 'hook-base.php', 'hb_update_user_session', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('11', 'map.render', 'hook-distance.php', 'renderphase', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('12', 'system.init_operation', 'hook-sidebar.php', 'sidebar_data_initialize', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('13', 'interface.dropdown', 'hook-itemuse.php', 'itemuse_dropdown', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('14', 'map.render', 'hook-itemuse.php', 'itemuse_quickbar_init', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('15', 'system.guid.deleted', 'hook-itemuse.php', 'itemuse_guid_deleted', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('16', 'item.pickup', 'hook-pickup.php', 'pickuphook_check_compatibility', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('17', 'system.guid.deleted', 'hook-base.php', 'hb_guid_deleted', 'YES', '0');
-INSERT INTO `unit_instance` VALUES ('1', '2305', 'a:4:{s:5:\"owner\";s:4:\"2307\";s:8:\"religion\";s:1:\"1\";s:8:\"citizens\";s:2:\"20\";s:8:\"soldiers\";s:1:\"0\";}', '2', '1', '1', '1', '54');
+INSERT INTO `system_dictionaries` VALUES ('6', 'GUID', 'SPELL', '5', 'FIXED', '0');
 INSERT INTO `unit_template` VALUES ('1', 'owner=0&religion=1&citizens=20&soldiers=0&x=12', 'Luskan Village', null, 'elements/mini/city.gif', 'Luskan village is a small, quite village oriented on the north side of the dark cliff.');
 INSERT INTO `unit_template` VALUES ('2', 'owner=1292&religion=1&citizens=20&soldiers=0', 'Mormon City', 'custom', 'elements/mini/capital.gif', 'Mormon is the capital of the strongholme kingdom. The king Melaton VI currently rules this area...');
 INSERT INTO `unit_vardesc` VALUES ('owner', 'Unit owner', '1', '0', '0', 'GUID', null);
 INSERT INTO `unit_vardesc` VALUES ('religion', 'City Religion', '1', '0', 'NEUTRAL', 'QUERY', 'SELECT `name` FROM `data_religions` WHERE `index` = $var');
 INSERT INTO `unit_vardesc` VALUES ('citizens', 'Number of citizens', '1', '0', '0', 'RAW', null);
 INSERT INTO `unit_vardesc` VALUES ('soldiers', 'Number of soldiers', '1', '0', '0', 'RAW', null);
-INSERT INTO `users_accounts` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '127.0.0.1', '2008-10-03 14:05:56', '1223069348', '0', 'ADMIN');
-INSERT INTO `users_accounts` VALUES ('2', 'player', '912af0dff974604f1321254ca8ff38b6', '127.0.0.1', '2008-10-01 23:02:22', '1222891486', '0', 'USER');
+INSERT INTO `users_accounts` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', null, null, null, null, 'ADMIN');
+INSERT INTO `users_accounts` VALUES ('2', 'player', '912af0dff974604f1321254ca8ff38b6', null, null, null, null, 'USER');

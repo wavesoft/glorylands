@@ -155,21 +155,23 @@ echoParam("package[website]", $row['website'], "Website", "parameter.gif");
 ################### DEPENDENCIES #######################
 $depends = unserialize($row['require']);
 $i = 0;
-foreach ($depends as $depend) {
-	$elmid++;
-	$ver = "<em>(Any)</em>";
-	if ($depends['ver']>0) $ver = $depends['ver'];
-?>
-<tr>
-	<td width="16"><input id="e<?php echo $elmid; ?>" name="depend[<?php echo $i; ?>]" type="checkbox" /></td>
-	<td width="16"><img src="../images/depend.gif" /></td>
-	<td width="178"><label for="e<?php echo $elmid; ?>"><b><?php echo $depend['name']; ?></b></label></td>
-	<td><label for="e<?php echo $elmid; ?>"><?php echo $depend['guid']; ?></label></td>
-	<td width="50"><label for="e<?php echo $elmid; ?>"><b>Version</b></label></td>
-	<td width="100"><label for="e<?php echo $elmid; ?>"><?php echo $ver; ?></label></td>
-</tr>
-<?php
-	$i++;
+if ($denepds) {
+	foreach ($depends as $depend) {
+		$elmid++;
+		$ver = "<em>(Any)</em>";
+		if ($depends['ver']>0) $ver = $depends['ver'];
+	?>
+	<tr>
+		<td width="16"><input id="e<?php echo $elmid; ?>" name="depend[<?php echo $i; ?>]" type="checkbox" /></td>
+		<td width="16"><img src="../images/depend.gif" /></td>
+		<td width="178"><label for="e<?php echo $elmid; ?>"><b><?php echo $depend['name']; ?></b></label></td>
+		<td><label for="e<?php echo $elmid; ?>"><?php echo $depend['guid']; ?></label></td>
+		<td width="50"><label for="e<?php echo $elmid; ?>"><b>Version</b></label></td>
+		<td width="100"><label for="e<?php echo $elmid; ?>"><?php echo $ver; ?></label></td>
+	</tr>
+	<?php
+		$i++;
+	}
 }
 if (sizeof($depends)==0) {
 ?>
