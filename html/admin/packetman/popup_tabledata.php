@@ -35,19 +35,23 @@ if (isset($_REQUEST['table']) && isset($_REQUEST['key'])) {
 		if ($_REQUEST['mode'] == 'delete') {
 			$struct .= "DELETE FROM `".$_REQUEST['table']."` WHERE ";
 			$where='';
-			foreach ($row as $key => $value) {
-				if ($key != $indexkey) {
-					if ($where!='') $where.=' AND ';
-					$where .= "`$key` = '".$value."'";
+			if (isset($_REQUEST['indexdel'])) {
+				$struct.="`{$indexkey}` = '".$row[$indexkey]."'";
+			} else {
+				foreach ($row as $key => $value) {
+					if ((($key != $indexkey) || !isset($_REQUEST['nokey'])) && !isset($_REQUEST['ignore'][$key])) {
+						if ($where!='') $where.=' AND ';
+						$where .= "`$key` = '".$value."'";
+					}
 				}
+				$struct.=$where;
 			}
-			$struct.=$where;
 		} else {
 			$struct .= "INSERT INTO `".$_REQUEST['table']."` \n";
 			$names = '';
 			$values = '';
 			foreach ($row as $key => $value) {
-				if ($key != $indexkey) {
+					if ((($key != $indexkey) || !isset($_REQUEST['nokey'])) && !isset($_REQUEST['ignore'][$key])) {
 					if ($names!='') $names.=',';
 					$names.='`'.$key.'`';
 					if ($values!='') $values.=',';
@@ -77,6 +81,14 @@ window.close();
 <form action="" method="post">
 <input type="hidden" name="table" value="<?php echo $_REQUEST['table']; ?>" />
 <input type="hidden" name="mode" value="<?php echo $_REQUEST['mode']; ?>" />
+<label for="nokey"><input id="nokey" type="checkbox" name="nokey" checked="checked" /> Do not include primery key</label>
+<?php
+	if ($_REQUEST['mode'] == 'delete') {
+?>
+ <label for="indexdel"><input id="indexdel" type="checkbox" name="indexdel" /> Delete using index</label>
+<?php	
+	}
+?>
 <?php
 	$sql->query("SHOW INDEX FROM `".$_REQUEST['table']."`");
 	$indexkey = $sql->fetch_array(MYSQL_ASSOC);
@@ -105,7 +117,7 @@ window.close();
 <?php
 			foreach ($row as $field => $value) {
 ?>
-		<td><?php echo $field; ?></td>
+		<td><input type="checkbox" title="Ignore this field" name="ignore[<?php echo $field; ?>]" /><?php echo $field; ?></td>
 <?php
 			}
 ?>

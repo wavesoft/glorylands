@@ -53,7 +53,7 @@ echo "Building manifest...";
 $manifestfiles = package_build_manifest($pid, $cache, $package);
 $filelist = array_merge($filelist, $manifestfiles);
 if ($manifestfiles) {
-	array_push($filelist, $cache.'/package.xml');
+	//array_push($filelist, $cache.'/package.xml');
 	echo "<font color=\"green\">ok</font>\n";
 } else {
 	echo "<font color=\"red\">failed</font>\n";

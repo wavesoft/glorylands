@@ -114,9 +114,7 @@ function distance_map_move(&$player_guid, &$from_x, &$from_y, &$from_map, &$to_x
 
 
 function renderPhase() {
-	
-	error_reporting(E_ALL);
-	
+		
 	global $dgrid;
 	$dgrid = array();
 

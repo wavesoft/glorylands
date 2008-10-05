@@ -5,9 +5,11 @@ include "../../config/config.php";
 include "../../engine/includes/base.php"; 
 include "scripts/packetman.php"; 
 include "scripts/packetgen.php"; 
+include "scripts/installfunc.php"; 
 $g_pcltar_lib_dir = $_CONFIG[GAME][BASE]."/admin/includes/lib";
 include "../includes/lib/pclzip.lib.php";
 include "../includes/lib/pcltar.lib.php";
+set_time_limit(0);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -34,139 +36,157 @@ if ($_REQUEST['a'] == 'upload') {
 	package_clear_dir($cache);
 	echo "<font color=\"green\">ok</font>\n";
 	
-	// Extract archive
+	// Confirm upload and get file
 	$file = $_FILES['fileupload'];
 	if (!isset($file)) {
 		die("<font color=\"red\">Warning! No file uploaded!</font></pre>\n<input type=\"button\" onclick=\"window.history.go(-1)\" value=\"Back\" />");
 	}
-	if (strtolower(substr($file['name'],-4)) == '.zip') {	
-		// ZIP Archive
+	$fname = $cache.'/'.$file['name'];
+	if (!move_uploaded_file($file['tmp_name'], $fname)) {
+		die("<font color=\"red\">Error uploading this file!</font></pre>\n<input type=\"button\" onclick=\"window.history.go(-1)\" value=\"Back\" />");
+	}
 	
-		echo "<b>ZIP</b> Detected. Deflating...";
-		$zip = new PclZip($file['tmp_name']);
-		$files=$zip->extract($cache);	
-		if (!$files) {
-			$extractok = false;
-			echo "<font color=\"red\">failed</font>\n";
-		} else {
-			$extractok = true;
-			echo "<font color=\"green\">done</font>\n";
-		}
-	
-	} elseif (strtolower(substr($file['name'],-4)) == '.tar') {	
-		// TAR Archive
-	
-		echo "<b>TAR</b> Detected. Extracting...";
-		$files=PclTarExtract($file['tmp_name'], $cache);
-		if (!$files) {
-			$extractok = false;
-			echo "<font color=\"red\">failed</font>\n";
-		} else {
-			$extractok = true;
-			echo "<font color=\"green\">done</font>\n";
-		}
-	
-	} elseif ((strtolower(substr($file['name'],-7)) == '.tar.gz') || (strtolower(substr($file['name'],-4)) == '.tgz')) {	
-		// GZip TAR Archive
-	
-		echo "<b>GZip</b> Detected. Deflating...";	
-		if (!function_exists('gzopen')) {
-			echo "<font color=\"red\">failed</font>\n";
-			die("\n<b>Your webserver does not support Zlib Compression Functions! Please install the <a href=\"http://www.gzip.org/zlib/\">zlib</a> extension for php, or try another package compression</b></pre>\n<input type=\"button\" onclick=\"window.history.go(-1)\" value=\"Back\" /><input type=\"button\" onclick=\"window.location='http://www.gzip.org/zlib/'\" value=\"Download ZLib\" />");
-		}
-		
-		$fin = gzopen($file['tmp_name'],"r");
-		$fout = fopen($cache."/package.tar", "w");
-		while ($buf = gzread($fin,10240)) {
-			fwrite($fout,$buf);
-		}
-		fclose($fin);
-		fclose($fout);
-		echo "<font color=\"green\">done</font>\n";
-	
-		echo "<b>TAR</b> Detected. Extracting...";
-		$files=PclTarExtract($cache."/package.tar", $cache);
-		if (!$files) {
-			$extractok = false;
-			echo "<font color=\"red\">failed</font>\n";
-		} else {
-			$extractok = true;
-			echo "<font color=\"green\">done</font>\n";
-		}
-	
-	} elseif (strtolower(substr($file['name'],-8)) == '.tar.bz2') {	
-		// BZ2 TAR Archive
-		echo "<b>BZip2</b> Detected. Deflating...";
-		if (!function_exists('bzopen')) {
-			echo "<font color=\"red\">failed</font>\n";
-			die("\n<b>Your webserver does not support Bzip2 Compression Functions! Please install the <a href=\"http://sources.redhat.com/bzip2/\">bzip2</a> extension for php, or try another package compression</b></pre>\n<input type=\"button\" onclick=\"window.history.go(-1)\" value=\"Back\" /><input type=\"button\" onclick=\"window.location='http://sources.redhat.com/bzip2/'\" value=\"Download BZip2\" />");
-		}
-	
-		$fin = bzopen($file['tmp_name'],"r");
-		$fout = fopen($cache."/package.tar", "w");
-		while ($buf = bzread($fin,10240)) {
-			fwrite($fout,$buf);
-		}
-		fclose($fin);
-		fclose($fout);
-		echo "<font color=\"green\">done</font>\n";
-	
-		echo "<b>TAR</b> Detected. Extracting...";
-		$files=PclTarExtract($cache."/package.tar", $cache);
-		if (!$files) {
-			$extractok = false;
-			echo "<font color=\"red\">failed</font>\n";
-		} else {
-			$extractok = true;
-			echo "<font color=\"green\">done</font>\n";
-		}
+	// Extract archive
+	echo "Extracting archive...";
+	if (!package_extract_file($fname, $cache)) {
+		echo "<font color=\"red\">failed</font>\n";
+		die("Operation interrupted! Errors:\n".$package_error);
 	} else {
-		die("<font color=\"red\">Cannot identify package type! Please use one of the follow formats: ZIP, TAR, GZIP, BZIP2</font></pre>\n<input type=\"button\" onclick=\"window.history.go(-1)\" value=\"Back\" />");
+		echo "<font color=\"green\">ok</font>\n";
+	}
+	
+	// Check multiple archive case
+	echo "Checking for multiple archive...";
+	$d = dir($cache);
+	$only_zip = true;
+	$zip_list = array();
+	while (false !== ($entry = $d->read())) {
+		// Exclude hidden files
+		if (substr($entry,0,1)!='.') {
+			if ( (strtolower(substr($entry,-4)) == '.zip') ||
+				 (strtolower(substr($entry,-4)) == '.tar') ||
+				 (strtolower(substr($entry,-4)) == '.tgz') ||
+				 (strtolower(substr($entry,-7)) == '.tar.gz') ||
+				 (strtolower(substr($entry,-4)) == '.tbz') ||
+				 (strtolower(substr($entry,-8)) == '.tar.bz2')) {
+				 
+				// Exclude the uploaded zip file
+				if ($entry!=$file['name']) array_push($zip_list, $entry);				
+			} else {
+				$only_zip = false;
+			}
+		}
+	}
+	$d->close();
+	if ($only_zip) {
+		echo "<font color=\"#FF9900\">found</font>\nInstalling <b>".sizeof($zip_list)."</b> packages:\n\n";
+	
+		// Sort list
+		sort($zip_list);
+	
+		// Make the folder that will hold the further extracted files
+		$old_cache = $cache;
+		$cache.='/extract';
+		mkdir($cache);
+		
+	} else {
+		echo "<font color=\"green\">not found</font>\n";
+		$zip_list = array('');
 	}
 
-	echo "Preparing installation...";
-	$pinfo = package_install_prepare($cache);
-	if (!$pinfo) {
-		echo "<font color=\"red\">failed</font>\n";
-		if ($force) {
-			echo "Operation interrupted! Errors:\n".$package_error."\nProcess is forced to continue...\n\n";	
+	// Package counter
+	$installed_count = 0;
+
+	// Start installing archives
+	foreach ($zip_list as $zip_file) {
+		
+		// Error flag
+		$has_errors = false;
+		
+		if ($zip_file=='') {
+			// If we do not have multiple archives, use the default archive and the current directory
+			$zipname = 'package';
+			
 		} else {
-			die("Operation interrupted! Errors:\n".$package_error);
+		
+			// If we haev multiple archives, extract the archive to the "extracted" directory
+			echo "\nExtracting $zip_file...";
+			package_clear_dir($cache);
+			
+			// Extract archive
+			if (!package_extract_file($old_cache.'/'.$zip_file, $cache)) {
+				echo "<font color=\"red\">failed</font>\n";
+				echo "Operation interrupted! Errors:\n".$package_error;
+				$has_errors = true;
+			} else {
+				echo "<font color=\"green\">ok</font>\n";
+			}
+			
+			// Get zip name
+			$zipname = pathinfo($zip_file);
+			$zipname = $zipname['filename'];
 		}
-	} else {
-		echo "<font color=\"green\">ok</font>\n";
+	
+		if (!$has_errors) {
+			echo "Starting installation of the <b>{$zipname}</b>...";
+			$pinfo = package_install_prepare($cache);
+			if (!$pinfo) {
+				echo "<font color=\"red\">failed</font>\n";
+				if ($force) {
+					echo "Operation interrupted! Errors:\n".$package_error."\nProcess is forced to continue...\n\n";	
+				} else {
+					echo "Operation interrupted! Errors:\n".$package_error;
+					$has_errors = true;
+				}
+			} else {
+				echo "<font color=\"green\">ok</font>\n";
+			}
+		}
+		
+		if (!$has_errors) {
+			echo "Installing package...";
+			$filelist = package_install($cache, $package, $pinfo);
+			if (!$filelist) {
+				echo "<font color=\"red\">failed</font>\n";
+				if ($force) {
+					echo "Operation interrupted! Errors:\n".$package_error."\nProcess is forced to continue...\n\n";	
+				} else {
+					echo "Operation interrupted! Errors:\n".$package_error;
+					$has_errors = true;
+				}
+			} else {
+				echo "<font color=\"green\">ok</font>\n";
+			}
+		}
+		
+		if (!$has_errors) {
+			echo "Running install scripts...";
+			if (!package_run_install($pinfo['index'], $package.'/'.$pinfo['guid'].'/scripts')) {
+				echo "<font color=\"red\">failed</font>\n";
+				if ($force) {
+					echo "Operation interrupted! Errors:\n".$package_error."\nProcess is forced to continue...\n\n";	
+				} else {
+					echo "Operation interrupted! Errors:\n".$package_error;
+					$has_errors = true;
+				}
+			} else {
+				echo "<font color=\"green\">ok</font>\n";
+			}
+		}
+
+		if (!$has_errors) {
+			// Display warnings
+			if ($package_error!='') {
+				echo "\nWarnings:\n";
+				echo $package_error;
+			}
+			
+			$installed_count++;
+		}
+		
 	}
 	
-	echo "Installing package...";
-	$filelist = package_install($cache, $package, $pinfo);
-	if (!$filelist) {
-		echo "<font color=\"red\">failed</font>\n";
-		if ($force) {
-			echo "Operation interrupted! Errors:\n".$package_error."\nProcess is forced to continue...\n\n";	
-		} else {
-			die("Operation interrupted! Errors:\n".$package_error);
-		}
-	} else {
-		echo "<font color=\"green\">ok</font>\n";
-	}
-	
-	echo "Running install scripts...";
-	if (!package_run_install($pinfo['index'], $package.'/'.$pinfo['guid'].'/scripts')) {
-		echo "<font color=\"red\">failed</font>\n";
-		if ($force) {
-			echo "Operation interrupted! Errors:\n".$package_error."\nProcess is forced to continue...\n\n";	
-		} else {
-			die("Operation interrupted! Errors:\n".$package_error);
-		}
-	} else {
-		echo "<font color=\"green\">ok</font>\n";
-	}
-	
-	// Display warnings
-	if ($package_error!='') {
-		echo "\nWarnings:\n";
-		echo $package_error;
-	}
+	echo "\n<b>{$installed_count}</b> packages are installed";
 	
 	echo "</pre>\n";
 	?>
