@@ -784,6 +784,12 @@ function renderUpdate() {
 	var bx = grid_x - (grid_w/2);
 	var by = grid_y - (grid_h/2);
 	
+	// Check for data existance
+	if (!grid_range || !$defined(grid_range.x)) {
+		showStatus('<font color=\"red\">Map cannot be loaded!</font><br />', 5000);
+		return false;	
+	}
+	
 	// Validate data range
 	if (bx<grid_range.x.m) bx=grid_range.x.m;
 	if (bx+grid_w>grid_range.x.M) bx=grid_range.x.M-grid_w;
