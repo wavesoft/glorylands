@@ -980,6 +980,7 @@ function package_install($src_dir, $dst_dir, $pinfo) {
 					'data' => $file
 				));
 			} elseif (($use == 'UNINSTALL') || ($use == 'DISABLE')) {
+				$valid = true;
 				$sql->addRow('system_packages_uninstall', array(
 					'package' => $pid,
 					'umode' => 'SQL',
@@ -989,11 +990,13 @@ function package_install($src_dir, $dst_dir, $pinfo) {
 			}
 			
 			// Was the import valid?
-			if (!valid) {			
+			if ($valid) {			
 				// Copy the file if yes
 				if (!copy($src_dir.'/scripts/'.$file, $dst_dir.'/scripts/'.$file)) {
 					$package_error.=" &bull; Cannot copy file {$src_dir}/scripts/{$file} to {$dst_dir}/scripts/{$file}!\n";
 				};
+			} else {
+				$package_error.=" &bull; The file use '$use' is not known\n";
 			}
 		}		
 	}
@@ -1017,6 +1020,7 @@ function package_install($src_dir, $dst_dir, $pinfo) {
 					'data' => $file
 				));
 			} elseif (($use == 'UNINSTALL') || ($use == 'DISABLE')) {
+				$valid = true;
 				$sql->addRow('system_packages_uninstall', array(
 					'package' => $pid,
 					'umode' => 'SCRIPT',
@@ -1026,11 +1030,13 @@ function package_install($src_dir, $dst_dir, $pinfo) {
 			}
 			
 			// Was the import valid?
-			if (!valid) {
+			if ($valid) {
 				// Copy the file if yes
 				if (!copy($src_dir.'/scripts/'.$file, $dst_dir.'/scripts/'.$file)) {
 					$package_error.=" &bull; Cannot copy file {$src_dir}/scripts/{$file} to {$dst_dir}/scripts/{$file}!\n";
 				};				
+			} else {
+				$package_error.=" &bull; The file use '$use' is not known\n";
 			}
 		}		
 	}

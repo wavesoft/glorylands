@@ -223,7 +223,7 @@ function package_build_manifest($pid, $dest_dir, $package_root) {
 	}
 
 	// Finalize
-	fwrite($f,"<package>\n");
+	fwrite($f,"</package>\n");
 	fclose($f);
 
 	// Remove partial XML
