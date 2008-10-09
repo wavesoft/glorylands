@@ -1,64 +1,65 @@
-Index.php			Entry point. Passing parameters to engine/eventprocess.php .
-Ver.php				GloryLand version.
-Msgfeed.php 			This is used to feed any messages that are stacked on the player's stack, to the game interface. This is used when the game interface has nothing to send, but an update is required. This file is read by the game engine 12 times per minute.
+[root folder]			The main folder.
+-Index.php			Entry point. Passing parameters to engine/eventprocess.php .
+-Ver.php				GloryLand version.
+-Msgfeed.php 			This is used to feed any messages that are stacked on the player's stack, to the game interface. This is used when the game interface has nothing to send, but an update is required. This file is read by the game engine 12 times per minute.
 
-[Config]			General info directory.
-Config/config.php		Static (and global) game settings (base paths, SQL info etc.).
-Config/diralias.php		Locations and names for all directories.
+[Config]				General info directory.
+-Config/config.php		Static (and global) game settings (base paths, SQL info etc.).
+-Config/diralias.php		Locations and names for all directories.
 
-[Images]			Images for the game.
-Images/chars			Character images.
-Images/chars/large 		Large character images.
-Images/elements			They will be used by the actual game interface. For example, icons on buildings, sign etc.
-Images/players			Race images.
-Images/portraits 		Portraits of different characters.
-Images/UI			All user interface images.
-Images/items			(Will be merged to Images/elements).
-Images/inventory		Spell and item icons.
-Images/tiles			Tilesets of the game. (May be empty in your version, John didn’t put them, because there are more than ten thousand).
-Images/sightseens		Realistic background for battles and building interfaces etc.
+[Images]				Images for the game.
+-Images/chars			Character images.
+-Images/chars/large 		Large character images.
+-Images/elements			They will be used by the actual game interface. For example, icons on buildings, sign etc.
+-Images/players			Race images.
+-Images/portraits 		Portraits of different characters.
+-Images/UI			All user interface images.
+-Images/items			(Will be merged to Images/elements).
+-Images/inventory		Spell and item icons.
+-Images/tiles			Tilesets of the game. (May be empty in your version, John didn’t put them, because there are more than ten thousand).
+-Images/sightseens		Realistic background for battles and building interfaces etc.
 
 [data]				Game content
-data/engine			Engine-specific data
-data/engine/actions		The actual code for the game actions
-data/engine/actions.manifest	The run-time information for the game actions
-data/engine/actions.lib		The library files (group of functions) used by the actions
-data/engine/actions.hook	This folder contains all the game-wide hook handlers
-data/engine/actions.compiled	This folder will contain the compiled functions (Will be used if the actions are written in interpreted language)
-data/interfaces			The SMARTY template files used by out.html.php (The file is selected by the iface= parameter)
-data/maps			The game map data
-data/models			The game models data
-data/modules			The system modules (User interface add-ons)
+-data/engine			Engine-specific data
+-data/engine/actions		The actual code for the game actions
+--data/engine/actions.manifest	The run-time information for the game actions
+--data/engine/actions.lib		The library files (group of functions) used by the actions
+--data/engine/actions.hook	This folder contains all the game-wide hook handlers
+--data/engine/actions.compiled	This folder will contain the compiled functions (Will be used if the actions are written in interpreted language)
+-data/interfaces			The SMARTY template files used by out.html.php (The file is selected by the iface= parameter)
+-data/maps			The game map data
+-data/models			The game models data
+-data/modules			The system modules (User interface add-ons)
 
-[engine]			The game engine core
-engine/eventprocess.php		This is the main event processing script. It initializes the action session and environment and handles the output
-engine/actionprocess.php	This script initializes and runs the actual gane action
-engine/security-check.php	This script validates the security conditions to run an action
-engine/validity-check.php	This script validates the validity conditions to run an action
-engine/data			This folder contains some data cache information. Theese are used to quickly initialize the game, since the SQL-equilavent query takes much longer time to copmlete.
-engine/includes			Action-Wide functions (GL API)
-engine/managers			Action manager providers. (Managers are dynamic classes automatically instanced if the request contains a special parameter in the "<manager><index>=<init_string>" form - ex. player1=wavesoft)
-engine/outputprocessors		The action result renderers
-engine/scripts			(Not used any more, will be removed)
+[engine]				The game engine core
+-engine/eventprocess.php		This is the main event processing script. It initializes the action session and environment and handles the output
+-engine/actionprocess.php		This script initializes and runs the actual gane action
+-engine/security-check.php	This script validates the security conditions to run an action
+-engine/validity-check.php		This script validates the validity conditions to run an action
+-engine/data			This folder contains some data cache information. Theese are used to quickly initialize the game, since the SQL-equilavent query takes much longer time to copmlete.
+-engine/includes			Action-Wide functions (GL API)
+-engine/managers		Action manager providers. (Managers are dynamic classes automatically instanced if the request contains a special parameter in the "<manager><index>=<init_string>" form - ex. player1=wavesoft)
+-engine/outputprocessors		The action result renderers
+-engine/scripts			(Not used any more, will be removed)
 
-[themes]			The overall game themes
-themes/<theme>/header.php	The site header
-themes/<theme>/footer.php	The site footer
-themes/<theme>/style.css	The site stylesheet information
+[themes]				The overall game themes
+-themes/<theme>/header.php	The site header
+-themes/<theme>/footer.php	The site footer
+-themes/<theme>/style.css	The site stylesheet information
 
 [admin]				The administration system files
-admin/cache			This is a temporary folder that is used by the admin system for package extraction, packing, etc.
-admin/engine			Some basic admin engine files
-admin/images			Administration interface images
-admin/includes			Javascript includes for the browser (PHPs should be moved to engine)
-admin/modelmaker		Model maker tool, root directory
-admin/packages			Contains the package local cache
-admin/packages/<guid>/disabled	Contains the removed files of the package when disabled
-admin/packages/<guid>/scripts	Contains the installation/uninstallation/enable/disable scripts for this package
-admin/packages/<guid>/source	Contains the source package file (used for fixing/reinstalling the package)
-admin/packetman			The advanced package manager tool, root directory
-admin/scripts			Holds the saved scripts of the PHP evaluation console (admin/syseval.php)
-admin/uninstall			(Depreciated)
+-admin/cache			This is a temporary folder that is used by the admin system for package extraction, packing, etc.
+-admin/engine			Some basic admin engine files
+-admin/images			Administration interface images
+-admin/includes			Javascript includes for the browser (PHPs should be moved to engine)
+-admin/modelmaker		Model maker tool, root directory
+-admin/packages			Contains the package local cache
+-admin/packages/<guid>/disabled	Contains the removed files of the package when disabled
+-admin/packages/<guid>/scripts	Contains the installation/uninstallation/enable/disable scripts for this package
+-admin/packages/<guid>/source	Contains the source package file (used for fixing/reinstalling the package)
+-admin/packetman		The advanced package manager tool, root directory
+-admin/scripts			Holds the saved scripts of the PHP evaluation console (admin/syseval.php)
+-admin/uninstall			(Depreciated)
 
 [includes]			Javascript files for browser script
 [sql]				The SQL installation files
