@@ -117,7 +117,11 @@ button.blank {
 <table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
     <td class="textframe" align="center"><img src="images/UI/gl_chaos.png" width="226" height="226" /></td>
+{if $error}
+    <td width="215" rowspan="3" align="center" valign="top" class="panelframe">
+{else}
     <td width="215" rowspan="2" align="center" valign="top" class="panelframe">
+{/if}
 	    <table width="100%"  border="0" cellspacing="0" cellpadding="0">
 	    <tr>
 			  <td width="17" height="44" background="images/UI/head_l.gif">&nbsp;</td>
@@ -131,10 +135,40 @@ button.blank {
 	  </table>	    
 	<br /></td>
   </tr>
+{if $error}
+  <tr>
+    <td align="center" class="textframe"><font color="#FF0000">{$error}</font></td>
+  </tr>
+{/if}
   <tr>
     <td align="left" class="textframe"><h3>Create new account </h3>
-      <p>GloryLands is an open-data, massive multiplayer online game that is based on a continiously extensible world and innumerable items, quests and monsters. You can enter this world just using your web browser. No extra software or knowledge is required.</p>
-      <h4>&nbsp;</h4>
+      <p>Please complete the information required to create a new account. No activation is required, but your account might be deleted on future database update: </p>
+      <form  method="post" action="">
+	  <input type="hidden" name="action" value="create" />
+	  <table>
+	  <tr>
+	  	<td>Username:</td>
+		<td><input type="text" name="username" />
+	  </tr>
+	  <tr>
+	  	<td>Password:</td>
+		<td><input type="password" name="password" />
+	  </tr>
+	  <tr>
+	  	<td>Confirm:</td>
+		<td><input type="password" name="password2" />
+	  </tr>
+	  <tr>
+	  	<td>E-mail:</td>
+		<td><input type="email" name="email" />
+	  </tr>
+	  <tr>
+	  	<td colspan="2">
+		<input type="submit" value="Create account" />
+		</td>
+	  </tr>
+	  </table>
+      </form>      	  
     </td>
   </tr>
   <tr>

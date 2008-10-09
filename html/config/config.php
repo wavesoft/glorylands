@@ -23,7 +23,7 @@ define('INDX_INTERFACE', 'INDX_INTERFACE');
 
 ### The database configuration
 $_CONFIG[DB][HOST] 			= "localhost";
-$_CONFIG[DB][DATABASE] 		= "gl_empty";
+$_CONFIG[DB][DATABASE] 		= "test";
 $_CONFIG[DB][USER] 			= "glory";
 $_CONFIG[DB][PASSWORD] 		= "lands";
 
