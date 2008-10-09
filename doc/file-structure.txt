@@ -21,7 +21,7 @@
 
 [data]				Game content
 -data/engine			Engine-specific data
--data/engine/actions		The actual code for the game actions
+--data/engine/actions		The actual code for the game actions
 --data/engine/actions.manifest	The run-time information for the game actions
 --data/engine/actions.lib		The library files (group of functions) used by the actions
 --data/engine/actions.hook	This folder contains all the game-wide hook handlers
