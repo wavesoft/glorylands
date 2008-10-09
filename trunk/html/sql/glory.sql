@@ -596,8 +596,8 @@ CREATE TABLE `unit_vardesc` (
 CREATE TABLE `users_accounts` (
   `index` int(11) NOT NULL auto_increment,
   `name` varchar(30) collate latin1_general_ci default NULL,
-  `password` varchar(32) collate latin1_general_ci default NULL,
-  `lastip` varchar(15) collate latin1_general_ci default NULL,
+  `password` varchar(32) collate latin1_general_ci default NULL, 
+`email` varchar(80) collate latin1_general_ci default NULL,  `lastip` varchar(15) collate latin1_general_ci default NULL,
   `lastlogin` timestamp NULL default NULL,
   `lastaction` int(11) default NULL,
   `online` tinyint(1) default NULL,
@@ -674,5 +674,5 @@ INSERT INTO `unit_vardesc` VALUES ('owner', 'Unit owner', '1', '0', '0', 'GUID',
 INSERT INTO `unit_vardesc` VALUES ('religion', 'City Religion', '1', '0', 'NEUTRAL', 'QUERY', 'SELECT `name` FROM `data_religions` WHERE `index` = $var');
 INSERT INTO `unit_vardesc` VALUES ('citizens', 'Number of citizens', '1', '0', '0', 'RAW', null);
 INSERT INTO `unit_vardesc` VALUES ('soldiers', 'Number of soldiers', '1', '0', '0', 'RAW', null);
-INSERT INTO `users_accounts` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', null, null, null, null, 'ADMIN');
-INSERT INTO `users_accounts` VALUES ('2', 'player', '912af0dff974604f1321254ca8ff38b6', null, null, null, null, 'USER');
+INSERT INTO `users_accounts` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '', null, null, null, null, 'ADMIN');
+INSERT INTO `users_accounts` VALUES ('2', 'player', '912af0dff974604f1321254ca8ff38b6', '', null, null, null, null, 'USER');

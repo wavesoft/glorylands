@@ -237,10 +237,11 @@ button.blank {
   <tr>
     <td align="left" class="textframe"><h3>Welcome to GloryLands MMORPG!</h3>
       <p>GloryLands is an open-data, massive multiplayer online game that is based on a continiously extensible world and innumerable items, quests and monsters. You can enter this world just using your web browser. No extra software or knowledge is required.</p>
+      <p>Keep in mind that this is only a demonstration of the latest stable SVN version of the game. You can find more information on SourceForge: <a href="https://sourceforge.net/projects/glorylandsweb-b">https://sourceforge.net/projects/glorylandsweb-b</a></p>
       <h4>Disclamer</h4>
-      <p>I want to inform the users of this website that most of the graphics of this game are not my material. If you are fan of the most known RPG games, you'll probably find many simillarities. I tried to use only free material found on the internet, buf if I have violated any copyright law please let me know. I'll try to remove it as soon as possible. I hope that through the open-data system many new copyleft or copyrightless graphics will be added and thus, I'll be able to remove all the possibly copyrigthed material. The source of the graphics are listed <a href="disclaimer.html" target="_blank">here</a> </p>
+      <p>I want to inform the users of this website that most of the graphics of this game are not my material. If you are fan of the most known RPG games, you'll probably find many simillarities. I tried to use only free material found on the internet, buf if I have violated any copyright law please let me know. I'll try to remove it as soon as possible. I hope that through the open-data system many new copyleft or copyrightless graphics will be added and thus, I'll be able to remove all the possibly copyrigthed material. </p>
       <p>On the other hand, the game engine and the overall game design is completely my work.</p>
-    <p><img src="images/ui/ffox.png" width="48" height="48" align="absmiddle" />Optimized for mozilla Firefox </p></td>
+    <p><img src="images/UI/ffox.png" width="48" height="48" align="absmiddle" />Optimized for mozilla Firefox </p></td>
   </tr>
   <tr>
     <td colspan="2" align="center">&nbsp;</td>
