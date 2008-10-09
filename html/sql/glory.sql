@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
 Source Host: localhost
-Source Database: test
+Source Database: gl_empty
 Target Host: localhost
-Target Database: test
-Date: 5/10/2008 11:25:42 לל
+Target Database: gl_empty
+Date: 6/10/2008 12:31:33 נל
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -253,7 +253,7 @@ CREATE TABLE `interface_module_assign` (
   `position` int(11) default NULL,
   `weight` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for interface_module_resources
@@ -264,7 +264,7 @@ CREATE TABLE `interface_module_resources` (
   `mode` enum('CSS','JS','HEADER','FOOTER') collate latin1_general_ci default NULL,
   `filename` varchar(120) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for interface_modules
@@ -477,7 +477,7 @@ CREATE TABLE `system_hooks` (
   `active` enum('YES','NO') collate latin1_general_ci default 'YES',
   `package` int(11) default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_messages
@@ -596,8 +596,9 @@ CREATE TABLE `unit_vardesc` (
 CREATE TABLE `users_accounts` (
   `index` int(11) NOT NULL auto_increment,
   `name` varchar(30) collate latin1_general_ci default NULL,
-  `password` varchar(32) collate latin1_general_ci default NULL, 
-`email` varchar(80) collate latin1_general_ci default NULL,  `lastip` varchar(15) collate latin1_general_ci default NULL,
+  `password` varchar(32) collate latin1_general_ci default NULL,
+  `email` varchar(80) collate latin1_general_ci default NULL,
+  `lastip` varchar(15) collate latin1_general_ci default NULL,
   `lastlogin` timestamp NULL default NULL,
   `lastaction` int(11) default NULL,
   `online` tinyint(1) default NULL,
@@ -645,6 +646,18 @@ INSERT INTO `data_religions` VALUES ('19', 'Wee Jas', '', null, null, null, null
 INSERT INTO `data_religions` VALUES ('20', 'Yondalla', '', null, null, null, null, null);
 INSERT INTO `gameobject_template` VALUES ('1', 'z=0&visible=1&model=&level=1&displayname=Object', 'Testing Object', '(Developing Usage)', 'inventory/box128.png', null, null);
 INSERT INTO `gameobject_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'SCRIPT', 'return \"<font size=\\\"-1\\\">\".gl_mix_visualize($var,true, true).\"</font>\";');
+INSERT INTO `interface_module_assign` VALUES ('1', 'interface.main', 'CHATWIN', '2', '10');
+INSERT INTO `interface_module_assign` VALUES ('2', 'interface.main', 'SIDEBAR', '0', '1');
+INSERT INTO `interface_module_assign` VALUES ('3', 'interface.main', 'QUICKBAR', '4', '10');
+INSERT INTO `interface_module_resources` VALUES ('1', 'CHATWIN', 'JS', '{DATA.MODULE}/mod_chat/chatapi.js');
+INSERT INTO `interface_module_resources` VALUES ('2', 'CHATWIN', 'CSS', '{DATA.MODULE}/mod_chat/styles/style.css');
+INSERT INTO `interface_module_resources` VALUES ('3', 'SIDEBAR', 'JS', '{DATA.MODULE}/mod_sidebar/sidebar-feed.js');
+INSERT INTO `interface_module_resources` VALUES ('4', 'SIDEBAR', 'CSS', '{DATA.MODULE}/mod_sidebar/style.css');
+INSERT INTO `interface_module_resources` VALUES ('5', 'QUICKBAR', 'CSS', '{DATA.MODULE}/mod_quickbar/quickbar.css');
+INSERT INTO `interface_module_resources` VALUES ('6', 'QUICKBAR', 'JS', '{DATA.MODULE}/mod_quickbar/quickbar.js');
+INSERT INTO `interface_modules` VALUES ('CHATWIN', 'Chat Window', 'Cross-player chat window and system message receiver for any User Interface', 'chat');
+INSERT INTO `interface_modules` VALUES ('SIDEBAR', 'Side Bar', 'A sidebar that displays the user\'s current statistics', 'sidebar');
+INSERT INTO `interface_modules` VALUES ('QUICKBAR', 'Qucik Access Bar', 'A bar with 12 buttons with droppable/customizable ability that allows user to hold there items and actions', 'quickbar');
 INSERT INTO `item_template` VALUES ('1', null, 'Light Sword', 'A quite light sword, mostly used by dwarfs', 'WEAPON', 'ONEHAND-SWORD', 'inventory/Kunai-128x128.png', '1', '2', '1');
 INSERT INTO `item_template` VALUES ('2', null, 'Woodsman Sword', 'A Wooden excercising sword', 'WEAPON', 'TWOHAND-SWORD', 'inventory/Kunai-128x128.png', '2', '20', '0');
 INSERT INTO `item_template` VALUES ('3', 'slots=10', 'Woolen Bag', 'A bag made of wool. This bag can carry up to 10 items', 'CONTAINER', 'GENERIC', 'inventory/box128.png', '1', '5', '0');
@@ -668,6 +681,24 @@ INSERT INTO `system_dictionaries` VALUES ('3', 'GUID', 'ITEM', '2', 'FIXED', '0'
 INSERT INTO `system_dictionaries` VALUES ('4', 'GUID', 'NPC', '3', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('5', 'GUID', 'GAMEOBJECT', '4', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('6', 'GUID', 'SPELL', '5', 'FIXED', '0');
+INSERT INTO `system_hooks` VALUES ('1', 'map.move', 'hook-portal.php', 'portal_map_move', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('2', 'chat.command', 'hook-chatcommands.php', 'chat_admin', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('3', 'map.updategrid', 'hook-chatcommands.php', 'chat_notify_zidchange', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('4', 'interface.dropdown', 'hook-admin.php', 'admin_hook_dropdown', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('5', 'grid.alter', 'hook-base.php', 'hb_dynamic_grid_alter', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('6', 'system.init_operation', 'hook-distance.php', 'opinitTranslateID', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('7', 'system.init_operation', 'hook-chatcommands.php', 'chat_module_initialize', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('8', 'system.clientpoll', 'hook-sidebar.php', 'sidebar_data_feed', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('9', 'system.schedule', 'hook-itemuse.php', 'itemuse_schedule_hook', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('10', 'system.guid.update_end', 'hook-base.php', 'hb_update_user_session', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('11', 'map.render', 'hook-distance.php', 'renderphase', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('12', 'system.init_operation', 'hook-sidebar.php', 'sidebar_data_initialize', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('13', 'interface.dropdown', 'hook-itemuse.php', 'itemuse_dropdown', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('14', 'map.render', 'hook-itemuse.php', 'itemuse_quickbar_init', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('15', 'system.guid.deleted', 'hook-itemuse.php', 'itemuse_guid_deleted', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('16', 'item.pickup', 'hook-pickup.php', 'pickuphook_check_compatibility', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('17', 'system.guid.deleted', 'hook-base.php', 'hb_guid_deleted', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('18', 'system.complete_operation', 'hook-sidebar.php', 'sidebar_data_feed', 'YES', '0');
 INSERT INTO `unit_template` VALUES ('1', 'owner=0&religion=1&citizens=20&soldiers=0&x=12', 'Luskan Village', null, 'elements/mini/city.gif', 'Luskan village is a small, quite village oriented on the north side of the dark cliff.');
 INSERT INTO `unit_template` VALUES ('2', 'owner=1292&religion=1&citizens=20&soldiers=0', 'Mormon City', 'custom', 'elements/mini/capital.gif', 'Mormon is the capital of the strongholme kingdom. The king Melaton VI currently rules this area...');
 INSERT INTO `unit_vardesc` VALUES ('owner', 'Unit owner', '1', '0', '0', 'GUID', null);
