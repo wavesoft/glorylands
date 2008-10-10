@@ -241,7 +241,8 @@ button.blank {
       <h4>Disclamer</h4>
       <p>I want to inform the users of this website that most of the graphics of this game are not my material. If you are fan of the most known RPG games, you'll probably find many simillarities. I tried to use only free material found on the internet, buf if I have violated any copyright law please let me know. I'll try to remove it as soon as possible. I hope that through the open-data system many new copyleft or copyrightless graphics will be added and thus, I'll be able to remove all the possibly copyrigthed material. </p>
       <p>On the other hand, the game engine and the overall game design is completely my work.</p>
-    <p><img src="images/UI/ffox.png" width="48" height="48" align="absmiddle" />Optimized for mozilla Firefox <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=230518&type=3" /></p></td>
+    <p><img src="images/UI/ffox.png" width="48" height="48" align="absmiddle" />Optimized for mozilla Firefox </p>
+	<p><a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=230518&amp;type=3" alt="SourceForge.net Logo" width="125" border="0" height="37"></a> This is an open-source project</p></td>
   </tr>
   <tr>
     <td colspan="2" align="center">&nbsp;</td>
