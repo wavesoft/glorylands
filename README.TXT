@@ -169,3 +169,25 @@
  The game graphics are found on the internet by free to use (or claiming so) material.
  If you think that there might be a copyright violation please let me know 
  as soon as possible on <wavesoft@users.sourceforge.net>
+
+ =======================================================================
+  5.Terms of Use
+ ======================================================================= 
+
+ If you are using this program, you automatically accept the following terms.
+ If you dont you should erase all the source code copies that you have:
+
+ - This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+ - This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ - If you are using this software on a public server you have to synchronize 
+   the game content, provided through the open game content contribution system,
+   with the root game server (SVN) or must have the public contribution services 
+   turned off.Private servers have no restrictions.
