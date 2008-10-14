@@ -19,6 +19,7 @@ if (!isset($_SESSION[PLAYER][DATA])){
 	if ($act_operation=='interface.entry') $ans=true;
 	if ($act_operation=='interface.entry.register') $ans=true;
 	if ($act_operation=='interface.entry.newchar') $ans=true;
+	if ($act_operation=='regquiz.quiz') $ans=true;
 	if (!$ans) return false;
 }
 
