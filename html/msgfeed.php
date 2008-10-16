@@ -20,6 +20,9 @@
 include "config/config.php";
 include "engine/includes/base.php";
 
+// We are currently in message feed system
+define('IN_MSGFEED', true);
+
 // Make sure session is valid
 if (!isset($_SESSION[PLAYER][GUID])) die();
 
