@@ -27,17 +27,24 @@ function gl_expire_users() { /* Execution time must be as less as possible */
 	global $sql;
 	$timeout = 60;	/* Expire timeout (in seconds) */
 	$timeout = time() - $timeout;
+
+	// Notify all event chains to remove the user from their stacks
+	$ans=$sql->query("SELECT `name`, `index` FROM `users_accounts` WHERE `lastaction` < $timeout");
+	if (!$ans) relayMessage(MSG_INTERFACE,'POPUP',$sql->getError(),'SQL Error');
+	if (!$sql->emptyResults) {
+		while ($row = $sql->fetch_array()) {
+			callEvent('user.logout', $row['name'], $row['index']);
+		}
+	}
+	
+	// Logoff chars and user accounts
 	$ans=$sql->query("UPDATE `users_accounts` SET `online` = 0 WHERE `lastaction` < $timeout");
 	if (!$ans) relayMessage(MSG_INTERFACE,'POPUP',$sql->getError(),'SQL Error');
-	
-	// Logoff chars of logged-off users
-	/* [Do NOT. Just the account is enough :P]
 	$ans=$sql->query("UPDATE `char_instance`
 				 Inner Join `users_accounts` ON `char_instance`.`account` = `users_accounts`.`index`
 				 SET `char_instance`.`online` = 0
 				 WHERE `users_accounts`.`online` =  0");
 	if (!$ans) relayMessage(MSG_INTERFACE,'POPUP',$sql->getError(),'SQL Error');
-	*/
 }
 
 ## User Login/Logout and sessioning system ##
