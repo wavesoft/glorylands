@@ -19,6 +19,7 @@ if ($_REQUEST['action']=='create') {
 			));
 			if (!$ans) {
 				$act_result['error']='Cannot create account! Internal SQL error:'. $sql->getError();
+				debug_error($sql->getError());
 			} else {
 				// Log in new user
 				gl_user_login($name, $pwd);

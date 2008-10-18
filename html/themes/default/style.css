@@ -20,6 +20,13 @@ table.backload {
 	background-position: center;
 	background-repeat: no-repeat;
 }
+.footer {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #666666;
+	background-image: url(images/UI/backblack.png);
+	padding: 5px;
+}
 
 /* =====[ Border 1 : General ]============================== */
 .br1_lt {

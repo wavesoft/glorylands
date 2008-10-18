@@ -9,8 +9,8 @@
   Licenced under GNU/GPL Licence
   
 -->
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-7" />
-<title>Test for Map Z-Buffer</title>
+<meta http-equiv="Content-Type" content="text/html; charset={$CONFIG.GAME.CHARSET}" />
+<title>{$CONFIG.GAME.TITLE} v{$VERSION.VERSION}</title>
 {literal}
 <script language="javascript">
 // PHP-Generated variables
@@ -20,6 +20,7 @@ var mapOfsY = 8;
 {/literal}
 <script language="javascript" src="includes/mootools-release-1.11.js"></script>
 <script language="javascript" src="includes/glapi-1.0.src.js"></script>
+<script language="javascript" src="includes/popup.js"></script>
 {$javascript}
 <link href="{$theme}/style.css" rel="stylesheet" type="text/css" />
 {$stylesheet}
@@ -200,6 +201,9 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
  
  <tr>
    <td colspan="2" align="center">{$modules.4}</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center" class="footer"><small>Released under the GNU/GPL Licence. Author: John Haralampidis<br /><a href="javascript:popUpWindow('debug.php',700,300,true,true);">Debug Console</a></small></td>
   </tr>
 </table>
 <div style="" id="prompt"></div>

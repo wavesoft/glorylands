@@ -13,7 +13,7 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 		if (isset($parameters[1])) $y=$parameters[1];
 		if (isset($parameters[2])) $map=$parameters[2];
 		
-		$answer = "You have benn teleported to ($x, $y) at map #$map";
+		$answer = "You have benn teleported to ($x, $y) on map #$map";
 		
 		$_SESSION[PLAYER][DATA]['x']=$x;
 		$_SESSION[PLAYER][DATA]['y']=$y;
@@ -212,7 +212,7 @@ $chat_initialized = false;
 function chat_module_initialize($lastop, $newop) {
 	global $_VER, $chat_initialized;
 	if (($newop == 'interface.main') && !$chat_initialized) {
-		relayMessage(MSG_INTERFACE,'CHAT','GloryLands Engine Version '.$_VER['ENGINE'],'System');
+		relayMessage(MSG_INTERFACE,'CHAT','GloryLands Engine v'.$_VER['VERSION'],'System');
 		$chat_initialized = true; /* Send this only once */
 	}
 

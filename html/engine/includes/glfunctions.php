@@ -14,7 +14,7 @@ function gl_user_action() { /* Execution time must be as less as possible */
 		$now = time();
 		// Keep online user's account
 		$ans=$sql->query("UPDATE `users_accounts` SET `online` = 1, `lastaction` = $now WHERE `index` = ".$_SESSION[PLAYER][PROFILE]['index']);
-		if (!$ans) relayMessage(MSG_INTERFACE,'POPUP',$sql->getError(),'SQL Error');
+		if (!$ans) debug_error($sql->getError());
 		
 		// Keep online user player account
 		//$ans=$sql->query("UPDATE `char_instance` SET `online` = 1 WHERE `guid` = ".$_SESSION[PLAYER][GUID]);
@@ -30,7 +30,7 @@ function gl_expire_users() { /* Execution time must be as less as possible */
 
 	// Notify all event chains to remove the user from their stacks
 	$ans=$sql->query("SELECT `name`, `index` FROM `users_accounts` WHERE `lastaction` < $timeout");
-	if (!$ans) relayMessage(MSG_INTERFACE,'POPUP',$sql->getError(),'SQL Error');
+	if (!$ans) debug_error($sql->getError());
 	if (!$sql->emptyResults) {
 		while ($row = $sql->fetch_array()) {
 			callEvent('user.logout', $row['name'], $row['index']);
@@ -39,12 +39,12 @@ function gl_expire_users() { /* Execution time must be as less as possible */
 	
 	// Logoff chars and user accounts
 	$ans=$sql->query("UPDATE `users_accounts` SET `online` = 0 WHERE `lastaction` < $timeout");
-	if (!$ans) relayMessage(MSG_INTERFACE,'POPUP',$sql->getError(),'SQL Error');
+	if (!$ans) debug_error($sql->getError());
 	$ans=$sql->query("UPDATE `char_instance`
 				 Inner Join `users_accounts` ON `char_instance`.`account` = `users_accounts`.`index`
 				 SET `char_instance`.`online` = 0
 				 WHERE `users_accounts`.`online` =  0");
-	if (!$ans) relayMessage(MSG_INTERFACE,'POPUP',$sql->getError(),'SQL Error');
+	if (!$ans) debug_error($sql->getError());
 }
 
 ## User Login/Logout and sessioning system ##

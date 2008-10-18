@@ -23,7 +23,7 @@ class mgr_unit {
 			$this->unitID = $initstring;
 			// Get the data row
 			$ans=getObject($this->unitID);
-			if (!$ans) return false;
+			if (!$ans) {debug_error($sql->getError()); return false; }
 			$this->instanceRow = $ans;
 
 		} elseif ($initstring == "m") {
@@ -32,7 +32,7 @@ class mgr_unit {
 			
 			// Get the data row
 			$ans=getObject($this->unitID);
-			if (!$ans) return false;
+			if (!$ans) { return false; debug_error($sql->getError()); }
 			$this->instanceRow = $ans;
 
 
@@ -43,7 +43,7 @@ class mgr_unit {
 			
 			// Get the data row
 			$ans=getObjectTemplate('unit',$initstring);
-			if (!$ans) return false;
+			if (!$ans) {debug_error($sql->getError()); return false; }
 			$this->instanceRow = $ans;
 			
 		} else {
@@ -54,7 +54,7 @@ class mgr_unit {
 			}
 			// Get the units that fulify the request
 			$ans = getObjects('unit', "`{x}` = {$parm[0]} AND `{y}` = {$parm[1]} AND `{map}` = {$parm[2]} LIMIT 0,1");
-			if (!$ans) return false;
+			if (!$ans) {debug_error($sql->getError()) return false; }
 			// Get the first (only) item
 			$row=$ans[0];
 			$this->instanceRow=$row;

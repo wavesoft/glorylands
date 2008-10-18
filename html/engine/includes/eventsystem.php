@@ -105,13 +105,13 @@ function popMessages($type) {
 	// Then, dump messages from SQL
 	$user_guid = $_SESSION[PLAYER][GUID];
 	$ans=$sql->query("SELECT `data` FROM `system_messages` WHERE `type` = $type AND `user` = $user_guid ORDER BY `index` ASC");
-	if (!$ans) die($sql->getError());
+	if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 	if (!$sql->emptyResults) {
 		while ($row = $sql->fetch_array(MYSQL_NUM)) {
 			$result[] = unserialize($row[0]);		
 		}
 		$ans=$sql->query("DELETE FROM `system_messages` WHERE `type` = $type AND `user` = $user_guid");
-		if (!$ans) die($sql->getError());
+		if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 	}
 	
 	// Return result
@@ -131,7 +131,7 @@ function peekMessages($type) {
 	// Then, dump messages from SQL
 	$user_guid = $_SESSION[PLAYER][GUID];
 	$ans=$sql->query("SELECT `data` FROM `system_messages` WHERE `type` = $type AND `user` = $user_guid ORDER BY `index` ASC");
-	if (!$ans) die($sql->getError());
+	if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 	if (!$sql->emptyResults) {
 		while ($row = $sql->fetch_array(MYSQL_NUM)) {
 			$result[] = unserialize($row[0]);		

@@ -53,7 +53,7 @@ function gl_get_guid_parent($guid) {
 	$info = gl_analyze_guid($guid);
 
 	$ans=$sql->query("SELECT `parent` FROM `{$info['group']}_instance` WHERE `guid` = $guid");
-	if (!$ans) return 0;
+	if (!$ans) { debug_error($sql->getError()); return 0; }
 	if ($sql->emptyResults) return 0;
 	
 	// Return the parent
@@ -201,7 +201,7 @@ function gl_count_guid_children($parent, $group=false) {
 	
 	// Search the GUID table for items
 	$ans=$sql->query("SELECT COUNT(*) FROM `{$group}_instance` WHERE `parent` = ".$parent);
-	if (!$ans) return false;
+	if (!$ans) { debug_error($sql->getError()); return false; }
 	$row=$sql->fetch_array(MYSQL_NUM);
 	
 	// Return the result
@@ -227,7 +227,7 @@ function gl_get_guid_template($guid) {
 	
 	// Search for guid's template
 	$ans = $sql->query("SELECT `template` FROM `{$parts['group']}_instance` WHERE `index` = ".$parts['index']);
-	if (!$ans) return false;
+	if (!$ans) { debug_error($sql->getError()); return false; }
 	if ($sql->emptyResults) return false;
 	$row = $sql->fetch_array(MYSQL_NUM);	
 	
@@ -251,7 +251,7 @@ function gl_instance_object($guid, $vars = false) {
 	
 	// Analyze guid
 	$parts = gl_analyze_guid($guid);
-	if (!$parts['group']) return false;	// Group not exists? Cannot continue...
+	if (!$parts['group']) { debug_error('Cannot find group of GUID '.$guid,ERR_WARNING); return false; }	// Group not exists? Cannot continue...
 
 	// If group is instance, create a copy
 	if ($parts['instance']) {
@@ -262,7 +262,7 @@ function gl_instance_object($guid, $vars = false) {
 	
 		// Obdain instance structure
 		$ans = $sql->query("SELECT * FROM `{$parts['group']}_instance` WHERE `guid` = $guid");
-		if (!$ans) return;
+		if (!$ans) {debug_error($sql->getError()); return; }
 		if ($sql->emptyResults) return;
 		$row = $sql->fetch_array(MYSQL_ASSOC);
 		
@@ -279,13 +279,13 @@ function gl_instance_object($guid, $vars = false) {
 		
 		// Get the last index inserted
 		$ans = $sql->query("SELECT `index` FROM `{$parts['group']}_instance` ORDER BY `index` DESC LIMIT 0,1");
-		if (!$ans) return;
+		if (!$ans) { debug_error($sql->getError()); return; }
 		$row = $sql->fetch_array(MYSQL_NUM);
 		
 		// Update guid
 		$guid = gl_make_guid($row[0], false, $parts['group']);
 		$ans = $sql->query("UPDATE `{$parts['group']}_instance` SET `guid` = {$guid} WHERE `index` = {$row[0]}");
-		if (!$ans) return false;
+		if (!$ans) { debug_error($sql->getError()); return false; }
 		
 		// Return GUID
 		return $guid;
@@ -294,8 +294,8 @@ function gl_instance_object($guid, $vars = false) {
 
 		// Load guid template
 		$ans = $sql->query("SELECT * FROM `{$parts['group']}_template` WHERE `template` = {$parts['index']}");
-		if (!$ans) return false;
-		if ($sql->emptyResults) return false;
+		if (!$ans) { debug_error($sql->getError()); return false; }
+		if ($sql->emptyResults) { debug_error("Template {$parts['index']} not found while instancing GUID {$guid}"); return false; }
 
 		// Analyze schema and create data to import
 		$row = $sql->fetch_array();
@@ -334,13 +334,13 @@ function gl_instance_object($guid, $vars = false) {
 		
 		// Get the last index inserted
 		$ans = $sql->query("SELECT `index` FROM `{$parts['group']}_instance` ORDER BY `index` DESC LIMIT 0,1");
-		if (!$ans) return false;
+		if (!$ans) {debug_error($sql->getError());  return false; }
 		$row = $sql->fetch_array(MYSQL_NUM);
 		
 		// Update guid
 		$guid = gl_make_guid($row[0], true, $parts['group']);
 		$ans = $sql->query("UPDATE `{$parts['group']}_instance` SET `guid` = {$guid} WHERE `index` = {$row[0]}");
-		if (!$ans) return false;
+		if (!$ans) {debug_error($sql->getError()); return false; }
 		
 		// Return GUID
 		return $guid;
@@ -390,7 +390,7 @@ function gl_decode_variable($var,$type,$schema,$default = '',$guid) {
 						return "<span class=\"money\">$var</span>";
 
 		case 'QUERY':	$ans = $sql->query(str_replace('$var',$var,$schema));
-						if (!$ans) fatalError($sql->getError());
+						if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 						$row = $sql->fetch_array(MYSQL_NUM);
 						$s = '';
 						foreach ($row as $value) {
@@ -469,7 +469,7 @@ function gl_get_guid_vars($guid) {
 
 	// Get element from group's instance storage
 	$ans = $sql->query("SELECT * FROM `{$parts['group']}_instance` WHERE `guid` = {$guid}");
-	if (!$ans) return false;
+	if (!$ans) { debug_error($sql->getError()); return false; }
 	if ($sql->emptyResults) return false;
 	$row = $sql->fetch_array(MYSQL_ASSOC);
 	
@@ -484,7 +484,7 @@ function gl_get_guid_vars($guid) {
 	
 	// Include template variables
 	$ans = $sql->query("SELECT * FROM `{$parts['group']}_template` WHERE `template` = {$template}");
-	if (!$ans) return false;
+	if (!$ans) { debug_error($sql->getError()); return false; }
 	if ($sql->emptyResults) return false;
 	$row = $sql->fetch_array(MYSQL_ASSOC);
 	unset($row['template']);
@@ -572,7 +572,7 @@ function gl_delete_guid($guid) {
 
 	// Delete the table
 	$ans = $sql->query("DELETE FROM `{$parts['group']}_instance` WHERE `guid` = {$guid}");
-	if (!$ans) return false;
+	if (!$ans) { debug_error($sql->getError()); return false; }
 	if ($sql->affectedRows == 0)  return false;
 		
 	return true;

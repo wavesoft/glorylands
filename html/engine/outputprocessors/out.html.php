@@ -32,6 +32,7 @@ $smarty->assign($act_result);
 $smarty->assign('operation', $act_operation);
 $smarty->assign('interface', $act_interface);
 $smarty->assign('CONFIG', $_CONFIG);
+$smarty->assign('VERSION', $_VER);
 $smarty->assign('images', DIROF('DATA.IMAGE',true));
 $smarty->assign('theme', 'themes/'.$_CONFIG[GAME][THEME]);
 

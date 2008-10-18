@@ -38,7 +38,7 @@ function gl_extract_mixdata($object_vars) {
 		// Find default parameters that are dedicated on this instance
 		$template_guid = gl_get_guid_template($object_vars['guid']);
 		$ans=$sql->query("SELECT * FROM `data_mix_defaults` WHERE `linkguid` = $template_guid");
-		if (!$ans) return false;
+		if (!$ans) { debug_error($sql->getError()); return false; }
 		
 		// If there are not default parameters for this object, return
 		// the global default parameters
@@ -175,7 +175,7 @@ function gl_mix_data($obj1, $obj2, $skill = 0) {
 	// Load the environment parameters for this group mix
 	$ans=$sql->query("SELECT `skillguid`,`deftype`,`defgroup`,`droprate`,`skill_min`,`skill_max`,`drop_min`,`drop_max`,`attennuate_min`,`attennuate_max`
 					  FROM `data_mix_mixgroups` WHERE `group` = ".$obj1['group']." AND `mixgroup` = ".$obj2['group']);
-	if (!$ans) return false;
+	if (!$ans) {debug_error($sql->getError()); return false; }
 	
 	// If there are no data, load defautls
 	if ($sql->emptyResults) {

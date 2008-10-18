@@ -19,6 +19,8 @@ print_r($act_valid?'ow yees, yeees... :P':'No. I\'m sorry...');
 if (!$act_valid) {
 	echo "Validity was rejected in <font color=\"#FFFF00\">$act_invalid_position</font> check.";
 }
+echo "\n</b>\n<font color=\"#00FF00\">Debug Error Stack:</font>\n<b>";
+echo debug_render_errors();
 echo "\n</b>\n<font color=\"#00FF00\">Result:</font>\n<b>";
 print_r($act_result);
 echo "\n</b>\n<font color=\"#00FF00\">Interface:</font>\n<b>";
