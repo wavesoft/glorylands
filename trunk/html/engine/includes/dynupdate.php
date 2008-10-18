@@ -43,9 +43,9 @@ function gl_dynupdate_create($guid, $updateurl) {
 	
 	// Update SQL entry
 	$ans=$sql->query("DELETE FROM `interface_openwin` WHERE `player` =  $userguid AND `guid` = $guid");
-	if (!$ans) return false;
+	if (!$ans) { debug_error($sql->getError()); return false; }
 	$ans=$sql->query("INSERT INTO `interface_openwin` (`player`, `guid`, `updateurl`) VALUES ($userguid, $guid, '".mysql_escape_string($updateurl)."')");
-	if (!$ans) return false;
+	if (!$ans) { debug_error($sql->getError()); return false; }
 	
 	// Everything went OK
 	return true;
@@ -83,7 +83,7 @@ function gl_dynupdate_cleanup() {
 	
 	// Delete SQL entries
 	$ans=$sql->query("DELETE FROM `interface_openwin` WHERE `player` = $userguid");
-	if (!$ans) return false;
+	if (!$ans) { debug_error($sql->getError()); return false; }
 	
 	// Everything went OK
 	return true;

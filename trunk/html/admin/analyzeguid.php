@@ -46,7 +46,7 @@ if (isset($_REQUEST['guid'])) {
 if ($parts['instance']) {
 
 	$ans = $sql->query("SELECT `template` FROM `{$parts['group']}_instance` WHERE `index` = ".$parts['index']);
-	if (!$ans) die($sql->getError());
+	if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 	if ($sql->emptyResults) {
 
 ?>

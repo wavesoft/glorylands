@@ -30,7 +30,7 @@ function hb_dynamic_grid_alter($ignore_guid, $x, $y, $map) {
 						users_accounts.online =  '1'
 						");
 	if (!$ans) {
-		relayMessage(MSG_INTERFACE, 'MSGBOX', 'Error: '+$sql->getError());
+		debug_error($sql->getError());
 		return;
 	};
 	

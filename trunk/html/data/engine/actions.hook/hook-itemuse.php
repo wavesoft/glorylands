@@ -34,7 +34,7 @@ function itemuse_guid_deleted($guid) {
 
 	// When a GUID is deleted, remove the appropriate Quickbar button
 	$ans=$sql->query("DELETE FROM `mod_quickbar_slots` WHERE `guid` = ".$guid);
-	if (!$ans) relayMessage(MSG_INTERFACE,'MSGBOX',$sql->getError());
+	if (!$ans) debug_error($sql->getError());
 	qb_update_view();
 }
 

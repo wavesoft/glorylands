@@ -29,6 +29,7 @@ include_once DIROF('SYSTEM.INCLUDE')."scheduler.php";
 include_once DIROF('SYSTEM.INCLUDE')."itemmix.php";
 include_once DIROF('SYSTEM.INCLUDE')."spawnsystem.php";
 include_once DIROF('SYSTEM.INCLUDE')."dynupdate.php";
+include_once DIROF('SYSTEM.INCLUDE')."debugsystem.php";
 
 ### Connect to DB
 global $sql;

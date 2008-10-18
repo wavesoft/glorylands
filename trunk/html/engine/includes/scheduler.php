@@ -99,7 +99,7 @@ function gl_pop_schedules() {
 	
 	// Get the index of the expired events
 	$ans=$sql->query("SELECT `index`,`eventid`,`user`,`data` FROM `system_scheduler` WHERE `timestamp` <= $ctime");
-	if (!$ans) return false;
+	if (!$ans) {debug_error($sql->getError());  return false; }
 	if ($sql->emptyResults) return false;
 
 	// Get all the results
@@ -107,7 +107,7 @@ function gl_pop_schedules() {
 
 	// Delete expired events
 	$ans=$sql->query("DELETE FROM `system_scheduler` WHERE `timestamp` <= $ctime");
-	if (!$ans) return false;
+	if (!$ans) {debug_error($sql->getError()); return false; }
 	
 	// Return buffer
 	return $buf;

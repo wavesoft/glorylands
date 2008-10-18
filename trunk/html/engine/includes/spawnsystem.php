@@ -38,7 +38,7 @@ function gl_spawn_check() {
 				WHERE
 				`data_spawn_times`.`last_spawn` <= ".time());
 	
-	if (!$ans) return false;
+	if (!$ans) {debug_error($sql->getError()); return false; }
 	
 	while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	

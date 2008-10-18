@@ -57,7 +57,7 @@ function logCopy($src, $dst, $default_replace, $type) {
 
 	// Exists on SQL?
 	$ans=$sql->query("SELECT `hash`,`index`,`package` FROM `system_files` WHERE `filename` = '$dst'");
-	if (!$ans) die($sql->getError());
+	if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 	if (!$sql->emptyResults) {
 		$row = $sql->fetch_array(MYSQL_NUM);
 
@@ -76,7 +76,7 @@ function logCopy($src, $dst, $default_replace, $type) {
 			if ($row[0]!=$dst_md5) {
 				// Destination file exists, but has invalid hash? Consider it as damaged & replace it..
 				$ans=$sql->query("UPDATE `system_files` SET `hash` = '{$src_md5}' WHERE `index` = {$row[1]}");
-				if (!$ans) die($sql->getError());
+				if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 				echo "<font color=\"green\">damaged or missing. Replaced</font>\n"; 
 				if (is_file($dst)) unlink($dst);
 				copy($src,$dst);

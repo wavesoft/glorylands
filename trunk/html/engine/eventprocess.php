@@ -156,7 +156,7 @@ while ($operation != $last_operation) {
 	}
 
 	// Inform any code that must send data now
-	callEvent('system.complete_operation');
+	callEvent('system.complete_operation', $operation);
 	
 	// If we don't have blank output..
 	if ($outmode!='blank') {
