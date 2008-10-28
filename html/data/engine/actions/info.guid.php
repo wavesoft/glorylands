@@ -57,6 +57,6 @@ $act_result = array(
 
 // This window has a dynamic update possibility, so register it
 // on the DynUPDATE system
-gl_dynupdate_create($root_guid, '?a=info.guid&guid='.$_REQUEST['guid']);
+gl_dynupdate_create($_REQUEST['guid'], '?a=info.guid&guid='.$_REQUEST['guid']);
 
 ?>

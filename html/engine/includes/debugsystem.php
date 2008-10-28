@@ -75,7 +75,7 @@ function debug_render_args($backargs) {
 		} elseif (is_object($arg)) {
 			$html.='<'.print_r($arg,true).'>';
 		} elseif (is_array($arg)) {
-			$html.='[<span title="'.str_replace("\n"," ",print_r($arg,true)).'">Array</span>]';
+			$html.='[<span title="'.str_replace("\n"," ",print_r($arg,true)).'"><em>Array</em></span>]';
 		} else {
 			$html.=$arg;
 		}
@@ -103,7 +103,7 @@ function debug_render_backtrace($backtrace) {
 		} else {
 			$html.='()';
 		}
-		$html.=' on '.$trace['file'].'('.$trace['line'].')<br />'."\n";
+		$html.=' on <b>'.$trace['file'].'('.$trace['line'].')</b><br />'."\n";
 	}
 	return $html;
 }
@@ -156,7 +156,7 @@ function debug_render_errors() {
 	}
 	-->
 	</style>
-	<div class="debug_window"><div class="head">GloryLands Debug Console</div><table style="color: #000000; font-size: 10px;"><tr><th width="40">Time</th><th width="40">Level</th><th width="500">Backtrace</th><th>Message</th></tr>
+	<div class="debug_window"><div class="head">GloryLands Debug Console</div><table border="1" style="color: #000000; font-size: 10px;"><tr><th width="40">Time</th><th width="40">Level</th><th width="500">Backtrace</th><th>Message</th></tr>
 	';
 	
 	// Level-Name mapping

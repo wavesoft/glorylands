@@ -23,7 +23,11 @@ $grid = json_decode(file_get_contents($map),true);
 // Load images
 $images = array();
 foreach ($grid['dic'] as $file => $entry) {
-	$im = imagecreatefromgif("../images/tiles/{$file}");
+
+	// #@# USED ONLY FOR TESTING - WILL BE CHANGED BY THE MAP EDITOR #@# //
+	
+	//$im = imagecreatefromgif("../images/tiles/{$file}");
+	$im = imagecreatefrompng("../images/tiles/".str_replace('gif','png',$file));
 	if ($im) {
 		$images[$entry] = $im;
 	}

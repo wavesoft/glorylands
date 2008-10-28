@@ -59,6 +59,8 @@ function gl_spawn_check() {
 				// If yes, create new item instance(s) and place them on the container
 				$vars = array();
 				if ($row['variables']!='') $vars=unserialize($row['variables']);
+				
+				// #@# IF THE CONTAINER IS TEMPLATE GUID, ALL THE INSTANCED GUIDS SHALL GET THIS ITEM #@#
 				$vars['parent'] = $row['container'];
 				
 				// Loop import sequence till we reach the maximum import entries

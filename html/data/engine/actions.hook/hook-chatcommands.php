@@ -178,6 +178,17 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 		}
 		$answer .= "</ul>";
 		
+	} elseif ($cmd == 'tipsreset') {
+		
+		$sql->query('SELECT `index` FROM `data_tips`');
+		$tips = array();
+		while ($tip = $sql->fetch_array(MYSQL_NUM)) {
+			$tips[$tip[0]] = true;
+		}
+		gl_update_guid_vars($_SESSION[PLAYER][GUID], array('tips' => $tips));
+		
+		$answer = "Tips are reset for user #".$_SESSION[PLAYER][GUID];	
+
 	} elseif ($cmd == 'help') {
 		
 		$answer="Commands that can be used:<ul>";

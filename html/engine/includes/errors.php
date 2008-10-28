@@ -122,16 +122,19 @@ function glErrorHandler($errno, $errstr, $errfile, $errline) {
     switch ($errno) {
 
     case E_USER_ERROR:
-        fatalError("System Error: [$errno] $errstr on $errfile line $errline");
+		debug_error("System Error: [$errno] $errstr on $errfile line $errline", ERR_ERROR);
+        //fatalError("System Error: [$errno] $errstr on $errfile line $errline");
         exit(1);
         break;
 
     case E_USER_WARNING:
-        fatalError("Warning: [$errno] $errstr on $errfile line $errline");
+		debug_error("Warning: [$errno] $errstr on $errfile line $errline", ERR_WARNING);
+        //fatalError("Warning: [$errno] $errstr on $errfile line $errline");
         break;
 
     case E_USER_NOTICE:
-        fatalError("Notice: [$errno] $errstr on $errfile line $errline");
+		debug_error("Notice: [$errno] $errstr on $errfile line $errline", ERR_NOTICE);
+        //fatalError("Notice: [$errno] $errstr on $errfile line $errline");
         break;
 
     default:
@@ -143,6 +146,6 @@ function glErrorHandler($errno, $errstr, $errfile, $errline) {
 }
 
 // set to the user defined error handler
-//$old_error_handler = set_error_handler("glErrorHandler");
+$old_error_handler = set_error_handler("glErrorHandler");
 
 ?>
