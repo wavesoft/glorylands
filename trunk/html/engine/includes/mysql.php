@@ -127,7 +127,7 @@ class db {
 		$this->totQueries++;
 		if (!$result) {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>false,'error'=>$this->getError());
-			debug_error($this->getError());
+			debug_error($this->getError(),ERR_WARNING);
 			$this->emptyResults = true;
 			return false;
 		}
@@ -306,7 +306,7 @@ class db {
 		$this->totQueries++;
 		if (!$result) {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>false,'error'=>$this->getError());
-			debug_error($this->getError());
+			debug_error($this->getError(),ERR_WARNING);
 			return false;
 		} else {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>mysql_num_rows($result));
@@ -328,7 +328,7 @@ class db {
 		$this->totQueries++;
 		if (!$result) {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>false,'error'=>$this->getError());
-			debug_error($this->getError());
+			debug_error($this->getError(),ERR_WARNING);
 			return false;
 		} else {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>mysql_num_rows($result));
