@@ -6,7 +6,7 @@
 </head>
 <frameset rows="*" cols="200,*" framespacing="0" frameborder="no" border="0">
   <frame src="nav.php" name="left" scrolling="No" noresize="noresize" id="left" title="left" />
-  <frame src="home.php" name="main" id="main" title="main" />
+  <frame src="page.php" name="main" id="main" title="main" />
 </frameset>
 <noframes><body>
 </body>
