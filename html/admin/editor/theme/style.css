@@ -9,7 +9,7 @@ body {
 
 .nav {
 	background-image:url(images/bg_nav.jpg);
-	background-color: #000000;
+	background-color: #CCCCCC;
 }
 
 input {
@@ -18,11 +18,31 @@ input {
 	padding: 3px;
 }
 
+input.button {
+	background-color: #FFFFFF;
+	border: double 3px #666666;
+	padding: 3px;
+	color: #666666;
+}
+
+input.button:hover {
+	background-color: #D5EAFF;
+	border: double 3px #0066FF;
+	padding: 3px;
+	color: #0066FF;
+}
+
 select {
 	background-color: #FFFFFF;
 	border: solid 1px #999999;
 	padding: 3px;
 	font-size: 12px;
+}
+
+textarea {
+	background-color: #FFFFFF;
+	border: solid 1px #999999;
+	padding: 3px;
 }
 
 button {
@@ -49,3 +69,36 @@ button:active {
 	color: #999999;
 }
 
+.errborder {
+	border: solid 1px #990000;
+	background-color:#FFCCCC;
+	color: #333333;
+}
+
+table.discreet th {
+	text-align: left;
+}
+
+div.msg_ok {
+	border: solid 1px #009900;
+	background-color: #C6FFC6;
+	background-image: url(icons/button_ok.png);
+	background-repeat: no-repeat;
+	background-position: 3px 2px;
+	padding-left: 22px;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-bottom: 2px;
+}
+
+div.msg_error {
+	border: solid 1px #CC0000;
+	background-color: #FFDFDF;
+	background-image: url(icons/button_cancel.png);
+	background-repeat: no-repeat;
+	background-position: 3px 2px;
+	padding-left: 22px;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-bottom: 2px;
+}
