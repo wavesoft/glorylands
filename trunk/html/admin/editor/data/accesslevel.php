@@ -1,0 +1,5 @@
+<?php
+$ACCESS = array(
+	
+)
+?>

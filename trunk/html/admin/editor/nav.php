@@ -1,6 +1,7 @@
 <?php
 include "../../config/config.php"; 
 include "../../engine/includes/base.php"; 
+if (!isset($_SESSION[PLAYER])) { header("Location: index.php"); die("Unauthorized"); };
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -11,20 +12,14 @@ include "../../engine/includes/base.php";
 <script language="javascript" src="../../includes/mootools-1.11.js"></script>
 <script language="javascript">
 var v_page = '';
-// ### DEBUG FUNCTIONS ###
-
-function $trace(obj) {
-	ans='';
-	$each(obj, function(value, name) {
-		if (ans!='') ans+=', ';
-		ans+='['+name+'] = '+value;
-	});	
-	return ans;
-}
+var v_forward = false;
 </script>
 </head>
 <body class="nav">
-<form target="main" action="page.php" onsubmit="if(v_page)window.location='nav.php?page='+v_page">
+<img src="theme/images/logo.png" width="174" height="40" /><br />
+<center>GloryLands Content Editor</center><br />
+<form target="main" action="page.php" onsubmit="this.name.value=v_page;if(v_forward)window.location='nav.php?page='+v_page">
+<input type="hidden" name="page" value="" />
 <?php 
 global $MENU;
 include "data/menus.php";
@@ -66,7 +61,7 @@ foreach ($render_menu as $key => $menu) {
 	if (isset($menu['type'])) $type=$menu['type'];
 	if ($type=='menu') {
 ?>
-<button class="button" style="width: 100%" <?php if (isset($menu['submenu'])) { echo 'onclick="v_page=this.value;"'; } else { echo 'onclick="v_page=false;"'; } ?> type="submit" name="page" value="<?php echo $menu['page']; ?>">
+<button class="button" style="width: 100%" <?php if (isset($menu['submenu'])) { echo 'onclick="v_page=this.form.page.value=\''.addslashes($menu['page']).'\';v_forward=true"'; } else { echo 'onclick="v_page=this.form.page.value=\''.addslashes($menu['page']).'\';v_forward=false"'; } ?> type="submit">
 <?php if (isset($menu['icon'])) { ?> <img src="theme/icons/<?php echo $menu['icon']; ?>" align="absmiddle" /> <?php } ?><?php echo $menu['text']; ?>
 </button>
 <?php
