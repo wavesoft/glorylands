@@ -1,3 +1,4 @@
+<?php access_check(ACCESS_EDITOR); ?>
 <?php 
 // Perform any requested actions
 if (isset($_REQUEST['a'])) {

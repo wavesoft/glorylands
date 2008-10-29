@@ -1,4 +1,4 @@
-<?php if (!defined('IN_PAGE')) { header('Location: ../page.php?page=home'); die('Unauthorized'); } ?>
+<?php access_check(ACCESS_ALL); ?>
 <pre>
 <?php print_r($_REQUEST); ?>
 </pre>

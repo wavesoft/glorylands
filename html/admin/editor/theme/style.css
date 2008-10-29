@@ -102,3 +102,19 @@ div.msg_error {
 	padding-right: 2px;
 	padding-bottom: 2px;
 }
+
+div.msg_warn {
+	border: solid 1px #FFCC00;
+	background-color: #FFEFDF;
+	background-image: url(icons/critical.gif);
+	background-repeat: no-repeat;
+	background-position: 3px 2px;
+	padding-left: 22px;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-bottom: 2px;
+}
+table.login {
+	border: solid 2px #CCCCCC;
+	background-color: #FFFFCC;
+}
