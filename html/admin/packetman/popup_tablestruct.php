@@ -30,7 +30,7 @@ if (isset($_REQUEST['table'])) {
 </div>
 </center>
 <script language="javascript">
-window.opener.document.forms[0].elements[7].value += '<?php echo str_replace("\n","\\n\\\n",addslashes($struct)); ?>;'+"\n";
+window.opener.document.forms[0].elements[7].value += '<?php echo str_replace("\n","\\n\\\n",addslashes($struct)); ?>;'+"\n\n";
 window.close();
 </script>
 <?php

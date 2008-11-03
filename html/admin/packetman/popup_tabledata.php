@@ -71,7 +71,7 @@ if (isset($_REQUEST['table']) && isset($_REQUEST['key'])) {
 </div>
 </center>
 <script language="javascript">
-window.opener.document.forms[0].elements[7].value += '<?php echo str_replace("\n","\\n\\\n",addslashes($struct)); ?>;'+"\n";
+window.opener.document.forms[0].elements[7].value += '<?php echo str_replace("\n","\\n\\\n",addslashes($struct)); ?>;'+"\n\n";
 window.close();
 </script>
 <?php
@@ -81,7 +81,7 @@ window.close();
 <form action="" method="post">
 <input type="hidden" name="table" value="<?php echo $_REQUEST['table']; ?>" />
 <input type="hidden" name="mode" value="<?php echo $_REQUEST['mode']; ?>" />
-<label for="nokey"><input id="nokey" type="checkbox" name="nokey" checked="checked" /> Do not include primery key</label>
+<label for="nokey"><input id="nokey" type="checkbox" name="nokey" checked="checked" /> Do not include primary key</label>
 <?php
 	if ($_REQUEST['mode'] == 'delete') {
 ?>
@@ -117,7 +117,7 @@ window.close();
 <?php
 			foreach ($row as $field => $value) {
 ?>
-		<td><input type="checkbox" title="Ignore this field" name="ignore[<?php echo $field; ?>]" /><?php echo $field; ?></td>
+		<td><input type="checkbox" title="Ignore this field" name="ignore[<?php echo $field; ?>]" /><br /><?php echo $field; ?></td>
 <?php
 			}
 ?>

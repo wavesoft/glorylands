@@ -155,11 +155,11 @@ echoParam("package[website]", $row['website'], "Website", "parameter.gif");
 ################### DEPENDENCIES #######################
 $depends = unserialize($row['require']);
 $i = 0;
-if ($denepds) {
+if ($depends) {
 	foreach ($depends as $depend) {
 		$elmid++;
 		$ver = "<em>(Any)</em>";
-		if ($depends['ver']>0) $ver = $depends['ver'];
+		if ($depend['ver']>0) $ver = $depend['ver'];
 	?>
 	<tr>
 		<td width="16"><input id="e<?php echo $elmid; ?>" name="depend[<?php echo $i; ?>]" type="checkbox" /></td>
@@ -173,7 +173,7 @@ if ($denepds) {
 		$i++;
 	}
 }
-if (sizeof($depends)==0) {
+if (!$depends) {
 ?>
 <tr>
 	<td colspan="6"><em>(No Dependencies)</em></td>

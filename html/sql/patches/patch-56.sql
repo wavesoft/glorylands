@@ -1,9 +1,5 @@
 /*
-MySQL Data Transfer
-Source Host: localhost
-Source Database: glory
-Target Host: localhost
-Target Database: glory
+Added: Registration Quiz
 Date: 14/10/2008 12:57:44 рм
 */
 
@@ -40,7 +36,3 @@ CREATE TABLE `data_regquiz_questions` (
   `title` varchar(250) collate latin1_general_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
-
--- ----------------------------
--- Records 
--- ----------------------------
