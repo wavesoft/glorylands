@@ -43,10 +43,27 @@ $MENU = array(
 		'page' => 'gobj',
 		'icon' => 'system.png',
 		'text' => 'Game Objects',
-		'rquiz_addd' => array(
-			'icon' => 'edit_add.gif',
-			'text' => 'Add Data',
-			'page' => 'rquiz_addd'
+		'submenu' => array(
+			'gobj_items' => array(
+				'icon' => 'edit.png',
+				'text' => 'Items',
+				'page' => 'gobj_items'
+			),
+			'gobj_chars' => array(
+				'icon' => 'edit.png',
+				'text' => 'Characters',
+				'page' => 'gobj_chars'
+			),
+			'gobj_gameobjecs' => array(
+				'icon' => 'edit.png',
+				'text' => 'Map Objects',
+				'page' => 'gobj_gameobjecs'
+			),
+			'gobj_npc' => array(
+				'icon' => 'edit.png',
+				'text' => 'Non Playable Chars',
+				'page' => 'gobj_npc'
+			)
 		)
 	)
 );
