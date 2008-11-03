@@ -1,10 +1,6 @@
 /*
-MySQL Data Transfer
-Source Host: localhost
-Source Database: gl_empty
-Target Host: localhost
-Target Database: gl_empty
-Date: 6/10/2008 12:31:33 ��
+Complete SQL Database for revisions 65+
+Date: 3/11/2008 2:41:10 ��
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -36,6 +32,7 @@ CREATE TABLE `char_instance` (
   `INT` int(11) default NULL,
   `WIS` int(11) default NULL,
   `CHA` int(11) default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -49,6 +46,7 @@ CREATE TABLE `char_template` (
   `icon` varchar(40) collate latin1_general_ci default NULL,
   `flags` set('ADMIN') collate latin1_general_ci default NULL,
   `description` varchar(250) collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -63,6 +61,7 @@ CREATE TABLE `char_vardesc` (
   `default` varchar(120) collate latin1_general_ci default NULL,
   `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
   `translation` mediumtext collate latin1_general_ci,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -77,6 +76,7 @@ CREATE TABLE `data_maps` (
   `background` varchar(80) collate latin1_general_ci default NULL,
   `filename` varchar(80) collate latin1_general_ci default NULL,
   `z-base` int(11) default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -108,6 +108,7 @@ CREATE TABLE `data_mix_defaults` (
   `gravity` int(11) default NULL,
   `dropchance` int(4) default NULL,
   `attennuation` float(11,2) default '-1.00',
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -121,6 +122,7 @@ CREATE TABLE `data_mix_iconrules` (
   `subtype` varchar(20) collate latin1_general_ci default NULL,
   `offset` int(11) default NULL,
   `check` enum('EXISTS','GREATER','LESS','EQUAL') collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -131,6 +133,7 @@ CREATE TABLE `data_mix_icons` (
   `index` int(11) NOT NULL auto_increment,
   `icon` varchar(50) collate latin1_general_ci default NULL,
   `suggestname` varchar(120) collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -151,8 +154,45 @@ CREATE TABLE `data_mix_mixgroups` (
   `drop_max` int(11) default '0',
   `attennuate_min` int(11) default '50',
   `attennuate_max` int(11) default '100',
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+-- ----------------------------
+-- Table structure for data_regquiz_answers
+-- ----------------------------
+CREATE TABLE `data_regquiz_answers` (
+  `index` int(11) NOT NULL auto_increment,
+  `question` int(11) default NULL,
+  `answer` varchar(250) collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`index`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+-- ----------------------------
+-- Table structure for data_regquiz_data
+-- ----------------------------
+CREATE TABLE `data_regquiz_data` (
+  `index` int(11) NOT NULL auto_increment,
+  `answer` int(11) default NULL,
+  `v_modifier` varchar(120) collate latin1_general_ci default NULL,
+  `v_value` varchar(120) collate latin1_general_ci default NULL,
+  `i_guid` int(11) default NULL,
+  `i_parent` int(11) default NULL,
+  `contributor` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`index`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+-- ----------------------------
+-- Table structure for data_regquiz_questions
+-- ----------------------------
+CREATE TABLE `data_regquiz_questions` (
+  `index` int(11) NOT NULL auto_increment,
+  `question` mediumtext collate latin1_general_ci,
+  `title` varchar(250) collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`index`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for data_religions
@@ -166,6 +206,7 @@ CREATE TABLE `data_religions` (
   `maintemple_guid` int(11) default NULL,
   `founder_guid` int(11) default NULL,
   `image` varchar(120) collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -181,6 +222,7 @@ CREATE TABLE `data_spawn` (
   `spawncount` int(11) default '1',
   `successrate` int(1) default '100',
   `variables` text collate latin1_general_ci,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -193,6 +235,20 @@ CREATE TABLE `data_spawn_times` (
   `last_spawn` int(11) default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+-- ----------------------------
+-- Table structure for data_tips
+-- ----------------------------
+CREATE TABLE `data_tips` (
+  `index` int(11) NOT NULL auto_increment,
+  `trigger_action` varchar(60) collate latin1_general_ci default NULL,
+  `trigger_request` mediumtext collate latin1_general_ci,
+  `importance` enum('HIGH','NORMAL','LOW') collate latin1_general_ci default NULL,
+  `title` varchar(120) collate latin1_general_ci default NULL,
+  `tip` longtext collate latin1_general_ci,
+  `contributor` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`index`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for gameobject_instance
@@ -212,6 +268,7 @@ CREATE TABLE `gameobject_instance` (
   `visible` tinyint(1) default NULL,
   `model` varchar(40) collate latin1_general_ci default NULL,
   `mixhash` varchar(40) collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -226,6 +283,7 @@ CREATE TABLE `gameobject_template` (
   `icon` varchar(250) collate latin1_general_ci default NULL COMMENT 'Unit Icon',
   `description` mediumtext collate latin1_general_ci COMMENT 'Unit Description',
   `flags` set('OPENABLE','TRIGGER') collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -240,6 +298,7 @@ CREATE TABLE `gameobject_vardesc` (
   `default` varchar(120) collate latin1_general_ci default NULL,
   `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
   `translation` mediumtext collate latin1_general_ci,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -302,6 +361,7 @@ CREATE TABLE `item_instance` (
   `item_count` int(11) default NULL,
   `item_variables` longtext collate latin1_general_ci,
   `mixhash` varchar(40) collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Contains all the initialization instances that must be done';
 
@@ -319,6 +379,7 @@ CREATE TABLE `item_template` (
   `quality` int(11) default NULL,
   `item_level` int(11) default NULL,
   `require_level` int(11) default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -333,6 +394,7 @@ CREATE TABLE `item_vardesc` (
   `default` varchar(120) collate latin1_general_ci default NULL,
   `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
   `translation` mediumtext collate latin1_general_ci,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -395,6 +457,7 @@ CREATE TABLE `npc_instance` (
   `model` varchar(40) collate latin1_general_ci default NULL,
   `visible` tinyint(1) default NULL,
   `state` enum('NORMAL','GHOST','INVISIBLE') collate latin1_general_ci default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -411,6 +474,7 @@ CREATE TABLE `npc_template` (
   `flags` set('CHAT','QUEST','VENDOR','BANKER','TAXI','TABARD','TRAINER','BATTLEFIELD','HEALER','AUCTIONEER','GUARD','STABLEMASTER','INNKEEPER','ARMORER') collate latin1_general_ci default NULL,
   `type` enum('BEAST','DRAGON','DAEMON','ELEMENTAL','GIANT','UNDEAD','HUMANOID','CRITTER','TOTEM') collate latin1_general_ci default NULL,
   `description` text collate latin1_general_ci,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -425,6 +489,7 @@ CREATE TABLE `npc_vardesc` (
   `default` varchar(120) collate latin1_general_ci default NULL,
   `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
   `translation` mediumtext collate latin1_general_ci,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -440,18 +505,6 @@ CREATE TABLE `system_dictionaries` (
   `package` int(11) default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=46 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
-
--- ----------------------------
--- Table structure for system_events
--- ----------------------------
-CREATE TABLE `system_events` (
-  `event` varchar(30) collate latin1_general_ci NOT NULL default '',
-  `package` int(11) default '0',
-  `file` varchar(30) collate latin1_general_ci default NULL,
-  `function` varchar(30) collate latin1_general_ci default NULL,
-  `enabled` enum('YES','NO') collate latin1_general_ci default 'YES',
-  PRIMARY KEY  (`event`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_files
@@ -477,7 +530,7 @@ CREATE TABLE `system_hooks` (
   `active` enum('YES','NO') collate latin1_general_ci default 'YES',
   `package` int(11) default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Table structure for system_messages
@@ -560,6 +613,7 @@ CREATE TABLE `unit_instance` (
   `y` int(11) default NULL,
   `map` int(11) default NULL,
   `level` int(11) default NULL,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -573,6 +627,7 @@ CREATE TABLE `unit_template` (
   `subname` varchar(250) collate latin1_general_ci default NULL COMMENT 'Unit subname',
   `icon` varchar(250) collate latin1_general_ci default NULL COMMENT 'Unit Icon',
   `description` mediumtext collate latin1_general_ci COMMENT 'Unit Description',
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -587,6 +642,7 @@ CREATE TABLE `unit_vardesc` (
   `default` varchar(120) collate latin1_general_ci default NULL,
   `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
   `translation` mediumtext collate latin1_general_ci,
+  `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -602,50 +658,52 @@ CREATE TABLE `users_accounts` (
   `lastlogin` timestamp NULL default NULL,
   `lastaction` int(11) default NULL,
   `online` tinyint(1) default NULL,
-  `level` enum('BANNED','USER','MODERATOR','ADMIN') collate latin1_general_ci default 'USER',
+  `level` enum('BANNED','USER','EDITOR','MODERATOR','ADMIN') collate latin1_general_ci default 'USER',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `char_template` VALUES ('1', 'map=1&x=5&y=5&visible=1&state=NORMAL&model=bizarre36.o&INT=10&STR=50&DEX=10&CON=3&WIS=3&CHA=20', 'Human', 'portraits/clans_alchemist.gif', null, 'This is a human player. It is said that human players tend to have better abilities on trade operations that any other race.');
-INSERT INTO `char_template` VALUES ('2', 'map=4&x=5&y=5&visible=1&state=NORMAL&model=cape-grise.o&INT=40&STR=10&DEX=10&CON=50&WIS=50&CHA=10', 'Elf', 'portraits/neutral_elfranger.gif', null, 'This is an elf player.');
-INSERT INTO `char_vardesc` VALUES ('race', 'Race', '0', '0', '(Unknown)', 'RAW', null);
-INSERT INTO `char_vardesc` VALUES ('money', 'Money', '0', '1', '42', 'MONEY', null);
-INSERT INTO `char_vardesc` VALUES ('itelligence', 'Itelligence', '0', '1', '10', 'SCRIPT', 'if ($var > 90) {\r\n	$color=\'red\';\r\n} elseif ($var > 50) {\r\n	$color=\'blue\';\r\n} elseif ($var > 30) {\r\n	$color=\'green\';\r\n} else {\r\n	$color=\'grey\';\r\n}\r\nreturn \"<font color=\\\"$color\\\">$var %</font>\";');
-INSERT INTO `data_mix_iconrules` VALUES ('1', '1', 'CLASS', 'CONSUMABLE', null, 'EXISTS');
-INSERT INTO `data_mix_iconrules` VALUES ('2', '1', 'MODIFIER', 'HP', '20', 'LESS');
-INSERT INTO `data_mix_iconrules` VALUES ('3', '2', 'CLASS', 'CONSUMABLE', null, 'EXISTS');
-INSERT INTO `data_mix_iconrules` VALUES ('4', '2', 'MODIFIER', 'HP', '20', 'GREATER');
-INSERT INTO `data_mix_iconrules` VALUES ('5', '3', 'MODIFIER', 'STR', '0', 'GREATER');
-INSERT INTO `data_mix_iconrules` VALUES ('6', '2', 'MODIFIER', 'MP', null, 'EXISTS');
-INSERT INTO `data_mix_icons` VALUES ('1', 'inventory/X-grape-128x128.png', 'Minor healthy potion');
-INSERT INTO `data_mix_icons` VALUES ('2', 'inventory/X-grape-128x128.png', 'Great healthy potion');
-INSERT INTO `data_mix_icons` VALUES ('3', 'inventory/X-grape-128x128.png', 'Strength potion');
-INSERT INTO `data_mix_mixgroups` VALUES ('2', '1', '2', '0', 'RAGENT', '1', '0', '0', '100', '10', '0', '1', '100');
-INSERT INTO `data_religions` VALUES ('1', 'Deites', 'ÓõæçôÞóåéò', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('2', 'Jaccob', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('3', 'Corellon Larethian', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('4', 'Ehlonna', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('5', 'Erythnul', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('6', 'Fharlanghn', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('7', 'Garl Glittergold', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('8', 'Gruumsh', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('9', 'Heironeous', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('10', 'Hextor', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('11', 'Kord', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('12', 'Moradin', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('13', 'Nerull', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('14', 'Obad-Hai', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('15', 'Olidammara', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('16', 'Perlor', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('17', 'St. Cuthbert', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('18', 'Vecna', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('19', 'Wee Jas', '', null, null, null, null, null);
-INSERT INTO `data_religions` VALUES ('20', 'Yondalla', '', null, null, null, null, null);
-INSERT INTO `gameobject_template` VALUES ('1', 'z=0&visible=1&model=&level=1&displayname=Object', 'Testing Object', '(Developing Usage)', 'inventory/box128.png', null, null);
-INSERT INTO `gameobject_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'SCRIPT', 'return \"<font size=\\\"-1\\\">\".gl_mix_visualize($var,true, true).\"</font>\";');
+INSERT INTO `char_template` VALUES ('1', 'map=1&x=5&y=5&visible=1&state=NORMAL&model=bizarre36.o&INT=10&STR=50&DEX=10&CON=3&WIS=3&CHA=20', 'Human', 'portraits/clans_alchemist.gif', null, 'This is a human player. It is said that human players tend to have better abilities on trade operations that any other race.', '0');
+INSERT INTO `char_template` VALUES ('2', 'map=4&x=5&y=5&visible=1&state=NORMAL&model=cape-grise.o&INT=40&STR=10&DEX=10&CON=50&WIS=50&CHA=10', 'Elf', 'portraits/neutral_elfranger.gif', null, 'This is an elf player.', '0');
+INSERT INTO `char_vardesc` VALUES ('race', 'Race', '0', '0', '(Unknown)', 'RAW', null, '0');
+INSERT INTO `char_vardesc` VALUES ('money', 'Money', '0', '1', '42', 'MONEY', null, '0');
+INSERT INTO `char_vardesc` VALUES ('itelligence', 'Itelligence', '0', '1', '10', 'SCRIPT', 'if ($var > 90) {\r\n	$color=\'red\';\r\n} elseif ($var > 50) {\r\n	$color=\'blue\';\r\n} elseif ($var > 30) {\r\n	$color=\'green\';\r\n} else {\r\n	$color=\'grey\';\r\n}\r\nreturn \"<font color=\\\"$color\\\">$var %</font>\";', '0');
+INSERT INTO `data_mix_iconrules` VALUES ('1', '1', 'CLASS', 'CONSUMABLE', null, 'EXISTS', '0');
+INSERT INTO `data_mix_iconrules` VALUES ('2', '1', 'MODIFIER', 'HP', '20', 'LESS', '0');
+INSERT INTO `data_mix_iconrules` VALUES ('3', '2', 'CLASS', 'CONSUMABLE', null, 'EXISTS', '0');
+INSERT INTO `data_mix_iconrules` VALUES ('4', '2', 'MODIFIER', 'HP', '20', 'GREATER', '0');
+INSERT INTO `data_mix_iconrules` VALUES ('5', '3', 'MODIFIER', 'STR', '0', 'GREATER', '0');
+INSERT INTO `data_mix_iconrules` VALUES ('6', '2', 'MODIFIER', 'MP', null, 'EXISTS', '0');
+INSERT INTO `data_mix_icons` VALUES ('1', 'inventory/X-grape-128x128.png', 'Minor healthy potion', '0');
+INSERT INTO `data_mix_icons` VALUES ('2', 'inventory/X-grape-128x128.png', 'Great healthy potion', '0');
+INSERT INTO `data_mix_icons` VALUES ('3', 'inventory/X-grape-128x128.png', 'Strength potion', '0');
+INSERT INTO `data_mix_mixgroups` VALUES ('2', '1', '2', '0', 'RAGENT', '1', '0', '0', '100', '10', '0', '1', '100', '0');
+INSERT INTO `data_religions` VALUES ('1', 'Deites', 'ÓõæçôÞóåéò', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('2', 'Jaccob', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('3', 'Corellon Larethian', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('4', 'Ehlonna', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('5', 'Erythnul', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('6', 'Fharlanghn', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('7', 'Garl Glittergold', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('8', 'Gruumsh', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('9', 'Heironeous', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('10', 'Hextor', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('11', 'Kord', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('12', 'Moradin', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('13', 'Nerull', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('14', 'Obad-Hai', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('15', 'Olidammara', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('16', 'Perlor', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('17', 'St. Cuthbert', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('18', 'Vecna', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('19', 'Wee Jas', '', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('20', 'Yondalla', '', null, null, null, null, null, '0');
+INSERT INTO `data_tips` VALUES ('1', 'interface.main', '', 'NORMAL', 'Game interface', '<div style=\"padding: 5px;\">\r\n<b>Welcome to GloryLands!</b><br />\r\n<p>This is the main game interface. From here you can do all the game actions.</p>\r\n<p>On your left, you can see the map. Moving your cursor to the middle-bottom of your character shows a highlighted green area. This area shows the maximum range you can move. You can click on a green rectange to move to the specified position.</p>\r\n<p>On your right, you can see the status bar. The status bar contains your character status, the main menu buttons and the chat window</p>\r\n<p>On the bottom, you can see the quick access bar. You can drag items here from your bag, spellbooks or information windows, and use them with a single click</p>\r\n</div>', '0');
+INSERT INTO `data_tips` VALUES ('2', 'admin.addobj', null, 'NORMAL', 'Administration', '<p style=\"margin: 5px;\">Using this button you can place new buildings in the active map.</p>', '0');
+INSERT INTO `gameobject_template` VALUES ('1', 'z=0&visible=1&model=&level=1&displayname=Object', 'Testing Object', '(Developing Usage)', 'inventory/box128.png', null, null, '0');
+INSERT INTO `gameobject_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'SCRIPT', 'return \"<font size=\\\"-1\\\">\".gl_mix_visualize($var,true, true).\"</font>\";', '0');
 INSERT INTO `interface_module_assign` VALUES ('1', 'interface.main', 'CHATWIN', '2', '10');
 INSERT INTO `interface_module_assign` VALUES ('2', 'interface.main', 'SIDEBAR', '0', '1');
 INSERT INTO `interface_module_assign` VALUES ('3', 'interface.main', 'QUICKBAR', '4', '10');
@@ -658,23 +716,23 @@ INSERT INTO `interface_module_resources` VALUES ('6', 'QUICKBAR', 'JS', '{DATA.M
 INSERT INTO `interface_modules` VALUES ('CHATWIN', 'Chat Window', 'Cross-player chat window and system message receiver for any User Interface', 'chat');
 INSERT INTO `interface_modules` VALUES ('SIDEBAR', 'Side Bar', 'A sidebar that displays the user\'s current statistics', 'sidebar');
 INSERT INTO `interface_modules` VALUES ('QUICKBAR', 'Qucik Access Bar', 'A bar with 12 buttons with droppable/customizable ability that allows user to hold there items and actions', 'quickbar');
-INSERT INTO `item_template` VALUES ('1', null, 'Light Sword', 'A quite light sword, mostly used by dwarfs', 'WEAPON', 'ONEHAND-SWORD', 'inventory/Kunai-128x128.png', '1', '2', '1');
-INSERT INTO `item_template` VALUES ('2', null, 'Woodsman Sword', 'A Wooden excercising sword', 'WEAPON', 'TWOHAND-SWORD', 'inventory/Kunai-128x128.png', '2', '20', '0');
-INSERT INTO `item_template` VALUES ('3', 'slots=10', 'Woolen Bag', 'A bag made of wool. This bag can carry up to 10 items', 'CONTAINER', 'GENERIC', 'inventory/box128.png', '1', '5', '0');
-INSERT INTO `item_template` VALUES ('4', null, 'Dragon Book', 'One of the sacrest books of the Wulz\'ar Kingdom!', 'BOOK', null, 'inventory/Address-Book-128x128.png', '3', '20', '20');
-INSERT INTO `item_template` VALUES ('5', null, 'Fire orb', 'This is a small, soft orb with a fire rune carved on it', 'CONSUMABLE', 'GEM', 'inventory/orbz-fire-128x128.png', '4', '100', '10');
-INSERT INTO `item_vardesc` VALUES ('quality', 'Quality', '0', '1', 'Common', 'ALIAS', '0=%3Cfont+color%3D%23666666%3EJunk%3C%2Ffont%3E&1=%3Cfont+color%3D%23009900%3ENormal%3C%2Ffont%3E&2=%3Cfont+color%3D%230033CC%3ERare%3C%2Ffont%3E&3=%3Cfont+color%3D%23663399%3ELegendary%3C%2Ffont%3E&4=%3Cfont+color%3D%23FF9900%3EEpic%3C%2Ffont%3E&5=%3Cfont+color%3D%23FF0000%3EHeroic%3C%2Ffont%3E');
-INSERT INTO `item_vardesc` VALUES ('class', 'Class', '0', '1', 'Unknown', 'SCRIPT', '$name = ucfirst(strtolower($var));\r\nif ($var==\'CONTAINER\') {\r\n  $name .= \" <a href=\\\"javascript:gloryIO(\'?a=interface.container&guid=\".$guid.\"\');\\\"><small><em>(Open)<em></small></a>\";\r\n}\r\nreturn $name;\r\n');
-INSERT INTO `item_vardesc` VALUES ('parent', 'Is On', '0', '0', null, 'GUID', null);
-INSERT INTO `item_vardesc` VALUES ('subclass', 'Subclass', '0', '0', 'Unknown', 'SCRIPT', 'return ucfirst(strtolower($var));');
-INSERT INTO `item_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'SCRIPT', 'return \"<font size=\\\"-1\\\">\".gl_mix_visualize($var,true, true).\"</font>\";');
-INSERT INTO `npc_template` VALUES ('1', 'level=3&model=zombie-vert.o&state=NORMAL&visible=1', 'Wuz Grub', 'ORC', 'WARRIOR', 'portraits/lod_cultist.gif', 'CHAT,QUEST', 'HUMANOID', 'Wuz Grub is one of the finest warriors of the stratholme kingdom');
-INSERT INTO `npc_template` VALUES ('2', 'level=3&model=samurai-maitre.o&state=NORMAL&visible=1', 'Joe Amaroth', 'HUMAN', 'PALADIN', 'portraits/clans_kingsguard.gif', 'CHAT', 'HUMANOID', 'Joe Amaroth is a kingsguard!');
-INSERT INTO `npc_vardesc` VALUES ('name', 'Name', '1', '0', null, 'RAW', null);
-INSERT INTO `npc_vardesc` VALUES ('race', 'Race', '1', '0', null, 'SCRIPT', 'return ucfirst(strtolower($var));');
-INSERT INTO `npc_vardesc` VALUES ('class', 'Class', '1', '0', null, 'SCRIPT', 'return ucfirst(strtolower($var));');
-INSERT INTO `npc_vardesc` VALUES ('type', 'Type', '1', '0', null, 'SCRIPT', 'return ucfirst(strtolower($var));');
-INSERT INTO `npc_vardesc` VALUES ('born_city', 'Born in city', '1', '0', null, 'GUID', null);
+INSERT INTO `item_template` VALUES ('1', null, 'Light Sword', 'A quite light sword, mostly used by dwarfs', 'WEAPON', 'ONEHAND-SWORD', 'inventory/Kunai-128x128.png', '1', '2', '1', '0');
+INSERT INTO `item_template` VALUES ('2', null, 'Woodsman Sword', 'A Wooden excercising sword', 'WEAPON', 'TWOHAND-SWORD', 'inventory/Kunai-128x128.png', '2', '20', '0', '0');
+INSERT INTO `item_template` VALUES ('3', 'slots=10', 'Woolen Bag', 'A bag made of wool. This bag can carry up to 10 items', 'CONTAINER', 'GENERIC', 'inventory/box128.png', '1', '5', '0', '0');
+INSERT INTO `item_template` VALUES ('4', null, 'Dragon Book', 'One of the sacrest books of the Wulz\'ar Kingdom!', 'BOOK', null, 'inventory/Address-Book-128x128.png', '3', '20', '20', '0');
+INSERT INTO `item_template` VALUES ('5', null, 'Fire orb', 'This is a small, soft orb with a fire rune carved on it', 'CONSUMABLE', 'GEM', 'inventory/orbz-fire-128x128.png', '4', '100', '10', '0');
+INSERT INTO `item_vardesc` VALUES ('quality', 'Quality', '0', '1', 'Common', 'ALIAS', '0=%3Cfont+color%3D%23666666%3EJunk%3C%2Ffont%3E&1=%3Cfont+color%3D%23009900%3ENormal%3C%2Ffont%3E&2=%3Cfont+color%3D%230033CC%3ERare%3C%2Ffont%3E&3=%3Cfont+color%3D%23663399%3ELegendary%3C%2Ffont%3E&4=%3Cfont+color%3D%23FF9900%3EEpic%3C%2Ffont%3E&5=%3Cfont+color%3D%23FF0000%3EHeroic%3C%2Ffont%3E', '0');
+INSERT INTO `item_vardesc` VALUES ('class', 'Class', '0', '1', 'Unknown', 'SCRIPT', '$name = ucfirst(strtolower($var));\r\nif ($var==\'CONTAINER\') {\r\n  $name .= \" <a href=\\\"javascript:gloryIO(\'?a=interface.container&guid=\".$guid.\"\');\\\"><small><em>(Open)<em></small></a>\";\r\n}\r\nreturn $name;\r\n', '0');
+INSERT INTO `item_vardesc` VALUES ('parent', 'Is On', '0', '0', null, 'GUID', null, '0');
+INSERT INTO `item_vardesc` VALUES ('subclass', 'Subclass', '0', '0', 'Unknown', 'SCRIPT', 'return ucfirst(strtolower($var));', '0');
+INSERT INTO `item_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'SCRIPT', 'return \"<font size=\\\"-1\\\">\".gl_mix_visualize($var,true, true).\"</font>\";', '0');
+INSERT INTO `npc_template` VALUES ('1', 'level=3&model=zombie-vert.o&state=NORMAL&visible=1', 'Wuz Grub', 'ORC', 'WARRIOR', 'portraits/lod_cultist.gif', 'CHAT,QUEST', 'HUMANOID', 'Wuz Grub is one of the finest warriors of the stratholme kingdom', '0');
+INSERT INTO `npc_template` VALUES ('2', 'level=3&model=samurai-maitre.o&state=NORMAL&visible=1', 'Joe Amaroth', 'HUMAN', 'PALADIN', 'portraits/clans_kingsguard.gif', 'CHAT', 'HUMANOID', 'Joe Amaroth is a kingsguard!', '0');
+INSERT INTO `npc_vardesc` VALUES ('name', 'Name', '1', '0', null, 'RAW', null, '0');
+INSERT INTO `npc_vardesc` VALUES ('race', 'Race', '1', '0', null, 'SCRIPT', 'return ucfirst(strtolower($var));', '0');
+INSERT INTO `npc_vardesc` VALUES ('class', 'Class', '1', '0', null, 'SCRIPT', 'return ucfirst(strtolower($var));', '0');
+INSERT INTO `npc_vardesc` VALUES ('type', 'Type', '1', '0', null, 'SCRIPT', 'return ucfirst(strtolower($var));', '0');
+INSERT INTO `npc_vardesc` VALUES ('born_city', 'Born in city', '1', '0', null, 'GUID', null, '0');
 INSERT INTO `system_dictionaries` VALUES ('1', 'GUID', 'CHAR', '0', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('2', 'GUID', 'UNIT', '1', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('3', 'GUID', 'ITEM', '2', 'FIXED', '0');
@@ -699,11 +757,12 @@ INSERT INTO `system_hooks` VALUES ('15', 'system.guid.deleted', 'hook-itemuse.ph
 INSERT INTO `system_hooks` VALUES ('16', 'item.pickup', 'hook-pickup.php', 'pickuphook_check_compatibility', 'YES', '0');
 INSERT INTO `system_hooks` VALUES ('17', 'system.guid.deleted', 'hook-base.php', 'hb_guid_deleted', 'YES', '0');
 INSERT INTO `system_hooks` VALUES ('18', 'system.complete_operation', 'hook-sidebar.php', 'sidebar_data_feed', 'YES', '0');
-INSERT INTO `unit_template` VALUES ('1', 'owner=0&religion=1&citizens=20&soldiers=0&x=12', 'Luskan Village', null, 'elements/mini/city.gif', 'Luskan village is a small, quite village oriented on the north side of the dark cliff.');
-INSERT INTO `unit_template` VALUES ('2', 'owner=1292&religion=1&citizens=20&soldiers=0', 'Mormon City', 'custom', 'elements/mini/capital.gif', 'Mormon is the capital of the strongholme kingdom. The king Melaton VI currently rules this area...');
-INSERT INTO `unit_vardesc` VALUES ('owner', 'Unit owner', '1', '0', '0', 'GUID', null);
-INSERT INTO `unit_vardesc` VALUES ('religion', 'City Religion', '1', '0', 'NEUTRAL', 'QUERY', 'SELECT `name` FROM `data_religions` WHERE `index` = $var');
-INSERT INTO `unit_vardesc` VALUES ('citizens', 'Number of citizens', '1', '0', '0', 'RAW', null);
-INSERT INTO `unit_vardesc` VALUES ('soldiers', 'Number of soldiers', '1', '0', '0', 'RAW', null);
+INSERT INTO `system_hooks` VALUES ('19', 'system.complete_operation', 'hook-tips.php', 'tipshook_complete_operation', 'YES', '0');
+INSERT INTO `unit_template` VALUES ('1', 'owner=0&religion=1&citizens=20&soldiers=0&x=12', 'Luskan Village', null, 'elements/mini/city.gif', 'Luskan village is a small, quite village oriented on the north side of the dark cliff.', '0');
+INSERT INTO `unit_template` VALUES ('2', 'owner=1292&religion=1&citizens=20&soldiers=0', 'Mormon City', 'custom', 'elements/mini/capital.gif', 'Mormon is the capital of the strongholme kingdom. The king Melaton VI currently rules this area...', '0');
+INSERT INTO `unit_vardesc` VALUES ('owner', 'Unit owner', '1', '0', '0', 'GUID', null, '0');
+INSERT INTO `unit_vardesc` VALUES ('religion', 'City Religion', '1', '0', 'NEUTRAL', 'QUERY', 'SELECT `name` FROM `data_religions` WHERE `index` = $var', '0');
+INSERT INTO `unit_vardesc` VALUES ('citizens', 'Number of citizens', '1', '0', '0', 'RAW', null, '0');
+INSERT INTO `unit_vardesc` VALUES ('soldiers', 'Number of soldiers', '1', '0', '0', 'RAW', null, '0');
 INSERT INTO `users_accounts` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '', null, null, null, null, 'ADMIN');
 INSERT INTO `users_accounts` VALUES ('2', 'player', '912af0dff974604f1321254ca8ff38b6', '', null, null, null, null, 'USER');
