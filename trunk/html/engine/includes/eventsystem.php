@@ -10,7 +10,7 @@ function callEvent($event,&$a=false,&$b=false,&$c=false,&$d=false,&$e=false,&$f=
 						/* ^ Bug Fix: func_get_args() does not return reference vars */
 						
 	global $EventChain, $_CONFIG;
-	
+		
 	// No chained events? 
 	// Allow execution
 	if (!isset($EventChain[$event])) {

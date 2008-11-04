@@ -118,3 +118,52 @@ table.login {
 	border: solid 2px #CCCCCC;
 	background-color: #FFFFCC;
 }
+
+table.general {
+	padding: 2px;
+	border: solid 1px #666666;
+}
+
+table.general tr.header {
+	background-color: #333333;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
+table.editor small {
+	color: #666666;
+	font-style: italic;
+}
+
+table.editor tr.info td {
+	color: #666666;
+	font-style: inherit;
+	border-bottom: double 3px #666666;
+	padding-top: 4px;
+	font-weight: bold;
+}
+
+table.editor tr.separator {
+	height: 2px;
+}
+
+table.editor tr.separator td {
+	border-bottom: solid 2px #666666;
+}
+
+.access_global {
+	color: #006600;
+}
+
+.access_admin {
+	color: #666666;
+}
+
+.access_other {
+	color: #990000;
+}
+
+.access_you {
+	background-color: #00CC00;
+	color: #FFFFFF;
+}

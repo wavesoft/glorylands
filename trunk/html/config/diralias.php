@@ -26,12 +26,14 @@ $_CONFIG[DIRS][ALIAS] = array(
 	'INTERFACE.INCLUDE'	=> "/includes",
 	'INTERFACE.THEME'	=> "/themes",
 	'DOCUMENTATION'		=> "/doc",
+	'DATA.LANG'			=> "/data/lang",
 	'DATA.MAP'			=> "/data/maps",
 	'DATA.MODEL'		=> "/data/models",
 	'DATA.ENGINE'		=> "/engine/data",
 	'DATA.INTERFACE'	=> "/data/interfaces",
 	'DATA.MODULE'		=> "/data/modules",
 	'DATA.IMAGE'		=> "/images",
+	'DATA'				=> "/data",
 	'SYSTEM.MANAGER' 	=> "/engine/managers",
 	'SYSTEM.INCLUDE' 	=> "/engine/includes",
 	'SYSTEM.ENGINE' 	=> "/engine",
@@ -65,13 +67,15 @@ $_CONFIG[DIRS][NAMES] = array(
 	'INTERFACE.INCLUDE'	=> "Interface Element",
 	'INTERFACE.THEME'	=> "Interface Theme",
 	'DOCUMENTATION'		=> "Documentation",
+	'DATA.LANG'			=> "Language Data",
 	'DATA.MAP'			=> "Map Data",
 	'DATA.MODEL'		=> "Model Data",
 	'DATA.ENGINE'		=> "Engine Data",
 	'DATA.INTERFACE'	=> "Interface Data",
 	'DATA.MODULE'		=> "Interface Module",
 	'DATA.HOOK'			=> "Action message hook",
-	'DATA.IMAGE'		=> "Generic Image File"
+	'DATA.IMAGE'		=> "Generic Image File",
+	'DATA'				=> "Game Data"
 	
 	);
 	

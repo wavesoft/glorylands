@@ -29,7 +29,7 @@ function gl_expire_users() { /* Execution time must be as less as possible */
 	$timeout = time() - $timeout;
 
 	// Notify all event chains to remove the user from their stacks
-	$ans=$sql->query("SELECT `name`, `index` FROM `users_accounts` WHERE `lastaction` < $timeout");
+	$ans=$sql->query("SELECT `name`, `index` FROM `users_accounts` WHERE `lastaction` < $timeout AND `online` = 1");
 	if (!$ans) debug_error($sql->getError());
 	if (!$sql->emptyResults) {
 		while ($row = $sql->fetch_array()) {
@@ -38,7 +38,7 @@ function gl_expire_users() { /* Execution time must be as less as possible */
 	}
 	
 	// Logoff chars and user accounts
-	$ans=$sql->query("UPDATE `users_accounts` SET `online` = 0 WHERE `lastaction` < $timeout");
+	$ans=$sql->query("UPDATE `users_accounts` SET `online` = 0 WHERE `lastaction` < $timeout AND `online` = 1");
 	if (!$ans) debug_error($sql->getError());
 	$ans=$sql->query("UPDATE `char_instance`
 				 Inner Join `users_accounts` ON `char_instance`.`account` = `users_accounts`.`index`

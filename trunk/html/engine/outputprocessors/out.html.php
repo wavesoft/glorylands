@@ -23,9 +23,10 @@ include DIROF('OUTPUT.FILE')."interfaces/libs/Smarty.class.php";
 $smarty = new Smarty;
 $smarty->template_dir = DIROF('DATA.INTERFACE',true);
 $smarty->compile_dir = DIROF('OUTPUT.PROCESSOR')."interfaces/cache";
-$smarty->config_dir = DIROF('OUTPUT.PROCESSOR')."interfaces/config";
+$smarty->config_dir = DIROF('DATA.LANG');
 $smarty->compile_check = true;
 $smarty->debugging = false;
+$smarty->config_load($_CONFIG[GAME][LANG].'.dat');
 
 // Assign required variables
 $smarty->assign($act_result);

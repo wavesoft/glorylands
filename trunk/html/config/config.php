@@ -28,6 +28,7 @@ $_CONFIG[DB][USER] 			= "glory";
 $_CONFIG[DB][PASSWORD] 		= "lands";
 
 ### Global game information
+$_CONFIG[GAME][LANG] 		= "en";
 $_CONFIG[GAME][TITLE] 		= "Glory Lands";
 $_CONFIG[GAME][CHARSET] 	= "iso-8859-7";
 $_CONFIG[GAME][THEME] 		= "default";

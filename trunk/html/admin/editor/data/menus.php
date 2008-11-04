@@ -34,10 +34,35 @@ $MENU = array(
 		'icon' => 'globe2.png',
 		'text' => 'Map management'
 	),
+	'tips' => array(
+		'page' => 'tips',
+		'icon' => 'help.png',
+		'text' => 'Introduction Tips',
+		'submenu' => array(
+			'tips_add' => array(
+				'icon' => 'edit_add.gif',
+				'text' => 'New Tip',
+				'page' => 'tips_add'
+			)
+		)
+	),
 	'teleports' => array(
 		'page' => 'teleports',
 		'icon' => 'recur.png',
-		'text' => 'Teleport Points'
+		'text' => 'Teleport Points',
+		'customnav' => 'teleports',
+		'submenu' => array(
+			'teleports_edit' => array(
+				'icon' => 'edit.png',
+				'text' => 'Edit Map Teleports',
+				'page' => 'teleports_edit'
+			),
+			'teleports_add' => array(
+				'icon' => 'edit_add.gif',
+				'text' => 'Add Teleport',
+				'page' => 'teleports_add'
+			)
+		)
 	),
 	'gobj' => array(
 		'page' => 'gobj',
