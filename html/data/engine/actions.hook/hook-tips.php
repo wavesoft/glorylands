@@ -15,11 +15,11 @@ function tipshook_complete_operation($operation) {
 		}
 		
 		// Get the tips that this operation has triggered
-		$ans=$sql->query("SELECT * FROM `data_tips` WHERE `index` IN ({$tplist}) AND `trigger_action` = '{$operation}'");
-		if (!$ans) debug_error($sql->getError());
+		$sql_ans=$sql->query("SELECT * FROM `data_tips` WHERE `index` IN ({$tplist}) AND `trigger_action` = '{$operation}'");
+		if (!$sql_ans) debug_error($sql->getError());
 		
 		// Check and Display results
-		while ($row = $sql->fetch_array_fromresults($ans)) {
+		while ($row = $sql->fetch_array_fromresults($sql_ans)) {
 		
 			// Filter only the tips that follow our parameters:
 			$trigger = $row['trigger_request'];
@@ -33,7 +33,7 @@ function tipshook_complete_operation($operation) {
 				}
 				
 				#2 : Build the token list
-				$parts=preg_split('/(and|or|>|<|=)/i',$trigger,-1,PREG_SPLIT_DELIM_CAPTURE);
+				$parts=preg_split('/(and|or|>|<|\!|=)/i',$trigger,-1,PREG_SPLIT_DELIM_CAPTURE);
 				array_walk($parts, 'trim');
 					debug_message("Parts: ".print_r($parts,true));
 				
@@ -45,6 +45,7 @@ function tipshook_complete_operation($operation) {
 					if ($parts[$i+1]=='>') $check=(trim($parts[$i])>trim($parts[$i+2])); 
 					if ($parts[$i+1]=='<') $check=(trim($parts[$i])<trim($parts[$i+2]));
 					if ($parts[$i+1]=='=') $check=(trim($parts[$i])==trim($parts[$i+2]));
+					if ($parts[$i+1]=='!') $check=(trim($parts[$i])!=trim($parts[$i+2]));
 					
 					debug_message("Testing: [{$parts[$i]}] [{$parts[$i+1]}] [{$parts[$i+2]}]");
 					
@@ -72,7 +73,7 @@ function tipshook_complete_operation($operation) {
 			if ($ans) {
 			
 				// Display tip message
-				relayMessage(MSG_INTERFACE,'POPUP', $row['tip'], 'Tip: '.$row['title']);
+				relayMessage(MSG_INTERFACE,'POPUP', '<div style="padding: 5px;">'.$row['tip'].'</div>', 'Tip: '.$row['title']);
 				
 				// Remove this tip from player stack
 				unset($_SESSION[PLAYER][DATA]['tips'][$row['index']]);
