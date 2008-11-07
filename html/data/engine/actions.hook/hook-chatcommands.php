@@ -189,6 +189,39 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 		
 		$answer = "Tips are reset for user #".$_SESSION[PLAYER][GUID];	
 
+	} elseif ($cmd == 'online') {
+
+		$sql->query("SELECT `guid`,`name`,`x`,`y`,`map` FROM `char_instance` WHERE `online` = 1");
+		$answer = "";	
+		while ($char = $sql->fetch_array(MYSQL_ASSOC)) {
+			$answer.='<li><a href="javascript:gloryIO(\'?a=info.guid&guid='.$char['guid'].'\')">'.$char['name'].'</a> at <a href="javascript:gloryIO(\'?a=chat.send&text=/goto+'.($char['x']-1).'+'.$char['y'].'+'.$char['map'].'\');">('.$char['x'].','.$char['y'].'@'.$char['map'].')</a>';
+		}
+		if ($answer!='') {
+			$answer="Online users:<ul>".$answer."</ul>";
+		} else {
+			$answer.='No online users! (Wtf? How did YOU send THIS?!)';
+		}
+
+	} elseif ($cmd == 'gpsof') {
+
+		if (!isset($parameters[0])) { $answer='';
+			relayMessage(MSG_INTERFACE, 'CHAT', '<font color="#FF0000">Please, specify a username or a GUID!</font>', '<font color="gold">debug</font>');
+			return false;
+		}
+
+		if (is_numeric($parameters[0])) {
+			$guid = $parameters[0];
+		} else {
+			$guid=$sql->query_and_get_value("SELECT `guid` FROM `char_instance` WHERE `name` LIKE '".mysql_escape_string($parameters[0])."'");			
+		}
+
+		if (!$guid) {
+			$answer = "Player or GUID not found!";		
+		} else {
+			$row = gl_get_guid_vars($guid);
+			$answer = "Object position is <a href=\"javascript:gloryIO('?a=chat.send&text=/goto+{$row['x']}+{$row['y']}+{$row['map']}')\">({$row['x']},{$row['y']}@{$row['map']})</a>";
+		}
+
 	} elseif ($cmd == 'help') {
 		
 		$answer="Commands that can be used:<ul>";
@@ -200,6 +233,8 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 		$answer.="<li><b>varset</b><i> variable value [guid]</i> : Update a GUID's variable";
 		$answer.="<li><b>listvar</b><i> [guid]</i>: List GUID variables</li>";
 		$answer.="<li><b>delvar</b><i> variable [guid]</i>: Erase a GUID's variable</li>";
+		$answer.="<li><b>gpsof</b><i> charname/guid</i>: Get character or object position</li>";
+		$answer.="<li><b>online</b>: Get a list of the online players</li>";
 		$answer.="<li><b>logout</b>: Log out charachter</li>";
 		$answer.="</ul>";
 
