@@ -13,7 +13,7 @@
 
 ### Notify any included objects that they are included by script
 define('IN_SCRIPT',true);
-error_reporting(E_ERROR);
+error_reporting(E_ALL ^ E_NOTICE);
 
 ### Basic includes
 include_once $_CONFIG[GAME][BASE]."/config/diralias.php";
