@@ -107,7 +107,7 @@ while ($operation != $last_operation) {
 			if (isset($act_profile['default_outmode'])) {
 				$outmode = $act_profile['default_outmode']; /* Use profile wanted from the manifest */
 			} else {
-				$outmode = "debug"; 						/* Defaut output processor is the HTML */
+				$outmode = "echo"; 							/* Defaut output processor is the Echo */
 			}
 		}
 	}

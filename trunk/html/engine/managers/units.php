@@ -54,7 +54,7 @@ class mgr_unit {
 			}
 			// Get the units that fulify the request
 			$ans = getObjects('unit', "`{x}` = {$parm[0]} AND `{y}` = {$parm[1]} AND `{map}` = {$parm[2]} LIMIT 0,1");
-			if (!$ans) {debug_error($sql->getError()) return false; }
+			if (!$ans) {debug_error($sql->getError()); return false; }
 			// Get the first (only) item
 			$row=$ans[0];
 			$this->instanceRow=$row;
