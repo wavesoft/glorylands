@@ -210,6 +210,45 @@ function gl_count_guid_children($parent, $group=false) {
 
 
 /**
+  * Retrive all the guids that have the same parent GUID
+  *  
+  * This function automatically detects the instance table by the specified GUID and
+  * searches for a matched parent field. If you don't want automatic detection, you
+  * can specify a custom group
+  *
+  * @param int $parent 		The parent GUID whose children are to be counted
+  * @param string $group	An optional parameter that specifies the instance group to check for children
+  * @return int 			Returns the number of children
+  */
+function gl_get_guid_children($parent, $group=false) {
+	global $sql;
+	
+	// Detect group if not specified
+	if (!$group) {
+	
+		// Analyze GUID
+		$parts = gl_analyze_guid($parent);
+		if (!$parts['group']) return false;
+		
+		// Set group
+		$group = $parts['group'];
+	
+	} 
+	
+	// Search the GUID table for items
+	$ans=$sql->query("SELECT `guid` FROM `{$group}_instance` WHERE `parent` = ".$parent);
+	if (!$ans) { debug_error($sql->getError()); return false; }
+	$guids=array();
+	while ($row = $sql->fetch_array(MYSQL_NUM)) {
+		$guids[] = $row[0];
+	}
+	
+	// Return the result
+	return $guids;
+}
+
+
+/**
   * Obdain a guid's template group
   *
   * @param int $guid 		A GUID of an instanced entry
