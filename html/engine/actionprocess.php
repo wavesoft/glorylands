@@ -136,7 +136,10 @@ if (!isset($act_profile['helpers'])) { /* DEFINITELY NOT FAST! */
 }
 
 ###  Link some of the environment classes into the class array
-$act_classes['db'] = &$sql;
+$act_classes['sql'] = &$sql;
+
+### Expose variables
+extract($act_classes, EXTR_SKIP | EXTR_REFS);
 
 ### And now process the action
 include DIROF('ACTION')."{$act_operation}.php";
