@@ -9,13 +9,16 @@ class Language{
 	
 	var $_interface = array();
 	/**@var Array of Translactions */
-	var $_lang = array();
+	var $_langarray = array();
+	var $_lang = null;
 	
 	/** @varTranslation Type [local, remote] */
 	var $_type = null;
 	
 	/** @var webserver used for remote tranlation */
 	var $_dict_url = null;
+	
+	
 	
 	/**
 	 * 
@@ -25,10 +28,23 @@ class Language{
 	 */
 	function __construct($lang, $type='local'){
 		$this->_type = $type;
-		$this->_dict_url = $lang;
+		$this->_lang = $lang;
 			
 	}
 	
+	/**
+	 * 
+	 * @return 
+	 * @param $lang Object[optional]
+	 */
+	function &getInstance($lang='en-US'){
+		static $langs;
+		if(!empty($langs)){
+			return $langs;
+		}
+		$langs = new Language($lang);
+		return $langs;		
+	}
 	
 	/**
 	 * Function usec for tranlation
@@ -39,13 +55,13 @@ class Language{
 	function translate($w, $group='game'){
 		//$group = 
 		if( !array_search($group, $this->_interface) ){
-			include_once 'languages/'.$lang.'/'.$group.'.lang';
+			include_once 'languages/'.$this->_lang .'/'.$group.'.lang';
 			$this->_interface[] = $group;
-			$this->_lang = array_merge($this->_lang, $dictionary); 
+			$this->_langarray = array_merge($this->_langarray, $dictionary); 
 		}
 		
-		return (isset($this->_lang[$w]))? // if find tranlation 
-			$this->_lang[$w]: // return tranlation 
+		return (isset($this->_langarray[$w]))? // if find tranlation 
+			$this->_langarray[$w]: // return tranlation 
 			$w; // return gived word
 	}
 	
