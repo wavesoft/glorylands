@@ -18,6 +18,7 @@ define('MAP_GRID_W','MAP_GRID_W');
 define('MAP_GRID_H','MAP_GRID_H');
 define('INDX_INTERFACE', 'INDX_INTERFACE');
 
+define('LANG','LANG');
 ### Uncomment the next line to enable debugging
 //define('GLOB_DEBUG', true);
 
