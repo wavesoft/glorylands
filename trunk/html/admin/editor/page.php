@@ -12,6 +12,7 @@ include "tools/auth.php";
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-7" />
 <title>GloryLands :: Content Editor</title>
 <link rel="stylesheet" type="text/css" href="theme/style.css">
+<script src="tools/codepress/codepress.js" type="text/javascript"></script>
 </head>
 <body>
 <?php

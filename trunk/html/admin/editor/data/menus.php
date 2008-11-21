@@ -34,6 +34,11 @@ $MENU = array(
 		'icon' => 'globe2.png',
 		'text' => 'Map management'
 	),
+	'action_edit' => array(
+		'page' => 'action_edit',
+		'icon' => 'globe2.png',
+		'text' => 'Action management'
+	),
 	'tips' => array(
 		'page' => 'tips',
 		'icon' => 'help.png',

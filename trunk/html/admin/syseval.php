@@ -39,6 +39,7 @@ ob_implicit_flush();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-7" />
 <title>GloryLands Administration :: Script evaluation</title>
+<script src="includes/codepress/codepress.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -99,8 +100,8 @@ function doadd(obj) {
 <p>
 <table>
 <tr>
-	<td>
-	<textarea id="script" name="script" cols="120" rows="14"><?php echo stripslashes($_POST['script']); ?></textarea>
+	<td>    
+	<textarea id="script" name="script" cols="120" rows="14"><?php if (isset($_POST['script'])) { echo stripslashes($_POST['script']); } else { echo "<"."?"."php \n\n?".">"; }  ?></textarea>
 	</td>
 	<td>Declared Functions<br />
       <select name="select" size="14" onchange="doadd(this)">
