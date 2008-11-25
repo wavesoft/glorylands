@@ -42,7 +42,8 @@ function itemuse_dropdown(&$data, $guid) {
 	// Add pickup handler
 	array_push($data, array(
 		'url'=>'?a=item.pickup&guid='.$_REQUEST['guid'], 
-		'text'=>'<img src="images/UI/navbtn_take.gif" border="0" title="Pickup item" />'
+		'icon' => 'images/UI/piemenu/take.gif',
+		'text'=>'Pickup item'
 	));
 }
 

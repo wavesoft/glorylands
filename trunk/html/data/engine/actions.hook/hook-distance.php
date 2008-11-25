@@ -202,9 +202,9 @@ function renderPhase() {
 	chunk.x.M	= (int)			: Maximum X Value
 	chunk.y.m	= (int)			: Minimum Y Value
 	chunk.y.M	= (int)			: Maximum Y Value
-	chunk.center.x = (int)		: Center X offset
-	chunk.center.y = (int)		: Center Y offset	
-	chunk.action = (str)		: The base url
+	chunk.point.x = (int)		: The "pin point"'s X offset
+	chunk.point.y = (int)		: The "pin point"'s Y offset	
+	chunk.action = (str)		: The base url action
 */
 	$visualgrid = array();
 
@@ -236,6 +236,8 @@ function renderPhase() {
 	$_SESSION[DATA]['WALKID'] = array();
 	
 	// Build visual grid
+	global $sql;
+
 	$log.="Range: x=[$minX~$maxX] y=[$minY~$maxY]";
 	$first = false;
 	$vgrid = array();
@@ -257,8 +259,14 @@ function renderPhase() {
 						
 				// Store grid information
 				$gx = $x-$minX;
-				$gy = $y-$minY;				
-				$vgrid[$gy][$gx] = array('i'=>$id, 'c'=>'#66FF66');
+				$gy = $y-$minY;
+				if (($x==$_SESSION[PLAYER][DATA]['x']) && ($y==$_SESSION[PLAYER][DATA]['y'])) {
+					$vgrid[$gy][$gx] = array('i'=>$id, 'b'=>'images/UI/area/red.png');
+				} elseif ($sql->poll("SELECT `index` FROM `data_maps_teleports` WHERE `x` = {$x} AND `y` = {$y} AND `map` = ".$_SESSION[PLAYER][DATA]['map'])) {
+					$vgrid[$gy][$gx] = array('i'=>$id, 'b'=>'images/UI/area/blue-portal.png');
+				} else {
+					$vgrid[$gy][$gx] = array('i'=>$id, 'b'=>'images/UI/area/green.png');
+				}
 				$log.="VGrid @$gx,$gy<br />";
 				
 				// Calculate visualgrid extends
@@ -291,7 +299,7 @@ function renderPhase() {
 	return true;
 }
 
-// Hooks system.init_operation to translate request value "id" into "x","y"
+// Hooks system.init_operation to map request value "id" into "x","y" coordinates
 function opinitTranslateID($lastop, $newop) {
 	if ($newop == 'map.grid.get') {
 		if (isset($_REQUEST['id']) && isset($_SESSION[DATA]['WALKID'])) {
