@@ -9,6 +9,7 @@ if (isset($vars['x'], $vars['y'])) {
 		// We are too far away
 		$act_result = array(
 			'mode' => 'DROPDOWN',
+			'menus'=> array(array('images/UI/piemenu/help.gif', 'View information', '?a=info.guid&guid='.$_REQUEST['guid'])),
 			'text' => '<small><em>(Too far away!)</em></small>'
 		);
 		return;
@@ -17,31 +18,28 @@ if (isset($vars['x'], $vars['y'])) {
 
 // Initialize reply stack
 $data = array(
-	array('url'=>'?a=info.guid&guid='.$_REQUEST['guid'], 'text'=>'<img src="images/UI/navbtn_help.gif" border="0" title="View information" />'),
-	array('url'=>'?a=interface.container&guid='.$_REQUEST['guid'], 'text'=>'<img src="images/UI/navbtn_explore.gif" border="0" title="Search Object" />')
+	array('url'=>'?a=info.guid&guid='.$_REQUEST['guid'], 'icon' => 'images/UI/piemenu/help.gif', 'text'=>'View information'),
+	array('url'=>'?a=interface.container&guid='.$_REQUEST['guid'], 'icon' => 'images/UI/piemenu/find.gif', 'text'=>'Search Object')
 );
+$text = '';
 
 // Dropdown system is mostly based on the interrupt system
-if (callEvent('interface.dropdown', $data, $_REQUEST['guid'])) {
+if (callEvent('interface.dropdown', $data, $_REQUEST['guid'], $text)) {
 
-	// Build text
-	$text = '';
+	// Compress menu items reply by removing text keys and replacing them with indexies
+	$menus = array();
 	foreach ($data as $entry) {
-
-		// If we have an URL, display the link
-		if (isset($entry['url'])) {
-			$text.="<a href=\"javascript:void(0)\" onclick=\"disposeDropDown(); gloryIO('".$entry['url']."');\">".$entry['text']."</a >";
-
-		// If we have only the text, show a text entry
-		} elseif (isset($entry['text'])) {
-			$text.="<span>".$entry['text']."</span>";
-		}
+		$menu = array('','','');
+		if (isset($entry['icon'])) $menu[0]=$entry['icon'];
+		if (isset($entry['text'])) $menu[1]=$entry['text'];
+		if (isset($entry['url'])) $menu[2]=$entry['url'];
+		array_push($menus, $menu);
 	}
 
 	// Reply data
 	$act_result = array(
 		'mode' => 'DROPDOWN',
-		'text' => "Called by ".$_REQUEST['pos']." and parent ".$_REQUEST['parent']." <br />".$text
+		'menus' => $menus
 	);
 	
 } else {
@@ -49,6 +47,7 @@ if (callEvent('interface.dropdown', $data, $_REQUEST['guid'])) {
 	// Do nothing if some interrupt returned false
 	$act_result = array(
 		'mode' => 'DROPDOWN',
+		'menus' => array(),
 		'text' => '<small><em>(Nothing here)</em></small>'
 	);
 }

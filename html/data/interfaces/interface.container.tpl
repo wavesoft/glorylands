@@ -3,7 +3,7 @@
 {if is_array($_my.objects) && count($_my.objects) > 0 }
 <ul>
 {section name=id loop=$_my.objects}
-<li oncontextmenu="var e=new Event(event); dropdownShow(e.event.clientX,e.event.clientY,{$_my.objects[id].guid},'CONTAINER', {$_my.parent});e.stop();">
+<li oncontextmenu="var e=new Event(event); piemenu_dispose(); piemenu_init(e.event.clientX,e.event.clientY,{$_my.objects[id].guid},'CONTAINER', {$_my.parent});e.stop();">
 	<img onload="qb_makedraggable(this,{$_my.objects[id].guid},false,{$_my.parent},'interface.container');" src="images/{$_my.objects[id].image}" />
 	<a href="javascript:gloryIO('?a=info.guid&guid={$_my.objects[id].guid}');">{$_my.objects[id].name}</a>
 	<span>{$_my.objects[id].desc}</span>

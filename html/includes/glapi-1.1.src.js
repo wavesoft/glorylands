@@ -156,7 +156,7 @@ function createWindow(header, content, x, y, w, h, guid) {
 		if (!isMozilla) { /* Slide effect works with bugs on mozilla */
 			var slider = new Fx.Slide(eContent);
 		}
-		linkToggle.setAttribute('href', 'javascript:void(null)');
+		linkToggle.setAttribute('href', 'javascript:;');
 		linkToggle.innerHTML = '&nbsp;';
 		eHead.appendChild(linkToggle);
 		$(linkToggle).addEvent('click', function(e){
@@ -208,7 +208,7 @@ function createWindow(header, content, x, y, w, h, guid) {
 		if (y) eBody.setStyles({'top':y});
 		if (w) eBody.setStyles({'width':w});
 		if (h) eBody.setStyles({'height':h});
-		
+				
 		// Create object
 		eBody.setStyles({'z-index': lastZ++});
 		document.body.appendChild(eBody);
@@ -570,7 +570,7 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 					resetRegion();
 
 					// Dispose any visible misc layers
-					disposeDropDown();
+					piemenu_dispose();
 					disposeActionPane();
 					
 					// Display data buffer
@@ -671,10 +671,16 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 				// ## HTML Data for dropdown menu ##
 				} else if (mode=='DROPDOWN') {
 
-					// Update dropdown menu text
-					if ($defined(obj.text) && dropdownInfo.visible) {
-						$('dropdownLayer').setHTML(obj.text);
+					// Update piemenu menus and text
+					var menus = [];
+					var text = [];
+
+					if ($defined(obj.menus)) menus=obj.menus;
+					if ($defined(obj.text)) text=obj.text;
+					if (pie_wait_icon) {
+						piemenu_show(menus, text);
 					}
+
 
 				// ## Unknown Interface ##
 				} else {
@@ -931,6 +937,8 @@ function disposeDropDown(){
 var regions = [];
 var visibleRegionID = -1;
 var activeEvent = false;
+var region_showing = false;
+var region_showing_fx = null;
 
 // Stack a region on region management system
 function stackRegion(chunk) {
@@ -948,13 +956,21 @@ function resetRegion() {
 // Display a region object if it hits the x/y coordinates
 function hitTestRegion(x,y) {
 	
-	// If we already have a visible region object do not show seconds
-	if (visibleRegionID>-1) return;
+	// If we already have a visible region object do not show seconds,
+	// and also check if the mouse has moven out before the show animation was completed
+	if (visibleRegionID>-1) {
+			if (region_showing) {
+				if ((x!=regions[visibleRegionID].show.x) || (y!=regions[visibleRegionID].show.y)) {
+					abortActionPaneRender();	
+				}
+			}
+			return;
+	}
 	
 	// Check regions for collision
 	for (var i=0; i<regions.length; i++) {
 		if ((regions[i].show.x == x) && (regions[i].show.y == y)) {
-			setTimeout(function(){ showRegion(i); }, 100);
+			showRegion(i);
 			return;
 		}
 	}
@@ -968,17 +984,22 @@ function showRegion(index) {
 }
 
 // Disposes a region object
-function disposeActionPane() {
+function disposeActionPane(quick) {
 	// Exit if no panel is visible
 	if (visibleRegionID==-1) return;
 	
 	var panel = $('actionpane');
-	var fx = new Fx.Styles(panel, {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
-	fx.start({
-		'opacity': 0
-	}).chain(function() {
+	
+	if (!quick) {
+		var fx = new Fx.Styles(panel, {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
+		fx.start({
+			'opacity': 0
+		}).chain(function() {
+			panel.setStyles({visibility:'hidden'});	
+		});	
+	} else {
 		panel.setStyles({visibility:'hidden'});	
-	});	
+	}
 	visibleRegionID = -1;
 }
 
@@ -995,23 +1016,28 @@ function renderActionRange(chunk) {
 	chunk.x.M	= (int)			: Maximum X Value
 	chunk.y.m	= (int)			: Minimum Y Value
 	chunk.y.M	= (int)			: Maximum Y Value
-	chunk.center.x = (int)		: Center X offset
-	chunk.center.y = (int)		: Center Y offset	
+	chunk.point.x = (int)		: The "pin point"'s X offset
+	chunk.point.y = (int)		: The "pin point"'s Y offset	
 	chunk.action = (str)		: The base url
 	
 	*/
-	
+
+	// Dispose hover
+	hoverShow();
+
 	try {
-	var x=0;
-	var y=0;
-	
+	var x=0; var y=0;	
 	var HTML = '<table cellspacing="0" cellpadding="0">';
 	for (y=chunk.y.m; y<=chunk.y.M; y++) {
 		HTML+='<tr>';
 		for (x=chunk.x.m; x<=chunk.x.M; x++) {
 			if ($defined(chunk.grid[y])) {
   			  if ($defined(chunk.grid[y][x])) {
-				HTML+='<td><a href="javascript:void(0);" onclick="disposeDropDown();gloryIO(\'?a='+chunk.action+'&id='+chunk.grid[y][x].i+'\');" class="actgrid_link" style="background-color: ' + chunk.grid[y][x].c + '">';
+				  
+				var cell_style='';
+				if ($defined(chunk.grid[y][x].c)) cell_style+='background-color:' + chunk.grid[y][x].c+'; ';
+				if ($defined(chunk.grid[y][x].b)) cell_style+='background-image:url(' + chunk.grid[y][x].b+'); ';
+				HTML+='<td><a href="javascript:void(0);" onclick=";gloryIO(\'?a='+chunk.action+'&id='+chunk.grid[y][x].i+'\');" class="actgrid_link" style="'+cell_style+'">';
 				if ($defined(chunk.grid[y][x].t)) {
 					HTML+=chunk.grid[y][x].t;
 				} else {
@@ -1047,18 +1073,19 @@ function renderActionPane(data,x,y) {
 		e = new Event(e);
 		e.stop();
 	});
-	panel.addEvent('mousemove', function(e){
-		e = new Event(e);
-		e.stop();
-	});
 	panel.addEvent('mouseleave', function(e){
 		e = new Event(e);
 		disposeActionPane();
 		e.stop();
 	});
 
-	var fx = new Fx.Styles('actionpane', {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
-	fx.start({
+	region_showing_fx = new Fx.Styles('actionpane', {duration: 500, transition: Fx.Transitions.Cubic.easeIn,
+		onComplete: function() {
+			region_showing=false;
+		}
+	});
+	region_showing=true;
+	region_showing_fx.start({
 		'opacity': 0.8
 	}).chain(function() {
 		hoverShow(false);
@@ -1066,6 +1093,14 @@ function renderActionPane(data,x,y) {
 	
 }
 
+// Aborts region display
+function abortActionPaneRender() {
+	if (region_showing) {
+		region_showing_fx.stop();	
+		region_showing=false;
+		disposeActionPane(true);
+	}
+}
 
 
 // ======================================================
@@ -1097,7 +1132,208 @@ function feeder() {
 }
 
 // ======================================================
-//  Basic site initializatoin functions
+//  PieMenu functions (replacing dropdownMenu)
+// ======================================================
+var pie_stack=[];
+var pie_info=[];
+var pie_wait_icon=null;
+var pie_menutext=null;
+var pie_visible=false;
+
+function piemenu_dispose() {
+	if (pie_stack.length>=0) {
+		for (var i=0; i<pie_stack.length; i++) {
+			var dispose_ani=new Fx.Styles(pie_stack[i], {duration: 400, transition: Fx.Transitions.Back.easeIn,
+				onComplete: function() {
+					this.element.remove();
+				}
+			});
+			dispose_ani.start({
+				'opacity': 0,
+				'left': pie_info.x-17,
+				'top': pie_info.y-17
+			});
+		}
+		pie_stack=[];
+	}
+	pie_info=[];
+	
+	// Dispose old menu text
+	if (pie_menutext) {
+		var dispose_ani=new Fx.Styles(pie_menutext, {duration: 400, transition: Fx.Transitions.Back.easeIn,
+			onComplete: function() {
+				this.element.remove();
+			}
+		});
+		dispose_ani.start({
+			'opacity': 0
+		});
+		pie_menutext=null;
+	}
+	
+	// Just in case we are still waiting for response...
+	piemenu_waitdispose();
+	pie_visible=false;
+}
+
+function piemenu_spawnicon(x,y,icon,tip,url) {
+	try {
+	var host = $(document.createElement('div'));
+	host.setStyles({
+		'width': '34px',
+		'height': '34px',
+		'position': 'absolute',
+		'background-repeat': 'no-repeat',
+		'background-image': 'url(images/UI/icon-bg.png)',
+		'text-align': 'center',
+		'left': (pie_info.x-17)+'px',
+		'top': (pie_info.y-17)+'px',
+		'opacity': 0,
+		'z-index': lastZ++
+	});
+
+	var host_ani=new Fx.Styles(host, {duration: 400, transition: Fx.Transitions.Back.easeOut});
+
+	var btn_link = $(document.createElement('a'));
+	btn_link.setAttribute('href','javascript:;');
+	btn_link.addEvent('click', function(e) {
+		e = new Event(e);
+		piemenu_dispose();
+		gloryIO(url);
+		e.stop();
+	});
+	btn_link.alt = tip;
+	btn_link.title = tip;
+	
+	var btn_image = $(document.createElement('img'));
+	btn_image.src = icon;
+	btn_image.border = '0';
+
+	btn_link.appendChild(btn_image);
+	host.appendChild(btn_link);
+	
+	pie_stack.push(host);
+	$(document.body).appendChild(host);
+	
+	// Play the effect
+	host_ani.start({
+		'opacity': 1,
+		'left': x-17+'px',
+		'top': y-17+'px'
+	});
+
+	
+	}	catch (ex) {}
+}
+
+function piemenu_show(menu,text) {
+	pie_visible=true;
+	
+	try {
+	// Dispose waiting menu
+	piemenu_waitdispose();
+	hoverShow();
+
+	// Prepare info
+	if (pie_info.length==0) return;
+	var distance = 5+(menu.length*5);
+
+	// Show text (if text exists)
+	if (text!='') {
+		
+		// Dispose old menu text
+		if (pie_menutext) {
+			pie_menutext.remove();
+			pie_menutext=null;
+		}
+		
+		// Create the element
+		pie_menutext = $(document.createElement('div'));
+		pie_menutext.setStyles({
+			'position': 'absolute',
+			'background-color': '#000000',
+			'boder-width': '2px',
+			'border-style': 'solid',
+			'border-color': '#CCCCCC',
+			'font-size': '10px',
+			'padding' : '2px',
+			'opacity' : 0,
+			'z-index': lastZ++
+		});
+		var menutext_ani=new Fx.Styles(pie_menutext, {duration: 400, transition: Fx.Transitions.Back.easeIn});
+
+		// If we have a menu, restrain text size
+		if (menu.length>0) {
+			pie_menutext.setStyles({
+				'width': ((distance*2)+60)+'px'
+			});
+		}
+		
+		// Import the new item into the body
+		pie_menutext.setHTML(text);
+		document.body.appendChild(pie_menutext);		
+		
+		// Move it to the center
+		var szinfo = pie_menutext.getSize();
+		pie_menutext.setStyles({
+			'left': (pie_info.x-(szinfo.size.x/2)),
+			'top': (pie_info.y+distance+15)
+		});		
+
+		// Play the effect
+		menutext_ani.start({
+			'opacity': 1
+		});
+	}
+
+	// Show Pie
+	if (menu.length>0) {
+		var step = (2*Math.PI)/menu.length;
+		var radius = 0;
+		for (var i=0; i<menu.length; i++) {
+			var item_x = pie_info.x + (distance * Math.cos(radius));
+			var item_y = pie_info.y + (distance * Math.sin(radius));
+			piemenu_spawnicon(item_x,item_y,menu[i][0],menu[i][1],menu[i][2]);
+			radius += step;
+		}
+	}
+
+	} catch (ex) {}
+}
+
+function piemenu_waitdispose() {
+	try {
+		if (pie_wait_icon) {
+			pie_wait_icon.remove();
+			pie_wait_icon=null;
+		}
+	} catch (e) {}
+}
+
+function piemenu_wait() {
+	piemenu_waitdispose();
+	pie_wait_icon = $(document.createElement('img'));
+	pie_wait_icon.src = 'images/UI/loading-big.gif';
+	$(document.body).appendChild(pie_wait_icon);
+	var szinfo = pie_wait_icon.getSize();
+	pie_wait_icon.setStyles({
+		'left': (pie_info.x-(szinfo.size.x/2))+'px',
+		'top': (pie_info.y-(szinfo.size.y/2))+'px',
+		'position': 'absolute'
+	});
+}
+
+function piemenu_init(x,y,guid,position,parent_guid) {
+	pie_info = {
+		'x': x,
+		'y': y
+	};
+	gloryIO('?a=interface.dropdown&guid='+guid+'&pos='+position+'&parent='+parent_guid, false, true);
+	piemenu_wait();
+}
+
+// ======================================================
+//  Basic site initialization functions
 // ======================================================
 
 // The overlay item the player has his mouse over (contains the dictionary entry)
@@ -1113,8 +1349,8 @@ $(window).addEvent('load', function(e){
 	// Initialize datapane
 	initDisplayBuffer();
 	
-	// Initialize mouse handler on datapane
-	$('datapane').addEvent('mousemove', function(e) {
+	// Initialize mouse handler on window
+	$(window).addEvent('mousemove', function(e) {
 		e = new Event(e);							
 		
 		// Get DataPane left offset
@@ -1131,9 +1367,6 @@ $(window).addEvent('load', function(e){
 		var yP = byP+glob_y_base;
 		var Overlay = ""; var DicEntry = "";
 
-		// Collision test with action grids
-		hitTestRegion(xP,yP);
-
 		// Obdain Hover info from navigation grid
 		if ($defined(nav_grid[xP])) {
 			if ($defined(nav_grid[xP][yP-1])) {
@@ -1141,36 +1374,56 @@ $(window).addEvent('load', function(e){
 				DicEntry = nav_grid['dic'][Overlay];
 			}
 		}
-		
+
+		// Detect hover info
 		if (DicEntry.d) {
-			$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base+', Overlay: '+Overlay+' Dic:'+DicEntry.d.name);
 			hoveredItem=DicEntry;
-			hoverShow(DicEntry.d.name, e.event.clientX, e.event.clientY);			
 		} else {
-			$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base);
 			hoveredItem=false;
-			hoverShow(false);
 		}
-		
-		// Rectangle handling
-		var r = $('grid_rect');
-		if (r) {
-			if (r.getStyle('display')!='none') r.setStyles({left:(bxP-rectinfo.bx)*32, top:(byP-rectinfo.by)*32, width: rectinfo.w*32, height:rectinfo.h*32, display:''});
-		}		
-		
+
+		// If we have an open pop-up element, do nothing
+		if (!pie_visible) {
+
+			// Collision test with action grids
+			hitTestRegion(xP,yP);
+
+			// Display hover info
+			if (hoveredItem) {
+				$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base+', Overlay: '+Overlay+' Dic:'+DicEntry.d.name);
+				hoverShow(DicEntry.d.name, e.event.clientX, e.event.clientY);			
+			} else {
+				$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base);
+				hoverShow(false);
+			}
+
+			// Rectangle handling
+			var r = $('grid_rect');
+			if (r) {
+				if (r.getStyle('display')!='none') r.setStyles({left:(bxP-rectinfo.bx)*32, top:(byP-rectinfo.by)*32, width: rectinfo.w*32, height:rectinfo.h*32, display:''});
+			}		
+			
+		}
 	});
 	$('datapane').addEvent('contextmenu', function(e) {
 		e = new Event(e);
 		if (hoveredItem!=false) {
 			// Display the dropdown menu
-			dropdownShow(e.event.clientX,e.event.clientY,hoveredItem.g,'MAP');
+			piemenu_dispose();
+			piemenu_init(e.event.clientX,e.event.clientY,hoveredItem.g,'MAP');
 		} else {
 			// Clicked over no item
-			disposeDropDown();	
+			piemenu_dispose();	
 		}
 		//window.alert($trace(e));
 		e.stop();
 	});
+
+	$('datapane').addEvent('mousedown', function(e) {
+		// Dispose dropdown (if visible)
+		piemenu_dispose();
+	});
+
 	$('datapane').addEvent('click', function(e) {
 		e = new Event(e);							
 
@@ -1200,7 +1453,8 @@ $(window).addEvent('load', function(e){
 		}
 		
 		// Dispose dropdown (if visible)
-		disposeDropDown();
+		piemenu_dispose();
+		e.stop();
 	});
 
 	
@@ -1257,11 +1511,16 @@ $(window).addEvent('keydown', function(e){
 		}
 		
 		// Dispose dropdown menu
-		disposeDropDown();
+		piemenu_dispose();
 		
 		// Do not forward the event any further
 		e.stop();		
 	}
+});
+
+$(window).addEvent('mouseup', function(e){
+	// Dispose dropdown menu
+	piemenu_dispose();
 });
 
 // #################### DEBUG #####################

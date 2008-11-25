@@ -9,7 +9,8 @@ function qb_makeqbutton(element, guid, slot) {
 	// Add context menu and required parameters
 	element.addEvent('contextmenu',function(e) {
 		var e = new Event(e);
-		dropdownShow(e.event.clientX,e.event.clientY,guid,'QUICKBAR',slot)
+		piemenu_dispose();
+		piemenu_init(e.event.clientX,e.event.clientY,guid,'QUICKBAR',slot)
 		e.stop();
 	});
 	element.setProperty('guid', guid);

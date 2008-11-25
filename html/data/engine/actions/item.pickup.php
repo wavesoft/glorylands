@@ -32,7 +32,10 @@ while ($row = $sql->fetch_array_fromresults($ans, MYSQL_ASSOC)) {
 }
 
 // Pickup the item
-if (!$dst_guid) return;
+if (!$dst_guid) {
+	relayMessage(MSG_INTERFACE,'MSGBOX','You do not have any bag!');
+	return;
+}
 item_pickup($src_guid, $dst_guid);
 
 ?>

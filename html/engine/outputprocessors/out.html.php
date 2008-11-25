@@ -34,7 +34,7 @@ $smarty->assign('operation', $act_operation);
 $smarty->assign('interface', $act_interface);
 $smarty->assign('CONFIG', $_CONFIG);
 $smarty->assign('VERSION', $_VER);
-$smarty->assign('images', DIROF('DATA.IMAGE',true));
+$smarty->assign('images', 'images');
 $smarty->assign('theme', 'themes/'.$_CONFIG[GAME][THEME]);
 
 // If result is not valid, display the standard error message
