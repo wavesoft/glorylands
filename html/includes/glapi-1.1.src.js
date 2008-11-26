@@ -1361,8 +1361,8 @@ $(window).addEvent('load', function(e){
 		var scrl = getScrollPosition();
 
 		// Calculate cell X,Y
-		var bxP = Math.ceil((e.event.clientX-dpX)/32)-1;//-scrl.x;
-		var byP = Math.ceil((e.event.clientY-dpY)/32)-1;//-scrl.y;
+		var bxP = Math.ceil((e.event.clientX-dpX+scrl.x)/32)-1;
+		var byP = Math.ceil((e.event.clientY-dpY+scrl.y)/32)-1;
 		var xP = bxP+glob_x_base;
 		var yP = byP+glob_y_base;
 		var Overlay = ""; var DicEntry = "";
@@ -1391,7 +1391,7 @@ $(window).addEvent('load', function(e){
 			// Display hover info
 			if (hoveredItem) {
 				$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base+', Overlay: '+Overlay+' Dic:'+DicEntry.d.name);
-				hoverShow(DicEntry.d.name, e.event.clientX, e.event.clientY);			
+				hoverShow(DicEntry.d.name, e.event.clientX+scrl.x, e.event.clientY+scrl.y);
 			} else {
 				$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base);
 				hoverShow(false);
@@ -1407,10 +1407,13 @@ $(window).addEvent('load', function(e){
 	});
 	$('datapane').addEvent('contextmenu', function(e) {
 		e = new Event(e);
+		// Get Scroll position
+		var scrl = getScrollPosition();
+
 		if (hoveredItem!=false) {
 			// Display the dropdown menu
 			piemenu_dispose();
-			piemenu_init(e.event.clientX,e.event.clientY,hoveredItem.g,'MAP');
+			piemenu_init(e.event.clientX+scrl.x,e.event.clientY+scrl.y,hoveredItem.g,'MAP');
 		} else {
 			// Clicked over no item
 			piemenu_dispose();	
@@ -1435,9 +1438,9 @@ $(window).addEvent('load', function(e){
 		var scrl = getScrollPosition();
 				
 		// Calculate cell X,Y
-		var xP = Math.ceil((e.event.clientX-dpX)/32)+glob_x_base-1-scrl.x;
-		var yP = Math.ceil((e.event.clientY-dpY)/32)+glob_y_base-1-scrl.y;
-	
+		var xP = Math.ceil((e.event.clientX-dpX+scrl.x)/32)+glob_x_base-1;
+		var yP = Math.ceil((e.event.clientY-dpY+scrl.y)/32)+glob_y_base-1;
+		
 		// If we have no active rect, hit test regions
 		if (rectinfo.url == '') {
 			//gridClick(xP,yP);
@@ -1520,7 +1523,7 @@ $(window).addEvent('keydown', function(e){
 
 $(window).addEvent('mouseup', function(e){
 	// Dispose dropdown menu
-	piemenu_dispose();
+	piemenu_dispose();	
 });
 
 // #################### DEBUG #####################

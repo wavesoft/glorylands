@@ -9,8 +9,11 @@ function qb_makeqbutton(element, guid, slot) {
 	// Add context menu and required parameters
 	element.addEvent('contextmenu',function(e) {
 		var e = new Event(e);
+		// Get Scroll position
+		var scrl = getScrollPosition();
+
 		piemenu_dispose();
-		piemenu_init(e.event.clientX,e.event.clientY,guid,'QUICKBAR',slot)
+		piemenu_init(e.event.clientX+scrl.x,e.event.clientY+scrl.y,guid,'QUICKBAR',slot)
 		e.stop();
 	});
 	element.setProperty('guid', guid);
