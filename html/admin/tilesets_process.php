@@ -10,7 +10,7 @@
 <pre>
 <?php
 
-$bp = 'C:/Users/Γιάννης/Downloads/== Glory Lands ==/2D Tilesets/old';
+$bp = 'Z:\(Downloads)\[UNSORTED]\== Glory Lands ==\2D Tilesets\old';
 $fn = $_REQUEST['f'];
 if (!isset($fn)) {
 	die("Invalid file specified");
@@ -44,12 +44,20 @@ for ($y = 0; $y < $h; $y++) {
 	echo "<tr>\n";
 	for ($x = 0; $x < $w; $x++) {
 		$tile = imagecreatetruecolor(32,32);
-		imagecopy($tile, $im, 0, 0, $x * 32 ,$y * 32, 32, 32);
+
 		imagealphablending($tile,true);
-		imagecolortransparent($tile,0);
-		imagegif($tile, "cache/{$fn}-{$x}-{$y}.gif");
+		$c=imagecolorallocatealpha($tile,0,255,0,127);
+		imagecolortransparent($tile,$c);
+		imagefill($tile,0,0,$c);
+
+		imagecopy($tile, $im, 0, 0, $x * 32 ,$y * 32, 32, 32);
+		imagepng($tile, "cache/{$fn}-{$x}-{$y}.png");
 		imagedestroy($tile);
-		echo "<td><a href=\"?f=".$_REQUEST['f']."&tx={$x}&ty={$y}\"><img border=\"0\" src=\"cache/{$fn}-{$x}-{$y}.gif\"></a></td>\n";
+		if (file_exists("cache/{$fn}-{$x}-{$y}.png")) {
+			echo "<td><a href=\"?f=".$_REQUEST['f']."&tx={$x}&ty={$y}\"><img border=\"0\" src=\"cache/{$fn}-{$x}-{$y}.png\"></a></td>\n";
+		} else {
+			echo "<td><img border=\"0\" src=\"images/edit_remove32.gif\"></td>\n";
+		}		
 	}
 	echo "</tr>\n";
 }

@@ -23,7 +23,7 @@ if (!$access) {
 	tinyMCE.init({
 	mode : "exact",
 	elements : "tip",
-	theme : "simple"
+	theme : "advanced"
 	});
 </script>
 <h1>Edit Tip <em><?php echo $row['title']; ?></em></h1>
@@ -53,7 +53,7 @@ if (!$access) {
 </tr>
 <tr>
 	<td colspan="2">
-	<textarea id="tip" name="tip" rows="9" style="width: 100%;"><?php echo $row['tip']; ?></textarea>
+	<textarea id="tip" name="tip" rows="15" style="width: 100%;"><?php echo $row['tip']; ?></textarea>
 	</td>
 </tr>
 <tr class="info">

@@ -55,7 +55,7 @@ foreach ($grid['grid'] as $y => $grid_y) {
 }
 
 // Echo result
-header('Content-type: image/jpeg');
-imagejpeg($im);
+header('Content-type: image/png');
+imagepng($im);
 
 ?>

@@ -195,14 +195,6 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	//relayMessage(MSG_INTERFACE,'MSGBOX',print_r($models[$row['model']],true));		
 }
 
-// ############ OBSOLETED ##################
-//$char=$_REQUEST['char'];
-//if (!$char && isset($_SESSION[DATA]['model'])) $char=$_SESSION[DATA]['model'];
-//if (!$char) $char='faux-choque.o';
-//$o_char = new mapobj('data/models/'.$char);
-//push_object($Gx,$Gy+1,0,$o_char);
-// ###########################################
-
 // If cached ZID is not the one current grid has, reload it (if not in quick mode)
 if (!$quick) {
 	if ($_SESSION['GRID']['ID'] != $map) {
@@ -218,46 +210,6 @@ if (!$quick) {
 
 // Notify infogrid on linked modules
 callEvent('map.infogrid', $nav_grid, $map_info['filename']);
-
-// Stack some tests
-/*
-	chunk.color = (str) [x,y]	: Display icons with the given color on given locations
-	chunk.x.m	= (int)			: Minimum X Value
-	chunk.x.M	= (int)			: Maximum X Value
-	chunk.y.m	= (int)			: Minimum Y Value
-	chunk.y.M	= (int)			: Maximum Y Value
-	chunk.center.x = (int)		: Center X offset
-	chunk.center.y = (int)		: Center Y offset	
-*/
-
-/*
-$obj = array(
-	'grid' => array(
-		0 => array(
-			array('c'=>'#33FF00', 'i'=>1),
-			array('c'=>'#00FF00', 'i'=>2, 't'=>'&uarr;'),
-			array('c'=>'#33FF00', 'i'=>3)
-			),
-		1 => array(
-			array('c'=>'#00FF00', 'i'=>4, 't'=>'&larr;'),
-			array(),
-			array('c'=>'#00FF00', 'i'=>6, 't'=>'&rarr;')
-			),
-		2 => array(
-			array('c'=>'#33FF00', 'i'=>7),
-			array('c'=>'#00FF00', 'i'=>8, 't'=>'&darr;'),
-			array('c'=>'#33FF00', 'i'=>9)
-			)
-	),
-	'x' => array('m'=>0, 'M'=>2),
-	'y' => array('m'=>0, 'M'=>2),
-	'center' => array('x' => $_SESSION[PLAYER][DATA]['x']-1 , 'y' => $_SESSION[PLAYER][DATA]['y']-1),
-	'show' => array('x' => $_SESSION[PLAYER][DATA]['x'] , 'y' => $_SESSION[PLAYER][DATA]['y']),
-	'action' => 'map.grid.get'
-);
-relayMessage(MSG_INTERFACE, 'RANGE', $obj);
-*/
-
 callEvent('map.render');
 
 if (!$quick) {
