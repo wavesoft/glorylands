@@ -665,7 +665,7 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 						ddwin_show(width,height,obj.text);
 					}
 					catch (e) {
-						window.alert(e);	
+						window.alert(e);
 					}
 
 				// ## HTML Data for dropdown menu ##
@@ -1258,6 +1258,7 @@ function piemenu_show(menu,text) {
 			'font-size': '10px',
 			'padding' : '2px',
 			'opacity' : 0,
+			'text-align': 'center',
 			'z-index': lastZ++
 		});
 		var menutext_ani=new Fx.Styles(pie_menutext, {duration: 400, transition: Fx.Transitions.Back.easeIn});
@@ -1349,62 +1350,6 @@ $(window).addEvent('load', function(e){
 	// Initialize datapane
 	initDisplayBuffer();
 	
-	// Initialize mouse handler on window
-	$(window).addEvent('mousemove', function(e) {
-		e = new Event(e);							
-		
-		// Get DataPane left offset
-		var dpX = $('datapane').getLeft();
-		var dpY = $('datapane').getTop();
-		
-		// Get Scroll position
-		var scrl = getScrollPosition();
-
-		// Calculate cell X,Y
-		var bxP = Math.ceil((e.event.clientX-dpX+scrl.x)/32)-1;
-		var byP = Math.ceil((e.event.clientY-dpY+scrl.y)/32)-1;
-		var xP = bxP+glob_x_base;
-		var yP = byP+glob_y_base;
-		var Overlay = ""; var DicEntry = "";
-
-		// Obdain Hover info from navigation grid
-		if ($defined(nav_grid[xP])) {
-			if ($defined(nav_grid[xP][yP-1])) {
-				Overlay = nav_grid[xP][yP-1];
-				DicEntry = nav_grid['dic'][Overlay];
-			}
-		}
-
-		// Detect hover info
-		if (DicEntry.d) {
-			hoveredItem=DicEntry;
-		} else {
-			hoveredItem=false;
-		}
-
-		// If we have an open pop-up element, do nothing
-		if (!pie_visible) {
-
-			// Collision test with action grids
-			hitTestRegion(xP,yP);
-
-			// Display hover info
-			if (hoveredItem) {
-				$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base+', Overlay: '+Overlay+' Dic:'+DicEntry.d.name);
-				hoverShow(DicEntry.d.name, e.event.clientX+scrl.x, e.event.clientY+scrl.y);
-			} else {
-				$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base);
-				hoverShow(false);
-			}
-
-			// Rectangle handling
-			var r = $('grid_rect');
-			if (r) {
-				if (r.getStyle('display')!='none') r.setStyles({left:(bxP-rectinfo.bx)*32, top:(byP-rectinfo.by)*32, width: rectinfo.w*32, height:rectinfo.h*32, display:''});
-			}		
-			
-		}
-	});
 	$('datapane').addEvent('contextmenu', function(e) {
 		e = new Event(e);
 		// Get Scroll position
@@ -1457,7 +1402,6 @@ $(window).addEvent('load', function(e){
 		
 		// Dispose dropdown (if visible)
 		piemenu_dispose();
-		e.stop();
 	});
 
 	
@@ -1500,7 +1444,7 @@ $(window).onerror = function(e) {
 };
 
 // Handle ESC key to cancel any active operation
-$(window).addEvent('keydown', function(e){
+$(document).addEvent('keydown', function(e){
 	e = new Event(e);	
 	if (e.code == 27) {
 		
@@ -1517,13 +1461,82 @@ $(window).addEvent('keydown', function(e){
 		piemenu_dispose();
 		
 		// Do not forward the event any further
-		e.stop();		
+		e.stop();
+	} else if (e.control) {
+		e.stop();
+		if (e.key == 'b') {
+			gloryIO('?a=interface.inventory');
+		}
 	}
 });
 
-$(window).addEvent('mouseup', function(e){
+$(document).addEvent('mouseup', function(e){
 	// Dispose dropdown menu
 	piemenu_dispose();	
+});
+
+$(document).addEvent('contextmenu', function(e){
+	var e = new Event(e);
+	// Disable right click on the document
+	piemenu_dispose();	
+	e.stop();
+});
+
+// Initialize mouse handler on window
+$(document).addEvent('mousemove', function(e) {
+	e = new Event(e);							
+	
+	// Get DataPane left offset
+	var dpX = $('datapane').getLeft();
+	var dpY = $('datapane').getTop();
+	
+	// Get Scroll position
+	var scrl = getScrollPosition();
+
+	// Calculate cell X,Y
+	var bxP = Math.ceil((e.event.clientX-dpX+scrl.x)/32)-1;
+	var byP = Math.ceil((e.event.clientY-dpY+scrl.y)/32)-1;
+	var xP = bxP+glob_x_base;
+	var yP = byP+glob_y_base;
+	var Overlay = ""; var DicEntry = "";
+
+	// Obdain Hover info from navigation grid
+	if ($defined(nav_grid[xP])) {
+		if ($defined(nav_grid[xP][yP-1])) {
+			Overlay = nav_grid[xP][yP-1];
+			DicEntry = nav_grid['dic'][Overlay];
+		}
+	}
+
+	// Detect hover info
+	if (DicEntry.d) {
+		hoveredItem=DicEntry;
+	} else {
+		hoveredItem=false;
+	}
+
+	// If we have an open pop-up element, do nothing
+	if (!pie_visible) {
+
+		// Collision test with action grids
+		hitTestRegion(xP,yP);
+
+		// Display hover info
+		if (hoveredItem) {
+			$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base+', Overlay: '+Overlay+' Dic:'+DicEntry.d.name);
+			hoverShow(DicEntry.d.name, e.event.clientX+scrl.x, e.event.clientY+scrl.y);
+		} else {
+			$('prompt').setHTML('X: '+xP+', Y: '+yP+' With Zero at: '+glob_x_base+','+glob_y_base);
+			hoverShow(false);
+		}
+
+		// Rectangle handling
+		var r = $('grid_rect');
+		if (r) {
+			if (r.getStyle('display')!='none') r.setStyles({left:(bxP-rectinfo.bx)*32, top:(byP-rectinfo.by)*32, width: rectinfo.w*32, height:rectinfo.h*32, display:''});
+		}		
+		
+	}
 });
 
 // #################### DEBUG #####################

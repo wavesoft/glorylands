@@ -11,6 +11,7 @@
 -->
 <meta http-equiv="Content-Type" content="text/html; charset={$CONFIG.GAME.CHARSET}" />
 <title>{$CONFIG.GAME.TITLE} v{$VERSION.VERSION}</title>
+<script src="{$theme}/compatibility/IE7.js" type="text/javascript"></script>
 {literal}
 <script language="javascript">
 // PHP-Generated variables
@@ -19,7 +20,8 @@ var mapOfsY = 8;
 </script>
 {/literal}
 <script language="javascript" src="includes/mootools-release-1.11.js"></script>
-<script language="javascript" src="includes/glapi-1.1.src.js"></script>
+<!-- <script language="javascript" src="includes/glapi-1.1.src.js"></script> -->
+<script language="javascript" src="includes/glapi.js"></script>
 <script language="javascript" src="includes/popup.js"></script>
 {$javascript}
 <link href="{$theme}/style.css" rel="stylesheet" type="text/css" />
