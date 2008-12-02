@@ -68,7 +68,7 @@ $(document).addEvent('mouseup', function(e){
 });
 
 function map_feed(url) {
-	var data = new Json.Remote('maps/feed.php', {
+	var data = new Json.Remote('maps/feed.php?'+url, {
 			onComplete: function(o) {
 				map_updatedata(o);
 			},
