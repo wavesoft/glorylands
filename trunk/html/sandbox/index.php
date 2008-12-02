@@ -56,5 +56,16 @@
 		</div>
 		<div id="dataloader"><div id="dataloader_text"></div></div>
 	</div>
+	<div>
+	<a href="javascript:map_feed('mode=0');">Remove all</a> | 
+	<a href="javascript:map_feed('mode=1');">Display 10 random objects</a> | 
+	<a href="javascript:map_feed('mode=2');">Fade effect</a> | 
+	<a href="javascript:map_feed('mode=3');">Pop effect</a> | 
+	<a href="javascript:map_feed('mode=4');">Zooom effect</a> | 
+	<a href="javascript:map_feed('mode=5');">Drop effect</a> | 
+	<a href="javascript:map_feed('mode=6');">Scroll moving</a> | 
+	<a href="javascript:map_feed('mode=7');">Bounce moving</a> | 
+	<a href="javascript:map_feed('mode=8');">Fade moving</a> | 
+	</div>
 </body>
 </html>
