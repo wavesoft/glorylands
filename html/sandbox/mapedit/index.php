@@ -77,13 +77,21 @@
 		<div class="header">Objects</div>
 		<div class="content">
 			<span id="objects_status"></span>
-			<select onchange="objloader_download(this.value)" style="width: 100%;" id="objects_set">
+			<select onchange="oloader_download(this.value)" style="width: 100%;" id="objects_set">
 			<option value="furniture">furniture</option>
 			</select>
 		</div>
-		<div id="objects_host">
-
+		<div class="objects_host" id="objects_host">
+			Kai edw ena test
 		</div>
+        <div class="sidemenu">
+            <div class="rt"></div><div class="rb"></div><div class="t"></div><div class="b"></div><div class="r"></div>
+            <div class="content" style="height: 60px;">
+                <div id="objects_clear"><a href="javascript:;" onclick="ui_objclear()"><img src="images/edit_remove.png" border="0" /></a></div>
+                <div id="objects_put"><a href="javascript:;" onclick="ui_objput()"><img src="images/edit_add.png" border="0" /></a></div>
+                <div id="objects_edit"><a href="javascript:;" onclick="ui_objedit()"><img src="images/edit.png" border="0" /></a></div>
+            </div>
+        </div>
 	</div>
 	</td>
 	</tr>

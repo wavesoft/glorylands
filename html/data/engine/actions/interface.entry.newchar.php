@@ -5,7 +5,8 @@ if ($_REQUEST['action']=='create') {
 	$tpl = $_REQUEST['template'];
 	$name = $_REQUEST['name'];
 	if ($tpl && $name) {
-		$guid = gl_instance_object(gl_make_guid($tpl, false, 'char'), array('name'=>$name, 'account'=>$_SESSION[PLAYER][PROFILE]['index']));
+		$tpl = gl_make_guid($tpl, false, 'char');
+		$guid = gl_instance_object($tpl, array('name'=>$name, 'account'=>$_SESSION[PLAYER][PROFILE]['index']));
 		if (!$guid) {
 			$act_result['error']='Cannot instance character';
 		} else {

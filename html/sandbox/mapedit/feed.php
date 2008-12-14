@@ -19,7 +19,24 @@ if ($_REQUEST['a']=='save') {
 	$f = file_get_contents('test.txt');
 	echo $f;
 
-} else {
+} elseif ($_REQUEST['a']=='objects') {
+	$base = $_REQUEST['base'];
+	if (!$base) $base='furniture';
+	
+	$files = array();
+	$x=0; $ok=true;
+	
+	$d = dir("objects");
+	while (false !== ($entry = $d->read())) {
+		if ( (substr($entry,0,1)!='.') && (substr($entry,-4)=='.png') )  {		
+			$files[]='objects/'.$entry;		
+		}
+	}
+	$d->close();
+	
+	echo json_encode($files);
+	
+} elseif ($_REQUEST['a']=='tiles') {
 	$base = $_REQUEST['base'];
 	if (!$base) $base='z-field-ext';
 	
