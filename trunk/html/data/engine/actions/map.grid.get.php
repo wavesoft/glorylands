@@ -213,7 +213,7 @@ callEvent('map.infogrid', $nav_grid, $map_info['filename']);
 callEvent('map.render');
 
 if (!$quick) {
-	// Return result
+	// Return standard result
 	$act_result = array_merge($act_result, array(
 			'mode' => 'GRID',
 			'data' => $grid,
@@ -227,7 +227,7 @@ if (!$quick) {
 			'y' => $Gy
 	));
 } else {
-	// Return result
+	// Return quick result
 	$act_result = array_merge($act_result, array(
 			'mode' => 'GRID',
 			'data' => $grid,

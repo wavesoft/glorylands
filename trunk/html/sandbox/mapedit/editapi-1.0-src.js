@@ -127,7 +127,7 @@ function json_load() {
 				for (var i=0; i<3; i++) {
 					paint_layer = i+1;
 					$each(obj[i], function(e) {
-						paint_put(e.x,e.y,e.s);
+						paint_put(e.x-scroll_offset.x,e.y-scroll_offset.y,e.s);
 				   });
 				}
 				
@@ -171,13 +171,64 @@ function ui_objects() {
 function ui_clear() {
 	$('tiles_clear').setStyles({'background-color':'#FFFFFF'});
 	$('tiles_put').setStyles({'background-color':''});
+	$('objects_clear').setStyles({'background-color':''});
+	$('objects_edit').setStyles({'background-color':''});
+	$('objects_put').setStyles({'background-color':''});
 	brush_erase=true;
+	brush_put=false;
+	object_put=false;
+	object_edit=false;
+	object_erase=false;
 }
 
 function ui_put() {
 	$('tiles_clear').setStyles({'background-color':''});
 	$('tiles_put').setStyles({'background-color':'#FFFFFF'});
+	$('objects_clear').setStyles({'background-color':''});
+	$('objects_edit').setStyles({'background-color':''});
+	$('objects_put').setStyles({'background-color':''});
 	brush_erase=false;
+	brush_put=true;
+	object_put=false;
+	object_edit=false;
+	object_erase=false;
+}
+
+function ui_objclear() {
+	$('objects_clear').setStyles({'background-color':'#FFFFFF'});
+	$('objects_edit').setStyles({'background-color':''});
+	$('objects_put').setStyles({'background-color':''});
+	$('tiles_clear').setStyles({'background-color':''});
+	$('tiles_put').setStyles({'background-color':''});
+	brush_erase=false;
+	brush_put=false;
+	object_put=false;
+	object_edit=false;
+	object_erase=true;
+}
+
+function ui_objput() {
+	$('objects_clear').setStyles({'background-color':''});
+	$('objects_edit').setStyles({'background-color':''});
+	$('objects_put').setStyles({'background-color':'#FFFFFF'});
+	$('tiles_clear').setStyles({'background-color':''});
+	$('tiles_put').setStyles({'background-color':''});
+	brush_erase=false;
+	brush_put=false;
+	object_put=true;
+	object_edit=false;
+	object_erase=false;
+}
+
+function ui_objedit() {
+	$('objects_clear').setStyles({'background-color':''});
+	$('objects_put').setStyles({'background-color':''});
+	$('objects_edit').setStyles({'background-color':'#FFFFFF'});
+	brush_erase=false;
+	brush_put=false;
+	object_put=false;
+	object_edit=true;
+	object_erase=false;
 }
 
 /**
@@ -212,6 +263,12 @@ function dropdown_dispose() {
 	}
 }
 
+function ui_setbackground() {
+	$('content_host').setStyles({
+		'background-image': 'url('+'../../images/tiles/'+tiles_base+'-'+selection.x+'-'+selection.y+'.png'+')'
+	});
+}
+
 /**
   * Tiles loader system
   *
@@ -229,7 +286,7 @@ function tloader_download(tileset) {
 	$('tiles_status').setStyles({'display':''});
 	$('tiles_status').setHTML('<center>Downloading information...</center>');
 
-	var data = new Json.Remote('feed.php?base='+tileset, {
+	var data = new Json.Remote('feed.php?a=tiles&base='+tileset, {
 			onComplete: function(o) {
 				tloader_preload(o);
 			},
@@ -296,6 +353,117 @@ function tloader_spawnimage(src) {
 	$('tiles_host').appendChild(im);	
 	im.src=src;
 	tiles_cache.push(im);
+}
+
+/**
+  * Objects loader system
+  *
+  */
+var objects_cache = [];
+
+function oloader_download(objectset) {
+	oloader_reset();
+	
+	$('objects_set').setStyles({'display':'none'});
+	$('objects_status').setStyles({'display':''});
+	$('objects_status').setHTML('<center>Downloading information...</center>');
+
+	var data = new Json.Remote('feed.php?a=objects&base='+objectset, {
+			onComplete: function(o) {
+				oloader_preload(o);
+			},
+			onFailure: function(e) {
+				window.alert(e.message);
+			}
+	}).send();	
+}
+
+function oloader_preload(images) {
+	var lt_timer=null; /* Loading Timeout */
+	var lt_finalized=false;
+
+	new Asset.images(images, {
+		onComplete: function(e){
+			lt_finalized=true;
+			if (lt_timer) {clearTimeout(lt_timer);lt_timer=null;};
+			oloader_renderimages(images);
+		},
+		onProgress: function(img_id) {
+			// If we are completed, this is just a late call..
+			// ignore it...
+			if (!lt_finalized) {
+				var perc = Math.ceil(100*img_id/images.length);
+				if (perc > 100) perc-=100; /* When objects are already cached, the maximum value seems to be 200% */
+				$('objects_status').setHTML('<div class="progress_bar"><div style="width: '+perc+'%;">&nbsp;</div></div>');
+				
+				// More than a second of delay between two images is too much
+				// Probably it is stucked 
+				// BUGFIX: 1) Unreasonable stops on 99% on IE
+				//         2) Blocks when file does not exists
+				if (lt_timer) {clearTimeout(lt_timer); lt_timer=null;};
+				lt_timer=setTimeout(function(){ oloader_renderimages(images); }, 2000);
+			}
+		}
+	});
+}
+
+function oloader_renderimages(images) {
+	$('objects_status').setHTML('<center>Displaying...</center>');
+	var cur_image=0;
+	var timer = setInterval(function() {
+		for (var i=cur_image; i<cur_image+8; i++) {
+			object_store(images[i]);
+		}
+		cur_image=i;
+		if (i>=images.length) {
+			$('objects_status').setStyles({'display':'none'});
+			$('objects_set').setStyles({'display':''});
+			clearInterval(timer);
+		}
+	},10);
+}
+
+function oloader_reset() {
+	try {
+		$each(objects_cache, function(e){
+			e.remove();
+		});
+	} catch (e) {		
+	}
+	objects_cache=[];
+}
+
+function object_store(img) {
+	var a = document.createElement('a');
+	var i = document.createElement('img');		
+	a.appendChild(i);
+	
+	
+	a.href="javascript:;"
+	i.src=img;
+	i.setAttribute('border', 0);
+
+	$('objects_host').appendChild(a);
+	a.addEvent('click', function(e) {
+		var e = new Event(e);
+		object_select(img);
+		ui_objput();
+		e.stop();
+	});
+
+	objects_cache.push({'data':{}, 'elm':a});
+}
+
+/**
+  * Objects system
+  *
+  */
+var object_put = false;
+var object_edit = false;
+
+function object_select(img) {
+	brush_selection_useobject(img);
+	brush_show();
 }
 
 /**
@@ -381,7 +549,9 @@ function paint_updateblock(x,y,image,layer) {
 	}
 }
 
-function paint_clear(x,y) {
+function paint_clear(sx,sy) {
+	var x = sx+scroll_offset.x;
+	var y = sy+scroll_offset.y;
 	var id=x+','+y;
 	if ($defined(paint_grid[paint_layer-1][id])) {
 		paint_grid[paint_layer-1][id].remove();
@@ -389,7 +559,9 @@ function paint_clear(x,y) {
 	}	
 }
 
-function paint_put(x,y,image) {
+function paint_put(sx,sy,image) {
+	var x = sx+scroll_offset.x;
+	var y = sy+scroll_offset.y;
 	var im = paint_updateblock(x,y,image,paint_layer);
 	im.setStyles({
 		'left': x*32,
@@ -407,11 +579,12 @@ var brush_selection = {x:0,y:0,w:0,h:0};
 var brush_dragging = false;
 var brush_dragused = false;
 var brush_erase = false;
+var brush_put = true;
 
 function _brush_clean() {
 	for (var y=brush_selection.y; y<brush_selection.y+brush_selection.h; y++) {
 		for (var x=brush_selection.x; x<brush_selection.x+brush_selection.w; x++) {
-			paint_clear(x+scroll_offset.x,y+scroll_offset.y);
+			paint_clear(x,y);
 		}
 	}
 }
@@ -422,7 +595,7 @@ function _brush_blit(sel,dest) {
 	
 	for (var y=dest.y; y<dest.y+dest.h; y++) {
 		for (var x=dest.x; x<dest.x+dest.w; x++) {
-			paint_put(x+scroll_offset.x,y+scroll_offset.y,tiles_base+'-'+sx+'-'+sy+'.png');
+			paint_put(x,y,tiles_base+'-'+sx+'-'+sy+'.png');
 			sx++;
 			if (sx>=sel.x+sel.w) {
 				sx=sel.x;
@@ -559,6 +732,12 @@ function brush_apply(layer) {
 	}
 }
 
+function brush_selection_useobject(img) {
+	brush_reset();
+	var im = brush_spawnimage(img);
+	brush_elements.push({'o':im, 'x':0, 'y':0});
+}
+
 function brush_selection_updateview() {
 	if ((brush_selection.w==1)&&(brush_selection.h==1)) {
 		$('content_selection').setStyles({
@@ -647,7 +826,7 @@ function brush_hide() {
 function brush_spawnimage(image) {
 	var im = $(document.createElement('img'));
 	$('content_data').appendChild(im);	
-	im.src='../../images/tiles/'+image;
+	im.src=image;
 	im.setStyles({'opacity':0.5});
 	return im;
 }
@@ -659,7 +838,7 @@ function brush_updateview(){
 	// Load brush info from the selection
 	for (var y=selection.y; y<selection.y+selection.h; y++) {
 		for (var x=selection.x; x<selection.x+selection.w; x++) {
-			var im = brush_spawnimage(tiles_base+'-'+x+'-'+y+'.png');
+			var im = brush_spawnimage('../../images/tiles/'+tiles_base+'-'+x+'-'+y+'.png');
 			brush_elements.push({'o':im, 'x':(x-selection.x)*32, 'y':(y-selection.y)*32});
 		}
 	}
@@ -790,6 +969,7 @@ function scroller_move(x,y) {
 $(window).addEvent('load', function(e){	
 
 	tloader_download('z-field-ext');
+	oloader_download('furniture');
 
 	$('content_host').addEvent('mousemove', function(e){
 		var e = new Event(e);
@@ -818,29 +998,38 @@ $(window).addEvent('load', function(e){
 	$('content_host').addEvent('mousedown', function(e){
 		var e = new Event(e);
 		dropdown_dispose();	
-		if (e.event.button == 1) {
-			scroller_start(e.client.x,e.client.y);
-			scroll_active = true;
-		} else if (e.event.button == 0) {
-			brush_dragging = true;			
+		
+		if (brush_erase || brush_put) {
+			if (e.event.button == 1) {
+				scroller_start(e.client.x,e.client.y);
+				scroll_active = true;
+			} else if (e.event.button == 0) {
+				brush_dragging = true;			
+			}
+		} else {
+			
 		}
 		e.stop();
 	})
 	
 	$('content_host').addEvent('mouseup', function(e){
 		var e = new Event(e);
-		if (brush_dragging) {
-			if (e.shift) {
-				paint_layer=3;
-			} else if (e.control) {
-				paint_layer=1;
-			} else {
-				paint_layer=2;
+		if (brush_erase || brush_put) {
+			if (brush_dragging) {
+				if (e.shift) {
+					paint_layer=3;
+				} else if (e.control) {
+					paint_layer=1;
+				} else {
+					paint_layer=2;
+				}
+				brush_apply();
 			}
-			brush_apply();
+			brush_dragging = false;
+			scroll_active = false;
+		} else {
+			
 		}
-		brush_dragging = false;
-		scroll_active = false;
 		e.stop();
 	});
 	
@@ -912,4 +1101,3 @@ $(window).addEvent('load', function(e){
 	 });
 
 });
-

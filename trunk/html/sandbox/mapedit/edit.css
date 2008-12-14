@@ -365,3 +365,20 @@ body {
 	width: 10px;
 	height: 10px;	
 }
+
+.objects_host {
+	height: 113px;
+	overflow: auto;
+}
+
+.objects_host a {
+	display:block;
+	float: left;
+	padding: 3px;
+}
+
+.objects_host a:hover {
+	padding: 2px;
+	border: solid 1px #8080FF;
+	background-color: #C4E2FB;
+}

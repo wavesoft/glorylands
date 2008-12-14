@@ -24,7 +24,7 @@ define('LANG','LANG');
 
 ### The database configuration
 $_CONFIG[DB][HOST] 			= "localhost";
-$_CONFIG[DB][DATABASE] 		= "gl_empty";
+$_CONFIG[DB][DATABASE] 		= "glory";
 $_CONFIG[DB][USER] 			= "glory";
 $_CONFIG[DB][PASSWORD] 		= "lands";
 

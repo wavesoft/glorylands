@@ -8,7 +8,8 @@
 class Language{
 	
 	var $_interface = array();
-	/**@var Array of Translactions */
+	
+	/** @var Array of Translactions */
 	var $_langarray = array();
 	var $_lang = null;
 	
@@ -29,7 +30,6 @@ class Language{
 	function __construct($lang, $type='local'){
 		$this->_type = $type;
 		$this->_lang = $lang;
-			
 	}
 	
 	/**
@@ -47,7 +47,7 @@ class Language{
 	}
 	
 	/**
-	 * Function usec for tranlation
+	 * Function used for tranlation
 	 * @return word translated
 	 * @param $w Word to Translate
 	 * @param $group lang file
@@ -66,3 +66,4 @@ class Language{
 	}
 	
 }
+?>

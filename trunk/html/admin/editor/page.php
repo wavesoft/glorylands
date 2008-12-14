@@ -13,6 +13,7 @@ include "tools/auth.php";
 <title>GloryLands :: Content Editor</title>
 <link rel="stylesheet" type="text/css" href="theme/style.css">
 <script src="tools/codepress/codepress.js" type="text/javascript"></script>
+<script src="../../includes/mootools-release-1.11.js.js" type="text/javascript"></script>
 </head>
 <body>
 <?php
