@@ -97,7 +97,7 @@ function json_save(){
 				}
 			}
 			rqdata.push(gdata);
-		}
+		}				
 
 		var json = new Json.Remote('feed.php?a=save', {
 			headers: {'X-Request': 'JSON'},
@@ -107,7 +107,7 @@ function json_save(){
 			onFailure: function(err) {
 				json_message('Error! '+err);
 			}
-		}).send(rqdata);
+		}).send({'map':rqdata, 'background':paint_background, 'objects':object_datagrid});
 	} catch (e) {
 		json_message('Error! '+e.message);
 	}
@@ -118,19 +118,32 @@ function json_load() {
 	try {
 		var json = new Json.Remote('feed.php?a=load', {
 			headers: {'X-Request': 'JSON'},
-			onComplete: function(obj) {
+			onComplete: function(data) {
 			
 				json_message('Rendering...');
 	
 				// We got the object. Do the loading...
 				paint_reset();
+				object_resetgrid();
+
+				// First, render the map
+				var obj = data.map;
 				for (var i=0; i<3; i++) {
 					paint_layer = i+1;
 					$each(obj[i], function(e) {
 						paint_put(e.x-scroll_offset.x,e.y-scroll_offset.y,e.s);
 				   });
 				}
+
+				// Then, render the objects
+				var obj = data.objects;
+				$each(obj, function(e) {
+					object_instance(e);
+				});
 				
+				// And finally, update the background
+				paint_setbackground(data.background);
+
 				json_message('Loaded!');
 			
 			},
@@ -144,6 +157,110 @@ function json_load() {
 	}
 }
 
+/**
+  * Interface Window Handler
+  *
+  */
+
+//### Interface window for object parameters ###
+var win_objparm_active_infobj = null;
+var win_objparm_inputs = [];
+var win_objparm_objects = [];
+
+function win_objparm_show(infobj) {
+	$('ui_objinfo').setStyle('visibility','visible');
+	win_objparm_active_infobj = infobj;
+	win_objparm_reset();
+	$each(infobj, function(v,id) {
+		if ((id!='x') && (id!='y') && (id!='z') && (id!='image')) {
+			win_objparm_spawncontrol(id,id,v);
+		}
+	});
+}
+
+function win_objparm_reset() {
+	$each(win_objparm_objects, function(e) {
+		try {
+			e[0].remove();
+			e[1].remove();
+			e[2].remove();
+			e[3].remove();
+		} catch (e) {
+		}
+	});
+	win_objparm_objects = [];
+	win_objparm_inputs = [];
+}
+
+function win_objparm_removeparm(id) {
+	$each(win_objparm_inputs, function(elm, i) {
+		var name = elm.getProperty('name');
+		if (name == id) {
+			win_objparm_objects[i][0].remove();
+			win_objparm_objects[i][1].remove();
+			win_objparm_objects[i][2].remove();
+			win_objparm_objects[i][3].remove();
+			win_objparm_objects.splice(i,1);
+			win_objparm_inputs.splice(i,1);
+			delete win_objparm_active_infobj[name];
+			return;	
+		}
+	});	
+}
+
+function win_objparm_spawncontrol(name, id, value) {
+	var o = $(document.createElement('div'));
+	var s = $(document.createElement('strong'));
+	var i = $(document.createElement('input'));
+	var x = $(document.createElement('img'));
+	
+	if (!$defined(value)) value='';
+	
+	s.setHTML(name+':');
+	i.setProperties({
+		'type': 'text',
+		'name': id,
+		'value': value
+	});
+	x.setProperties({
+		'src': 'images/edit_remove.png',
+		'title': 'Remove this parameter'
+	});
+	x.addEvent('click', function(e) {
+		var e = new Event(e);
+		win_objparm_removeparm(id);
+		e.stop();
+	});
+	
+	o.appendChild(x);
+	o.appendChild(s);
+	o.appendChild(i);
+	
+	$('ui_objinfo_data').appendChild(o);
+	win_objparm_inputs.push(i);
+	win_objparm_objects.push([i,s,o,x]);
+}
+
+function win_editobj_addparm() {
+	var pname = window.prompt("Enter the parameter name:");
+	if (!pname) return;
+	win_objparm_spawncontrol(pname,pname,win_objparm_active_infobj[pname]);	
+}
+
+function win_editobj_save() {
+	$('ui_objinfo').setStyle('visibility','hidden');
+	$each(win_objparm_inputs, function(elm) {
+		var name = elm.getProperty('name');
+		var value = elm.getProperty('value');
+		win_objparm_active_infobj[name]=value;
+	});
+	win_objparm_active_infobj=null;
+}
+
+function win_editobj_cancel() {
+	$('ui_objinfo').setStyle('visibility','hidden');
+	win_objparm_active_infobj=null;
+}
 
 /**
   * Interface button feedback handler
@@ -153,6 +270,8 @@ function json_load() {
 function ui_new() {
 	if (window.confirm('Do you really want to erase this map? This action is not undoeable!')) {
 		paint_reset();
+		paint_setbackground('');
+		object_resetgrid();
 	}
 }
 
@@ -179,6 +298,7 @@ function ui_clear() {
 	object_put=false;
 	object_edit=false;
 	object_erase=false;
+	brush_reset();
 }
 
 function ui_put() {
@@ -192,6 +312,7 @@ function ui_put() {
 	object_put=false;
 	object_edit=false;
 	object_erase=false;
+	brush_updateview();
 }
 
 function ui_objclear() {
@@ -205,6 +326,7 @@ function ui_objclear() {
 	object_put=false;
 	object_edit=false;
 	object_erase=true;
+	brush_reset();
 }
 
 function ui_objput() {
@@ -229,6 +351,11 @@ function ui_objedit() {
 	object_put=false;
 	object_edit=true;
 	object_erase=false;
+	brush_reset();
+}
+
+function ui_setbackground() {
+	paint_setbackground('../../images/tiles/'+tiles_base+'-'+selection.x+'-'+selection.y+'.png');
 }
 
 /**
@@ -238,10 +365,10 @@ function ui_objedit() {
 var ddmenu_object = null;
 
 function dropdown_show(x,y,menus) {
-	var e = document.createElement('div');
+	var e = $(document.createElement('div'));
 	if (!isInternetExplorer) { e.setAttribute('class', 'dropdownmenu') } else { e.setAttribute('className', 'dropdownmenu') };
 	$each(menus, function(m) {
-		var a = document.createElement('a');
+		var a = $(document.createElement('a'));
 		a.href = m[0];
 		a.innerHTML=m[1];
 		e.appendChild(a);
@@ -261,12 +388,6 @@ function dropdown_dispose() {
 		ddmenu_object.remove();
 		ddmenu_object=null;
 	}
-}
-
-function ui_setbackground() {
-	$('content_host').setStyles({
-		'background-image': 'url('+'../../images/tiles/'+tiles_base+'-'+selection.x+'-'+selection.y+'.png'+')'
-	});
 }
 
 /**
@@ -434,14 +555,15 @@ function oloader_reset() {
 }
 
 function object_store(img) {
-	var a = document.createElement('a');
-	var i = document.createElement('img');		
-	a.appendChild(i);
-	
-	
+	var a = $(document.createElement('a'));
+	var i = $(document.createElement('img'));
+	a.appendChild(i);	
 	a.href="javascript:;"
-	i.src=img;
-	i.setAttribute('border', 0);
+	
+	i.setProperties({
+		'border': 0,
+		'src': img
+	});
 
 	$('objects_host').appendChild(a);
 	a.addEvent('click', function(e) {
@@ -450,7 +572,7 @@ function object_store(img) {
 		ui_objput();
 		e.stop();
 	});
-
+	
 	objects_cache.push({'data':{}, 'elm':a});
 }
 
@@ -460,10 +582,91 @@ function object_store(img) {
   */
 var object_put = false;
 var object_edit = false;
+var object_erase = false;
+var object_active = "";
+var object_grid = [];
+var object_datagrid = [];
 
 function object_select(img) {
+	object_active = img;
 	brush_selection_useobject(img);
 	brush_show();
+}
+
+function object_resetgrid() {
+	$each(object_grid, function(e){
+		e.remove();
+	});
+	object_grid = [];
+	object_datagrid = [];
+}
+
+function object_instance_bybrush() {
+	var zindex = brush_position.y*500+brush_position.x;
+	if (zindex<0) zindex=1;
+	object_instance({'x':brush_position.x, 'y':brush_position.y, 'z':zindex});
+}
+
+function object_remove(obj) {
+	var id = object_grid.indexOf(obj);
+	if (id<0) return;
+	object_grid[id].remove();
+	object_grid.splice(id,1);
+	object_datagrid.splice(id,1);
+}
+
+function object_instance(data) {
+	var o = $(document.createElement('img'));
+
+	if (!$defined(data.image)) data.image=object_active;
+	if (!$defined(data.x)) data.x=0;
+	if (!$defined(data.y)) data.y=0;
+	
+	$('content_objects').appendChild(o);
+	o.setProperties({
+		'border': 0,
+		'src': data.image,
+	});
+	o.setStyles({
+		'left': data.x*32,
+		'top': data.y*32				
+	});
+	
+	o.addEvent('mouseenter', function(e){
+		var e = new Event(e);
+		if (object_edit || object_erase) {
+			o.setStyles({
+				'border': 'solid 1px #FF9900',
+				'background-color': '#FEEBD6'
+			});
+		}
+		e.stop();
+    });
+	o.addEvent('mouseleave', function(e){
+		var e = new Event(e);
+		if (object_edit || object_erase) {
+			o.setStyles({
+				'border': '',
+				'background-color': ''
+			});
+		}
+		e.stop();
+    });
+	o.addEvent('click', function(e){
+		var e = new Event(e);
+		if (object_edit) {
+			var id = object_grid.indexOf(o);
+			win_objparm_show(object_datagrid[id]);
+		} else if (object_erase) {
+			object_remove(o);
+		}
+		e.stop();									  
+    });
+
+	if ($defined(data.z)) o.setStyle('z-index', data.z);
+	
+	object_grid.push(o);
+	object_datagrid.push(data);
 }
 
 /**
@@ -471,50 +674,18 @@ function object_select(img) {
   *
   */
 
-// ### Object area painting ###
-var objpaint_elements = [];
-var objpaint_grid = [[],[],[]];
-var objpaint_layer = 1;
-
-function objpaint_spawn(image,layer) {
-	var im = $(document.createElement('img'));
-	$('content_layer'+layer).appendChild(im);	
-	im.src='../../images/tiles/'+image;
-	objpaint_elements.push(im);
-	return im;
-}
-
-function objpaint_reset() {
-	$each(objpaint_elements, function(e){
-		e.remove();								   
-   });
-	objpaint_elements = [];
-	objpaint_grid = [[],[],[]];
-}
-
-function objpaint_updateblock(x,y,image,layer) {
-	var id=x+','+y;
-	if ($defined(objpaint_grid[layer-1][id])) {
-		objpaint_grid[layer-1][id].src='../../images/tiles/'+image;
-		return objpaint_grid[layer-1][id];		
-	} else {
-		objpaint_grid[layer-1][id] = objpaint_spawn(image,layer);
-		return objpaint_grid[layer-1][id];
-	}
-}
-
-function objpaint_put(x,y,image) {
-	var im = objpaint_updateblock(x,y,image,paint_layer);
-	im.setStyles({
-		'left': x*32,
-		'top': y*32
-    });
-}
-
-// ### Main area painting ###
 var paint_elements = [];
 var paint_grid = [[],[],[]];
 var paint_layer = 1;
+var paint_background = '';
+
+function paint_setbackground(img) {
+	if (img == '') img='images/grid.gif';
+	$('content_host').setStyles({
+		'background-image': 'url('+img+')'
+	});
+	paint_background = img;	
+}
 
 function paint_spawn(image,layer) {
 	var im = $(document.createElement('img'));
@@ -998,22 +1169,26 @@ $(window).addEvent('load', function(e){
 	$('content_host').addEvent('mousedown', function(e){
 		var e = new Event(e);
 		dropdown_dispose();	
-		
-		if (brush_erase || brush_put) {
-			if (e.event.button == 1) {
+		if (e.event.button == 1) {
+			scroller_start(e.client.x,e.client.y);
+			scroll_active = true;
+		} else if (e.event.button == 0) {
+			if (e.alt) {
 				scroller_start(e.client.x,e.client.y);
 				scroll_active = true;
-			} else if (e.event.button == 0) {
-				brush_dragging = true;			
+			} else {
+				if (brush_erase || brush_put) {
+					brush_dragging = true;			
+				} else {
+					
+				}
 			}
-		} else {
-			
 		}
 		e.stop();
 	})
 	
 	$('content_host').addEvent('mouseup', function(e){
-		var e = new Event(e);
+		var e = new Event(e);		
 		if (brush_erase || brush_put) {
 			if (brush_dragging) {
 				if (e.shift) {
@@ -1026,10 +1201,10 @@ $(window).addEvent('load', function(e){
 				brush_apply();
 			}
 			brush_dragging = false;
-			scroll_active = false;
-		} else {
-			
+		} else if (object_put) {
+			object_instance_bybrush();
 		}
+		scroll_active = false;
 		e.stop();
 	});
 	
@@ -1090,13 +1265,18 @@ $(window).addEvent('load', function(e){
 	$(document).addEvent('mousedown', function(e){
 		var e = new Event(e);
 		dropdown_dispose();	
-		e.stop();
+		//e.stop();
 	});
 	
 	$(document).addEvent('mouseup', function(e){
 		var e = new Event(e);
 		brush_dragging = false;
-		scroll_active = false;											 
+		scroll_active = false;
+		//e.stop();
+	 });
+
+	$(document).addEvent('contextmenu', function(e){
+		var e = new Event(e);
 		e.stop();
 	 });
 

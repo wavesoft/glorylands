@@ -2,15 +2,19 @@
 
 if ($_REQUEST['a']=='save') {
 
-	$data = json_decode(stripslashes($_REQUEST['json']),true);
+	$buffer = json_decode(stripslashes($_REQUEST['json']),true);
 	file_put_contents('dump.txt', json_encode(stripslashes($_REQUEST['json'])));
-	file_put_contents('trace.txt', print_r($data,true));
+	file_put_contents('trace.txt', print_r($buffer,true));
+	
+	$data = $buffer['map'];
 	foreach ($data as $gid => $grid) {
 		foreach ($grid as $eid => $element) {
 			$data[$gid][$eid]['s'] = basename($data[$gid][$eid]['s']);
 		}
 	}
-	file_put_contents('test.txt', json_encode($data));
+	$buffer['map']=$data;
+	
+	file_put_contents('test.txt', json_encode($buffer));
 	
 	echo json_encode(array('message' => 'OK'));
 
