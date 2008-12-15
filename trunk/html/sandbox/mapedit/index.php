@@ -20,7 +20,7 @@
 			<div id="content_layer2" class="tiled_data">&nbsp;</div>
 			<div id="content_layer3" class="tiled_data">&nbsp;</div>
 			<div id="content_objects" class="tiled_data">&nbsp;</div>
-			<div id="content_data">
+			<div id="content_data" style="z-index:10000">
 				<div class="aniborder" id="content_selection" style="visibility: hidden">
 					<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
 				</div>
@@ -29,7 +29,7 @@
 		</div>
 	</div>
 	</td>
-	<td valign="top">
+	<td valign="top" width="295">
 	<div class="border">
 		<div class="lt"></div><div class="rt"></div><div class="lb"></div><div class="rb"></div>
 		<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
@@ -82,7 +82,7 @@
 			</select>
 		</div>
 		<div class="objects_host" id="objects_host">
-			Kai edw ena test
+			&nbsp;
 		</div>
         <div class="sidemenu">
             <div class="rt"></div><div class="rb"></div><div class="t"></div><div class="b"></div><div class="r"></div>
@@ -96,7 +96,7 @@
 	</td>
 	</tr>
 </table>
-<div class="border" id="ui_defobj" style="position: absolute; left: 110px; top: 60px; width: 522px; height: 440px; background-color:#FFFFFF; display: none;">
+<div class="border" id="ui_defobj" style="position: absolute; left: 110px; top: 60px; width: 522px; height: 440px; background-color:#FFFFFF; visibility: hidden; z-index:10001">
 	<div class="lt"></div><div class="rt"></div><div class="lb"></div><div class="rb"></div>
 	<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
 	<div class="header">Define Object</div>
@@ -116,6 +116,21 @@
 				<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
 			</div>
 		</div>
+	</div>
+</div>
+<div class="border" id="ui_objinfo" style="position: absolute; left: 250px; top: 100px; width: 340px; height: 250px; background-color:#FFFFFF; visibility: hidden; z-index:10002">
+	<div class="lt"></div><div class="rt"></div><div class="lb"></div><div class="rb"></div>
+	<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
+	<div class="header">Edit Parameters</div>
+	<div class="content" style="height: 32px;">
+		<div class="topmenu">
+			<a href="javascript:;" onclick="win_editobj_addparm();"><img src="images/edit_add32.png" border="0" align="absmiddle" /> <u>A</u>dd Parameter</a>
+			<a href="javascript:;" onclick="win_editobj_save();"><img src="images/filesave.png" border="0" align="absmiddle" /> <u>S</u>ave</a>
+			<a href="javascript:;" onclick="win_editobj_cancel();"><img src="images/button_cancel.png" border="0" align="absmiddle" /> <u>C</u>ancel</a>
+		</div>			
+	</div>
+	<div id="ui_objinfo_data" class="dynamic_input">
+			
 	</div>
 </div>
 <div id="msg"></div>
