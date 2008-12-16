@@ -11,7 +11,6 @@
 -->
 <meta http-equiv="Content-Type" content="text/html; charset={$CONFIG.GAME.CHARSET}" />
 <title>{$CONFIG.GAME.TITLE} v{$VERSION.VERSION}</title>
-<script src="{$theme}/compatibility/IE7.js" type="text/javascript"></script>
 {literal}
 <script language="javascript">
 // PHP-Generated variables
@@ -21,7 +20,7 @@ var mapOfsY = 8;
 {/literal}
 <script language="javascript" src="includes/mootools-release-1.11.js"></script>
 <!-- <script language="javascript" src="includes/glapi-1.1.src.js"></script> -->
-<script language="javascript" src="includes/glapi.js"></script>
+<script language="javascript" src="includes/glapi-2.0.src.js"></script>
 <script language="javascript" src="includes/popup.js"></script>
 {$javascript}
 <link href="{$theme}/style.css" rel="stylesheet" type="text/css" />
@@ -88,6 +87,46 @@ var mapOfsY = 8;
 	width: 28px;
 	top: 0px;
 }
+
+#datapane {
+	position: absolute; 
+	left:0px; 
+	top: 0px; 
+}
+
+#dataloader {
+	position: absolute; 
+	left: 0px; 
+	top: 0px; 
+	z-index: 250000; 
+	background-color: #000000; 
+	width: 768px; 
+	height: 512px; 
+	background-image: url(images/loading.gif); 
+	background-repeat: no-repeat; 
+	background-position: center;
+}
+#dataloader div {
+	top: 280px;
+	position: absolute;
+	color: #CCCCCC;
+	width: 768px;
+	text-align: center;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+#datahost {
+	background-color: #000000;
+	position: relative; 
+	width: 768px; 
+	height: 512px; 
+	display: block; 
+	left:0px; 
+	top: 0px; 
+	overflow: hidden;
+}
+
 </style>
 {/literal}
 </head>
@@ -118,10 +157,15 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 	<tr>
 		<td class="br1_l" width="10">&nbsp;</td>
 		<td>
-		<div style="position: relative; width: 768px; height: 512px; display: block; left:0px; top: 0px;" id="datapane">
-		<!-- Datapane Contents -->
-		</div>		
-		<div style="position: absolute; visibility: hidden; padding: 12px;" id="actionpane"></div>		</td>
+		<div id="datahost">
+			<div id="datapane">
+			<!-- Datapane Contents -->	
+			<div style="border: solid 2px #FF0000; z-index: 1000000; text-align:center; width: 32px; height:32px; position:absolute;" id="zp">&nbsp;</div>
+			</div>
+			<div id="dataloader"><div id="dataloader_text"></div></div>
+		</div>
+		<div style="position: absolute; visibility: hidden; padding: 12px;" id="actionpane"></div>		
+		</td>
 		<td class="br1_r" width="10"></td>
 	</tr>
 	<tr height="12">

@@ -80,8 +80,12 @@ function json_message(msg) {
 	json_clearmessage();
 }
   
-function json_save(){
-	json_message('Saving...');
+function json_save(action, msg_start, msg_complete, extra_data){
+	if (!$defined(action)) action='save';
+	if (!$defined(msg_start)) msg_start='Saving...';
+	if (!$defined(msg_complete)) msg_complete='Saved!';
+
+	json_message(msg_start);
 	try {
 		// Build request
 		var rqdata = [];
@@ -99,15 +103,15 @@ function json_save(){
 			rqdata.push(gdata);
 		}				
 
-		var json = new Json.Remote('feed.php?a=save', {
+		var json = new Json.Remote('feed.php?a='+action, {
 			headers: {'X-Request': 'JSON'},
 			onComplete: function(obj) {
-				json_message('Saved!');
+				json_message(msg_complete);
 			},
 			onFailure: function(err) {
 				json_message('Error! '+err);
 			}
-		}).send({'map':rqdata, 'background':paint_background, 'objects':object_datagrid});
+		}).send({'map':rqdata, 'background':paint_background, 'objects':object_datagrid, 'data':extra_data});
 	} catch (e) {
 		json_message('Error! '+e.message);
 	}
@@ -157,6 +161,24 @@ function json_load() {
 	}
 }
 
+function json_defobj(grid) {
+	json_message('Defining object...');
+	try {
+		var json = new Json.Remote('feed.php?a=define', {
+			headers: {'X-Request': 'JSON'},
+			onComplete: function(data) {
+				oloader_update();
+			},
+			onFailure: function(err) {
+				json_message('Error! '+err);
+			}
+			
+		}).send(grid);
+	} catch (e) {
+		json_message('Error! '+e.message);
+	}
+}
+
 /**
   * Interface Window Handler
   *
@@ -171,8 +193,9 @@ function win_objparm_show(infobj) {
 	$('ui_objinfo').setStyle('visibility','visible');
 	win_objparm_active_infobj = infobj;
 	win_objparm_reset();
+	win_objparm_spawncontrol('Object is dynamic','dynamic',infobj['dynamic'],'checkbox');
 	$each(infobj, function(v,id) {
-		if ((id!='x') && (id!='y') && (id!='z') && (id!='image')) {
+		if ((id!='x') && (id!='y') && (id!='z') && (id!='image') && (id!='dynamic')) {
 			win_objparm_spawncontrol(id,id,v);
 		}
 	});
@@ -208,24 +231,29 @@ function win_objparm_removeparm(id) {
 	});	
 }
 
-function win_objparm_spawncontrol(name, id, value) {
+function win_objparm_spawncontrol(name, id, value, type) {
 	var o = $(document.createElement('div'));
 	var s = $(document.createElement('strong'));
 	var i = $(document.createElement('input'));
 	var x = $(document.createElement('img'));
 	
 	if (!$defined(value)) value='';
+	if (!$defined(type)) type='text';
 	
 	s.setHTML(name+':');
 	i.setProperties({
-		'type': 'text',
+		'type': type,
 		'name': id,
 		'value': value
 	});
+	
+	if (type == 'checkbox') i.setProperty('checked', value);
+	
 	x.setProperties({
 		'src': 'images/edit_remove.png',
 		'title': 'Remove this parameter'
 	});
+	
 	x.addEvent('click', function(e) {
 		var e = new Event(e);
 		win_objparm_removeparm(id);
@@ -252,7 +280,17 @@ function win_editobj_save() {
 	$each(win_objparm_inputs, function(elm) {
 		var name = elm.getProperty('name');
 		var value = elm.getProperty('value');
-		win_objparm_active_infobj[name]=value;
+		var type = elm.getProperty('type');		
+		if (type == 'text') {
+			win_objparm_active_infobj[name]=value;
+		} else if  (type == 'checkbox') {
+			win_objparm_active_infobj[name]=elm.getProperty('checked');
+		}
+		
+		// Unset 'dynamic' variable if false
+		if ((name == 'dynamic') && !win_objparm_active_infobj[name]) {
+			delete win_objparm_active_infobj[name];
+		}
 	});
 	win_objparm_active_infobj=null;
 }
@@ -283,8 +321,10 @@ function ui_load() {
 	json_load();
 }
 
-function ui_objects() {
-	
+function ui_compile() {
+	var name = window.prompt("Please enter the map title:");
+	if (!name) return;
+	json_save('compile','Compiling...','Compiled!', {'title':name});
 }
 
 function ui_clear() {
@@ -356,6 +396,24 @@ function ui_objedit() {
 
 function ui_setbackground() {
 	paint_setbackground('../../images/tiles/'+tiles_base+'-'+selection.x+'-'+selection.y+'.png');
+}
+
+function ui_defobject() {
+	var name = window.prompt('Enter an object name:');
+	if (!name) return;
+	
+	var grid = [];
+	var i=0;j=0;
+	for (var y=selection.y; y<selection.y+selection.h; y++) {
+		grid[i]=[];
+		j=0;
+		for (var x=selection.x; x<selection.x+selection.w; x++) {
+			grid[i][j]=tiles_base+'-'+x+'-'+y+'.png';
+			j++;
+		}
+		i++;
+	}
+	json_defobj({'grid':grid,'name':name});
 }
 
 /**
@@ -447,7 +505,7 @@ function tloader_preload(images) {
 }
 
 function tloader_renderimages(images) {
-	$('tiles_status').setHTML('<center>Displaying...</center>');
+	$('tiles_status').setHTML('<center>Rendering...</center>');
 	var cur_image=0;
 	var timer = setInterval(function() {
 		for (var i=cur_image; i<cur_image+8; i++) {
@@ -481,10 +539,17 @@ function tloader_spawnimage(src) {
   *
   */
 var objects_cache = [];
+var objects_active = '';
+
+function oloader_update() {
+	oloader_reset();
+	oloader_download(objects_active);	
+}
 
 function oloader_download(objectset) {
 	oloader_reset();
 	
+	objects_active = objectset;
 	$('objects_set').setStyles({'display':'none'});
 	$('objects_status').setStyles({'display':''});
 	$('objects_status').setHTML('<center>Downloading information...</center>');
@@ -529,7 +594,7 @@ function oloader_preload(images) {
 }
 
 function oloader_renderimages(images) {
-	$('objects_status').setHTML('<center>Displaying...</center>');
+	$('objects_status').setHTML('<center>Rendering...</center>');
 	var cur_image=0;
 	var timer = setInterval(function() {
 		for (var i=cur_image; i<cur_image+8; i++) {
@@ -625,7 +690,7 @@ function object_instance(data) {
 	$('content_objects').appendChild(o);
 	o.setProperties({
 		'border': 0,
-		'src': data.image,
+		'src': data.image
 	});
 	o.setStyles({
 		'left': data.x*32,
@@ -1113,6 +1178,8 @@ function scroller_setpos(x,y) {
 	$('content_layer2').setStyles({'left':x,'top':y});
 	$('content_layer3').setStyles({'left':x,'top':y});
 	$('content_objects').setStyles({'left':x,'top':y});
+	$('content_collision').setStyles({'left':x,'top':y});
+	
 	$('spacer').setStyles({
 		'left':0, 'top':0, 'width':x+758, 'height':y+502
 	});

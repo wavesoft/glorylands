@@ -121,7 +121,7 @@ body {
 	display: block; 
 	left:0px; 
 	top: 0px; 
-	overflow: scroll;
+	overflow: hidden;
 	margin: 3px;
 }
 #tiles_host {
