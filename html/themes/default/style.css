@@ -168,7 +168,7 @@ table.backload {
 	width: 100%;
 	top: 40%;
 	position: absolute;
-	z-index: 3000;
+	z-index: 250001;
 }
 
 #waiter_host #waiter {

@@ -1,4 +1,5 @@
 <?php
+include "includes/renderer.php";
 
 if ($_REQUEST['a']=='save') {
 
@@ -16,6 +17,61 @@ if ($_REQUEST['a']=='save') {
 	
 	file_put_contents('test.txt', json_encode($buffer));
 	
+	echo json_encode(array('message' => 'OK'));
+
+} elseif ($_REQUEST['a']=='compile') {
+
+	$buffer = json_decode(stripslashes($_REQUEST['json']),true);
+	file_put_contents('dump.txt', json_encode(stripslashes($_REQUEST['json'])));
+	file_put_contents('trace.txt', print_r($buffer,true));
+	
+	$data = $buffer['map'];
+	$map_width=0;
+	$map_height=0;
+	foreach ($data as $gid => $grid) {
+		foreach ($grid as $eid => $element) {
+			$data[$gid][$eid]['s'] = basename($data[$gid][$eid]['s']);
+			if ($data[$gid][$eid]['x']>$map_width) $map_width=$data[$gid][$eid]['x'];
+			if ($data[$gid][$eid]['y']>$map_height) $map_height=$data[$gid][$eid]['y'];
+		}
+	}
+	$buffer['map']=$data;
+
+	$data = $buffer['objects'];
+	$map_images = array();
+	foreach ($data as $id => $object) {
+		$data[$id]['image'] = basename($data[$id]['image']);		
+	}
+	$buffer['map']=$data;
+	
+	$map = array(
+		'width' => $map_width,
+		'height' => $map_height,
+		'title' => $buffer['data']['title'],
+		'id' => 44,			
+		'images' => $map_images,		
+		'objects' => $buffer['objects'],	
+		'background' => array(
+			'fill' => $buffer['background'],
+			'name' => 'images/luskan',
+			'width' => 2912,
+			'height' => 832,
+			'xsize' => 1,
+			'ysize' => 1
+		),
+		
+		'collision' => array(
+		)	
+	);
+	
+	echo json_encode(array('message' => 'OK'));
+
+} elseif ($_REQUEST['a']=='define') {
+
+	$buffer = json_decode(stripslashes($_REQUEST['json']),true);
+	file_put_contents('dump.txt', stripslashes($_REQUEST['json']));
+	file_put_contents('trace.txt', print_r($buffer,true));
+	render_object($buffer['grid'], 'objects/object-'.$buffer['name'].'.png');
 	echo json_encode(array('message' => 'OK'));
 
 } elseif ($_REQUEST['a']=='load') {

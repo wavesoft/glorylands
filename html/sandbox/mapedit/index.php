@@ -19,6 +19,7 @@
 			<div id="content_layer1" class="tiled_data">&nbsp;</div>
 			<div id="content_layer2" class="tiled_data">&nbsp;</div>
 			<div id="content_layer3" class="tiled_data">&nbsp;</div>
+			<div id="content_collision" class="tiled_data">&nbsp;</div>
 			<div id="content_objects" class="tiled_data">&nbsp;</div>
 			<div id="content_data" style="z-index:10000">
 				<div class="aniborder" id="content_selection" style="visibility: hidden">
@@ -35,10 +36,10 @@
 		<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
 		<div class="header">Menu</div>
 		<div class="navmenu">
-			<a href="javascript:;" onclick="ui_new();"><img src="images/filenew.png" border="0" /><br /><u>N</u>ew</a>
-			<a href="javascript:;" onclick="ui_save();"><img src="images/filesave.png" border="0" /><br /><u>S</u>ave</a>
-			<a href="javascript:;" onclick="ui_load();"><img src="images/fileopen.png" border="0" /><br /><u>O</u>pen</a>
-			<a href="javascript:;" onclick="ui_objects();"><img src="images/packet.png" border="0" /><br />O<u>b</u>jects</a>
+			<a href="javascript:;" onclick="ui_new();" accesskey="n"><img src="images/filenew.png" border="0" /><br /><u>N</u>ew</a>
+			<a href="javascript:;" onclick="ui_save();" accesskey="s"><img src="images/filesave.png" border="0" /><br /><u>S</u>ave</a>
+			<a href="javascript:;" onclick="ui_load();" accesskey="o"><img src="images/fileopen.png" border="0" /><br /><u>O</u>pen</a>
+			<a href="javascript:;" onclick="ui_compile();" accesskey="c"><img src="images/packet.png" border="0" /><br /><u>C</u>ompile</a>
 		</div>
 		<div class="message" id="json_output"></div>
 	</div>
