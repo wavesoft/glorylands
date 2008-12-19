@@ -3,8 +3,17 @@ include "includes/renderer.php";
 
 if ($_REQUEST['a']=='save') {
 
-	$buffer = json_decode(stripslashes($_REQUEST['json']),true);
-	file_put_contents('dump.txt', json_encode(stripslashes($_REQUEST['json'])));
+	$str_buffer = stripslashes($_REQUEST['json']);
+	
+	// BUGFIX: json_decode does not understand arrays in: [,,,,,,,,1,,,,3,,] format >>>>
+	$str_buffer = str_replace('[,','[false,',$str_buffer);
+	$str_buffer = str_replace(',]',',false]',$str_buffer);
+	$str_buffer = str_replace(',,',',false,',$str_buffer);
+	$str_buffer = str_replace(',,',',false,',$str_buffer);
+	// <<<<
+	
+	$buffer = json_decode($str_buffer,true);
+	file_put_contents('dump.txt', $str_buffer);
 	file_put_contents('trace.txt', print_r($buffer,true));
 	
 	$data = $buffer['map'];
@@ -22,7 +31,7 @@ if ($_REQUEST['a']=='save') {
 } elseif ($_REQUEST['a']=='compile') {
 
 	$buffer = json_decode(stripslashes($_REQUEST['json']),true);
-	file_put_contents('dump.txt', json_encode(stripslashes($_REQUEST['json'])));
+	file_put_contents('dump.txt', stripslashes($_REQUEST['json']));
 	file_put_contents('trace.txt', print_r($buffer,true));
 	
 	$data = $buffer['map'];

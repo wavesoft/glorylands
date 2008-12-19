@@ -19,8 +19,8 @@
 			<div id="content_layer1" class="tiled_data">&nbsp;</div>
 			<div id="content_layer2" class="tiled_data">&nbsp;</div>
 			<div id="content_layer3" class="tiled_data">&nbsp;</div>
-			<div id="content_collision" class="tiled_data">&nbsp;</div>
 			<div id="content_objects" class="tiled_data">&nbsp;</div>
+			<div id="content_collision" class="tiled_data">&nbsp;</div>
 			<div id="content_data" style="z-index:10000">
 				<div class="aniborder" id="content_selection" style="visibility: hidden">
 					<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
@@ -93,6 +93,19 @@
                 <div id="objects_edit"><a href="javascript:;" onclick="ui_objedit()"><img src="images/edit.png" border="0" /></a></div>
             </div>
         </div>
+	</div>
+	<div class="border">
+		<div class="lt"></div><div class="rt"></div><div class="lb"></div><div class="rb"></div>
+		<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
+		<div class="header">Collision Grid</div>
+        <div class="sidemenu">
+            <div class="rt"></div><div class="rb"></div><div class="t"></div><div class="b"></div><div class="r"></div>
+            <div class="content" style="height: 40px;">
+                <div id="cgrid_clear"><a href="javascript:;" onclick="ui_cgrid_erase()"><img src="images/edit_remove.png" border="0" /></a></div>
+                <div id="cgrid_put"><a href="javascript:;" onclick="ui_cgrid_put()"><img src="images/edit_add.png" border="0" /></a></div>
+            </div>
+        </div>
+		100%
 	</div>
 	</td>
 	</tr>

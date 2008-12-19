@@ -797,4 +797,15 @@ function map_updateobject(uid,data) {
 	// objects. That means the stored
 	// object in the array is now updated
 }
- 
+
+var map_collision = [];			// The collision grid
+function map_collision_move_to(object,x,y) {
+	var pos = $(object).getPosition();
+	var start_x = Math.round(pos.x/32);
+	var start_y = Math.round(pos.y/32);
+	var stop_x = Math.round(x/32);
+	var stop_y = Math.round(y/32);
+	var fx=new Fx.Styles(object, {duration: 100, unit: 'px', transition: Fx.Transitions.linear});
+	
+	
+}
