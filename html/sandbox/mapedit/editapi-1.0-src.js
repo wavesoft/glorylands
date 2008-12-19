@@ -71,7 +71,7 @@ var json_msgtimer = null;
 function json_clearmessage() {
 	if (json_msgtimer) clearTimeout(json_msgtimer);
 	json_msgtimer = setTimeout(function() {
-		$('json_output').setHTML('');
+		$('json_output').setHTML('&nbsp;');
 		$('json_output').setStyles({
 			'visibility': 'hidden'
 		});
@@ -330,6 +330,7 @@ function ui_save() {
 
 function ui_load() {
 	json_load();
+	ui_put();
 }
 
 function ui_compile() {
@@ -353,6 +354,7 @@ function ui_cgrid_put() {
 	object_erase=false;
 	cgrid_put=true;
 	cgrid_erase=false;
+	$('content_collision').setStyle('visibility','visible');
 	brush_reset();
 }
 
@@ -371,6 +373,7 @@ function ui_cgrid_erase() {
 	object_erase=false;
 	cgrid_put=false;
 	cgrid_erase=true;
+	$('content_collision').setStyle('visibility','visible');
 	brush_reset();
 }
 
@@ -389,6 +392,7 @@ function ui_clear() {
 	object_erase=false;
 	cgrid_put=false;
 	cgrid_erase=false;
+	$('content_collision').setStyle('visibility','hidden');
 	brush_reset();
 }
 
@@ -407,6 +411,7 @@ function ui_put() {
 	object_erase=false;
 	cgrid_put=false;
 	cgrid_erase=false;
+	$('content_collision').setStyle('visibility','hidden');
 	brush_updateview();
 }
 
@@ -425,6 +430,7 @@ function ui_objclear() {
 	object_erase=true;
 	cgrid_put=false;
 	cgrid_erase=false;
+	$('content_collision').setStyle('visibility','hidden');
 	brush_reset();
 }
 
@@ -442,6 +448,7 @@ function ui_objput() {
 	object_edit=false;
 	object_erase=false;
 	cgrid_put=false;
+	$('content_collision').setStyle('visibility','hidden');
 	cgrid_erase=false;
 }
 
@@ -460,6 +467,7 @@ function ui_objedit() {
 	object_erase=false;
 	cgrid_put=false;
 	cgrid_erase=false;
+	$('content_collision').setStyle('visibility','hidden');
 	brush_reset();
 }
 
@@ -739,7 +747,7 @@ function object_resetgrid() {
 function object_instance_bybrush() {
 	var zindex = brush_position.y*500+brush_position.x;
 	if (zindex<0) zindex=1;
-	object_instance({'x':brush_position.x, 'y':brush_position.y, 'z':zindex});
+	object_instance({'x':brush_position.x+scroll_offset.x, 'y':brush_position.y+scroll_offset.y, 'z':zindex});
 }
 
 function object_remove(obj) {
@@ -1277,7 +1285,17 @@ var cgrid_erase = false;
 var cgrid_elements = [];
 var cgrid_data = [];
 var cgrid_datagrid = [];
-  
+var cgrid_attennuation = 100;
+
+function cgrid_setatt(att,keepon) {
+	cgrid_attennuation=att;
+	$$('.slider a').each(function(e){
+		e.setStyle('background-image','');
+  	});
+	keepon.setStyle('background-image','url(images/selection-on.png)');
+	ui_cgrid_put();
+}
+ 
 function cgrid_reset() {
 	$each(cgrid_elements, function(e) {
 	   try {
@@ -1300,14 +1318,20 @@ function cgrid_draw(x,y,value) {
 	}
 	
 	cgrid_datagrid[y][x]=value;
+	cgrid_data[y][x]=elm;
 	elm.setHTML(value);
+	
+	var op = Math.ceil(10+(100*50/(100-value)))/100;
 	elm.setStyles({
 		'left': x*32,
-		'top': y*32
+		'top': y*32,
+		'opacity': op
 	});
 }
 
 function cgrid_clear(x,y) {
+	if (!$defined(cgrid_data[y])) return;
+	if (!$defined(cgrid_data[y][x])) return;	
 	cgrid_data[y][x].remove();
 	delete cgrid_data[y][x];
 	delete cgrid_datagrid[y][x];
@@ -1315,7 +1339,6 @@ function cgrid_clear(x,y) {
 
 function cgrid_spawn() {
 	var o = $(document.createElement('div'));
-	o.setHTML('0');	
 	$('content_collision').appendChild(o);
 	cgrid_elements.push(o);
 	return o;
@@ -1325,7 +1348,13 @@ function cgrid_apply_brush() {
 	try {
 		for (var y=brush_selection.y; y<brush_selection.y+brush_selection.h; y++) {
 			for (var x=brush_selection.x; x<brush_selection.x+brush_selection.w; x++) {
-				if (cgrid_put) cgrid_draw(x+scroll_offset.x,y+scroll_offset.y,100);
+					if (cgrid_put) {
+						if (cgrid_attennuation == 0) {
+							cgrid_clear(x+scroll_offset.x,y+scroll_offset.y);
+						} else {
+							cgrid_draw(x+scroll_offset.x,y+scroll_offset.y,cgrid_attennuation);
+						}
+					}
 				if (cgrid_erase) cgrid_clear(x+scroll_offset.x,y+scroll_offset.y);
 			}
 		}
@@ -1355,6 +1384,7 @@ $(window).addEvent('load', function(e){
 
 	tloader_download('z-field-ext');
 	oloader_download('furniture');
+	cgrid_setatt(0,$$('.slider a')[0]);
 
 	$('content_host').addEvent('mousemove', function(e){
 		var e = new Event(e);
@@ -1420,7 +1450,7 @@ $(window).addEvent('load', function(e){
 				}
 			}
 			brush_dragging = false;
-		} else if (object_put) {
+		} else if (object_put && (e.event.button == 0)) {
 			object_instance_bybrush();
 		}
 		scroll_active = false;

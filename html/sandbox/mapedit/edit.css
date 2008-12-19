@@ -6,6 +6,7 @@ body {
 .border {
 	padding: 5px;
 	position: relative;
+	margin-bottom: 5px;
 }
 .border div.lt {
 	background-image: url(images/brbl-lt.png);
@@ -117,7 +118,7 @@ body {
 	background-image:url(images/grid.gif);
 	position: relative; 
 	width: 768px; 
-	height: 512px; 
+	height: 608px; 
 	display: block; 
 	left:0px; 
 	top: 0px; 
@@ -427,4 +428,30 @@ body {
 	font-size: 18px;
 	font-weight: bold;
 	text-align: center;
+}
+
+.slider {
+	height: 30px;
+	border: solid 1px #CCCCCC;
+	padding: 1px;
+	margin: 2px;
+	width: 248px;
+}
+
+.slider a {
+	display: block;
+	float: left;
+	height: 23px;
+	width: 30px;
+	padding-top: 7px;
+	text-decoration: none;
+	color: #000000;
+	text-align:center;
+	background-color:#990000;
+	margin-right: 1px;
+}
+
+.slider a:hover {
+	background-image: url(images/selection.png);
+	color: #FFFFFF;
 }
