@@ -41,9 +41,8 @@
 			<a href="javascript:;" onclick="ui_load();" accesskey="o"><img src="images/fileopen.png" border="0" /><br /><u>O</u>pen</a>
 			<a href="javascript:;" onclick="ui_compile();" accesskey="c"><img src="images/packet.png" border="0" /><br /><u>C</u>ompile</a>
 		</div>
-		<div class="message" id="json_output"></div>
+		<div class="message" id="json_output">&nbsp;</div>
 	</div>
-	<br />
 	<div class="border">
 		<div class="lt"></div><div class="rt"></div><div class="lb"></div><div class="rb"></div>
 		<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
@@ -71,7 +70,6 @@
 			</div>
 		</div>
 	</div>
-	<br />
 	<div class="border">
 		<div class="lt"></div><div class="rt"></div><div class="lb"></div><div class="rb"></div>
 		<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
@@ -105,7 +103,19 @@
                 <div id="cgrid_put"><a href="javascript:;" onclick="ui_cgrid_put()"><img src="images/edit_add.png" border="0" /></a></div>
             </div>
         </div>
-		100%
+		<div>
+        	Difficulty to enter the tile:<br />
+        	<div class="slider">
+            	<a href="javascript:;" onclick="cgrid_setatt(0,this);" style="background-color:#D5FFD6;">No</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(5,this);" style="background-color:#E9FFD5;">5%</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(10,this);" style="background-color:#F2FFD5;">10%</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(20,this);" style="background-color:#FFFED5;">20%</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(50,this);" style="background-color:#FFEED5;">50%</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(70,this);" style="background-color:#FFE4D5;">70%</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(80,this);" style="background-color:#FFD5D5;">80%</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(100,this);" style="background-color:#E9E9E9;">Full</a>
+            </div>
+        </div>
 	</div>
 	</td>
 	</tr>
