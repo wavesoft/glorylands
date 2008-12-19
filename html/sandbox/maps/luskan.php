@@ -27,7 +27,6 @@ $data = array(
 	),
 	
 	'collision' => array(
-		
 	)
 	
 );

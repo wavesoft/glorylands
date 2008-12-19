@@ -36,6 +36,12 @@ function $trace(obj,short) {
 	return ans;
 }
 
+function get_basename(url) {
+	var parts = new String(url);
+	parts = parts.split("/");
+	return parts[parts.length-1];
+}
+
 var tiles = [];
 var images = [];
 var paint_image = '';
@@ -96,7 +102,7 @@ function json_save(action, msg_start, msg_complete, extra_data){
 				if (p.indexOf(',')>0){
 					p = p.split(',');
 					if (paint_grid[grid_id][coord]!=null) {
-						gdata.push({'x':p[0], 'y':p[1], 's': paint_grid[grid_id][coord].src});
+						gdata.push({'x':p[0], 'y':p[1], 's': get_basename(paint_grid[grid_id][coord].src)});
 					}
 				}
 			}
@@ -111,7 +117,7 @@ function json_save(action, msg_start, msg_complete, extra_data){
 			onFailure: function(err) {
 				json_message('Error! '+err);
 			}
-		}).send({'map':rqdata, 'background':paint_background, 'objects':object_datagrid, 'data':extra_data});
+		}).send({'map':rqdata, 'background':paint_background, 'objects':object_datagrid, 'data':extra_data, 'zgrid':cgrid_datagrid});
 	} catch (e) {
 		json_message('Error! '+e.message);
 	}
@@ -128,6 +134,7 @@ function json_load() {
 	
 				// We got the object. Do the loading...
 				paint_reset();
+				cgrid_reset();
 				object_resetgrid();
 
 				// First, render the map
@@ -144,6 +151,9 @@ function json_load() {
 				$each(obj, function(e) {
 					object_instance(e);
 				});
+				
+				// Then, render the z-grid
+				if ($defined(data.zgrid)) cgrid_render(data.zgrid);
 				
 				// And finally, update the background
 				paint_setbackground(data.background);
@@ -310,6 +320,7 @@ function ui_new() {
 		paint_reset();
 		paint_setbackground('');
 		object_resetgrid();
+		cgrid_reset();
 	}
 }
 
@@ -327,17 +338,57 @@ function ui_compile() {
 	json_save('compile','Compiling...','Compiled!', {'title':name});
 }
 
+function ui_cgrid_put() {
+	$('tiles_clear').setStyles({'background-color':''});
+	$('tiles_put').setStyles({'background-color':''});
+	$('objects_clear').setStyles({'background-color':''});
+	$('objects_edit').setStyles({'background-color':''});
+	$('objects_put').setStyles({'background-color':''});
+	$('cgrid_clear').setStyles({'background-color':''});
+	$('cgrid_put').setStyles({'background-color':'#FFFFFF'});
+	brush_erase=false;
+	brush_put=false;
+	object_put=false;
+	object_edit=false;
+	object_erase=false;
+	cgrid_put=true;
+	cgrid_erase=false;
+	brush_reset();
+}
+
+function ui_cgrid_erase() {
+	$('tiles_clear').setStyles({'background-color':''});
+	$('tiles_put').setStyles({'background-color':''});
+	$('objects_clear').setStyles({'background-color':''});
+	$('objects_edit').setStyles({'background-color':''});
+	$('objects_put').setStyles({'background-color':''});
+	$('cgrid_clear').setStyles({'background-color':'#FFFFFF'});
+	$('cgrid_put').setStyles({'background-color':''});
+	brush_erase=false;
+	brush_put=false;
+	object_put=false;
+	object_edit=false;
+	object_erase=false;
+	cgrid_put=false;
+	cgrid_erase=true;
+	brush_reset();
+}
+
 function ui_clear() {
 	$('tiles_clear').setStyles({'background-color':'#FFFFFF'});
 	$('tiles_put').setStyles({'background-color':''});
 	$('objects_clear').setStyles({'background-color':''});
 	$('objects_edit').setStyles({'background-color':''});
 	$('objects_put').setStyles({'background-color':''});
+	$('cgrid_clear').setStyles({'background-color':''});
+	$('cgrid_put').setStyles({'background-color':''});
 	brush_erase=true;
 	brush_put=false;
 	object_put=false;
 	object_edit=false;
 	object_erase=false;
+	cgrid_put=false;
+	cgrid_erase=false;
 	brush_reset();
 }
 
@@ -347,11 +398,15 @@ function ui_put() {
 	$('objects_clear').setStyles({'background-color':''});
 	$('objects_edit').setStyles({'background-color':''});
 	$('objects_put').setStyles({'background-color':''});
+	$('cgrid_clear').setStyles({'background-color':''});
+	$('cgrid_put').setStyles({'background-color':''});
 	brush_erase=false;
 	brush_put=true;
 	object_put=false;
 	object_edit=false;
 	object_erase=false;
+	cgrid_put=false;
+	cgrid_erase=false;
 	brush_updateview();
 }
 
@@ -361,11 +416,15 @@ function ui_objclear() {
 	$('objects_put').setStyles({'background-color':''});
 	$('tiles_clear').setStyles({'background-color':''});
 	$('tiles_put').setStyles({'background-color':''});
+	$('cgrid_clear').setStyles({'background-color':''});
+	$('cgrid_put').setStyles({'background-color':''});
 	brush_erase=false;
 	brush_put=false;
 	object_put=false;
 	object_edit=false;
 	object_erase=true;
+	cgrid_put=false;
+	cgrid_erase=false;
 	brush_reset();
 }
 
@@ -375,22 +434,32 @@ function ui_objput() {
 	$('objects_put').setStyles({'background-color':'#FFFFFF'});
 	$('tiles_clear').setStyles({'background-color':''});
 	$('tiles_put').setStyles({'background-color':''});
+	$('cgrid_clear').setStyles({'background-color':''});
+	$('cgrid_put').setStyles({'background-color':''});
 	brush_erase=false;
 	brush_put=false;
 	object_put=true;
 	object_edit=false;
 	object_erase=false;
+	cgrid_put=false;
+	cgrid_erase=false;
 }
 
 function ui_objedit() {
 	$('objects_clear').setStyles({'background-color':''});
 	$('objects_put').setStyles({'background-color':''});
 	$('objects_edit').setStyles({'background-color':'#FFFFFF'});
+	$('cgrid_clear').setStyles({'background-color':''});
+	$('cgrid_put').setStyles({'background-color':''});
+	$('tiles_clear').setStyles({'background-color':''});
+	$('tiles_put').setStyles({'background-color':''});
 	brush_erase=false;
 	brush_put=false;
 	object_put=false;
 	object_edit=true;
 	object_erase=false;
+	cgrid_put=false;
+	cgrid_erase=false;
 	brush_reset();
 }
 
@@ -638,7 +707,8 @@ function object_store(img) {
 		e.stop();
 	});
 	
-	objects_cache.push({'data':{}, 'elm':a});
+	objects_cache.push(i);
+	objects_cache.push(a);
 }
 
 /**
@@ -1200,6 +1270,83 @@ function scroller_move(x,y) {
 
 
 /**
+  *  Collision grid handling
+  */
+var cgrid_put = false;
+var cgrid_erase = false;
+var cgrid_elements = [];
+var cgrid_data = [];
+var cgrid_datagrid = [];
+  
+function cgrid_reset() {
+	$each(cgrid_elements, function(e) {
+	   try {
+			e.remove();							   
+	   } catch (e) {		   
+	   }
+	});
+	cgrid_elements = [];
+}
+
+function cgrid_draw(x,y,value) {
+	if (!$defined(cgrid_data[y])) {
+		cgrid_data[y]=[];
+		cgrid_datagrid[y]=[];
+	}
+	if (!$defined(cgrid_data[y][x])) {
+		var elm = cgrid_spawn();
+	} else {
+		var elm = cgrid_data[y][x];
+	}
+	
+	cgrid_datagrid[y][x]=value;
+	elm.setHTML(value);
+	elm.setStyles({
+		'left': x*32,
+		'top': y*32
+	});
+}
+
+function cgrid_clear(x,y) {
+	cgrid_data[y][x].remove();
+	delete cgrid_data[y][x];
+	delete cgrid_datagrid[y][x];
+}
+
+function cgrid_spawn() {
+	var o = $(document.createElement('div'));
+	o.setHTML('0');	
+	$('content_collision').appendChild(o);
+	cgrid_elements.push(o);
+	return o;
+}
+
+function cgrid_apply_brush() {	
+	try {
+		for (var y=brush_selection.y; y<brush_selection.y+brush_selection.h; y++) {
+			for (var x=brush_selection.x; x<brush_selection.x+brush_selection.w; x++) {
+				if (cgrid_put) cgrid_draw(x+scroll_offset.x,y+scroll_offset.y,100);
+				if (cgrid_erase) cgrid_clear(x+scroll_offset.x,y+scroll_offset.y);
+			}
+		}
+	} catch (e) {
+		window.alert(e.message);
+	}
+}
+
+function cgrid_render(grid) {
+	$each(grid, function(xgrid,y) {
+		if ($defined(xgrid)) if (xgrid!=false) {
+			$each(xgrid, function(value,x) {
+				if ($defined(value)) if (value!=false) {
+					cgrid_draw(x,y,value);
+				}
+			});
+		}
+	});
+}
+
+/**
 ================================================================================================================================
 ================================================================================================================================
 **/
@@ -1244,7 +1391,7 @@ $(window).addEvent('load', function(e){
 				scroller_start(e.client.x,e.client.y);
 				scroll_active = true;
 			} else {
-				if (brush_erase || brush_put) {
+				if (brush_erase || brush_put || cgrid_put || cgrid_erase) {
 					brush_dragging = true;			
 				} else {
 					
@@ -1256,7 +1403,7 @@ $(window).addEvent('load', function(e){
 	
 	$('content_host').addEvent('mouseup', function(e){
 		var e = new Event(e);		
-		if (brush_erase || brush_put) {
+		if (brush_erase || brush_put || cgrid_put || cgrid_erase) {
 			if (brush_dragging) {
 				if (e.shift) {
 					paint_layer=3;
@@ -1265,7 +1412,12 @@ $(window).addEvent('load', function(e){
 				} else {
 					paint_layer=2;
 				}
-				brush_apply();
+				
+				if (brush_erase || brush_put) {
+					brush_apply();
+				} else {
+					cgrid_apply_brush();
+				}
 			}
 			brush_dragging = false;
 		} else if (object_put) {
@@ -1346,5 +1498,29 @@ $(window).addEvent('load', function(e){
 		var e = new Event(e);
 		e.stop();
 	 });
+
+	$(document).addEvent('keyup', function(e){
+		var e=new Event(e);
+		e.stop();
+	});
+
+	$(document).addEvent('keydown', function(e){
+		var e=new Event(e);
+		if (e.control) {
+			if (e.key == 's') {
+				ui_save();
+				e.stop();
+			} if (e.key == 'o') {
+				ui_load();
+				e.stop();
+			} if (e.key == 'n') {
+				ui_new();
+				e.stop();
+			} else if (e.key == 'g') {
+				ui_cgrid_put();
+				e.stop();
+			}
+		}
+	});
 
 });
