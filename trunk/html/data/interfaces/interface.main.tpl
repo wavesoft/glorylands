@@ -160,7 +160,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 		<div id="datahost">
 			<div id="datapane">
 			<!-- Datapane Contents -->	
-			<div style="border: solid 2px #FF0000; z-index: 1000000; text-align:center; width: 32px; height:32px; position:absolute;" id="zp">&nbsp;</div>
+			<!-- <div style="border: solid 2px #FF0000; z-index: 1000000; text-align:center; width: 32px; height:32px; position:absolute;" id="zp">&nbsp;</div> -->
 			</div>
 			<div id="dataloader"><div id="dataloader_text"></div></div>
 		</div>

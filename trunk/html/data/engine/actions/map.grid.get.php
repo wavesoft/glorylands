@@ -166,6 +166,8 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		'fx_move' => 'slide',
 		'fx_hide' => 'fade'
 	);
+	
+	// Focus on the player's object
 	if ($row['guid']==$_SESSION[PLAYER][GUID]) {
 		$myobj['focus'] = true;
 	}
