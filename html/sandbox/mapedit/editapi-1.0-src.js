@@ -354,7 +354,7 @@ function ui_cgrid_put() {
 	object_erase=false;
 	cgrid_put=true;
 	cgrid_erase=false;
-	$('content_collision').setStyle('visibility','visible');
+	$('content_collision').setStyle('display','');
 	brush_reset();
 }
 
@@ -373,7 +373,7 @@ function ui_cgrid_erase() {
 	object_erase=false;
 	cgrid_put=false;
 	cgrid_erase=true;
-	$('content_collision').setStyle('visibility','visible');
+	$('content_collision').setStyle('display','');
 	brush_reset();
 }
 
@@ -392,7 +392,7 @@ function ui_clear() {
 	object_erase=false;
 	cgrid_put=false;
 	cgrid_erase=false;
-	$('content_collision').setStyle('visibility','hidden');
+	$('content_collision').setStyle('display','none');
 	brush_reset();
 }
 
@@ -411,7 +411,7 @@ function ui_put() {
 	object_erase=false;
 	cgrid_put=false;
 	cgrid_erase=false;
-	$('content_collision').setStyle('visibility','hidden');
+	$('content_collision').setStyle('display','none');
 	brush_updateview();
 }
 
@@ -430,7 +430,7 @@ function ui_objclear() {
 	object_erase=true;
 	cgrid_put=false;
 	cgrid_erase=false;
-	$('content_collision').setStyle('visibility','hidden');
+	$('content_collision').setStyle('display','none');
 	brush_reset();
 }
 
@@ -448,7 +448,7 @@ function ui_objput() {
 	object_edit=false;
 	object_erase=false;
 	cgrid_put=false;
-	$('content_collision').setStyle('visibility','hidden');
+	$('content_collision').setStyle('display','none');
 	cgrid_erase=false;
 }
 
@@ -467,7 +467,7 @@ function ui_objedit() {
 	object_erase=false;
 	cgrid_put=false;
 	cgrid_erase=false;
-	$('content_collision').setStyle('visibility','hidden');
+	$('content_collision').setStyle('display','none');
 	brush_reset();
 }
 
