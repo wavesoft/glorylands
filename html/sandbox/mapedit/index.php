@@ -50,9 +50,15 @@
 		<div class="content">
 			<span id="tiles_status"></span>
 			<select onchange="tloader_download(this.value)" style="width: 100%;" id="tiles_set">
-			<option value="z-field-ext">z-field-ext</option>
-			<option value="z-castle-ext">z-castle-ext</option>
-			<option value="z-castle-int">z-castle-int</option>
+			<?php			
+			$d = dir("../../images/tiles");
+			while (false !== ($entry = $d->read())) {
+				if (substr($entry,-8) == '-0-0.png') {
+					echo "			<option value=\"".substr($entry,0,-8)."\">".substr($entry,0,-8)."</option>\n";
+				}
+			}
+			$d->close();
+			?>
 			</select>
 		</div>
 		<div id="tiles_host">
@@ -77,10 +83,10 @@
 		<div class="content">
 			<span id="objects_status"></span>
 			<select onchange="oloader_download(this.value)" style="width: 100%;" id="objects_set">
-			<option value="furniture">Furniture</option>
+			<option value="furniture" selected="selected">Furniture</option>
 			<option value="plant">Plants</option>
 			<option value="building">Buildings</option>
-			<option value="npc">NPCs</option>
+			<option value="char">Charcters</option>
 			<option value="element">Elements</option>
 			<option value="nature">Nature</option>
 			<option value="village">Village</option>
@@ -93,10 +99,11 @@
 		</div>
         <div class="sidemenu">
             <div class="rt"></div><div class="rb"></div><div class="t"></div><div class="b"></div><div class="r"></div>
-            <div class="content" style="height: 60px;">
-                <div id="objects_clear"><a href="javascript:;" onclick="ui_objclear()"><img src="images/edit_remove.png" border="0" /></a></div>
-                <div id="objects_put"><a href="javascript:;" onclick="ui_objput()"><img src="images/edit_add.png" border="0" /></a></div>
-                <div id="objects_edit"><a href="javascript:;" onclick="ui_objedit()"><img src="images/edit.png" border="0" /></a></div>
+            <div class="content" style="height: 80px;">
+                <div id="objects_clear"><a href="javascript:;" onclick="ui_objclear()" title="Remove an object from map"><img src="images/edit_remove.png" border="0" /></a></div>
+                <div id="objects_put"><a href="javascript:;" onclick="ui_objput()" title="Put an object on map"><img src="images/edit_add.png" border="0" /></a></div>
+                <div id="objects_edit"><a href="javascript:;" onclick="ui_objedit()" title="Edit an object"><img src="images/edit.png" border="0" /></a></div>
+                <div id="objects_region"><a href="javascript:;" onclick="ui_objdefregion()" title="Define object by map region"><img src="images/frame.png" border="0" /></a></div>
             </div>
         </div>
 	</div>

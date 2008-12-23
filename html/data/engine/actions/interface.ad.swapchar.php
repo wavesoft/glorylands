@@ -6,9 +6,9 @@ if (!isset($_REQUEST['char'])) {
 
 	$d = dir(DIROF('DATA.MODEL',true));
 	while (false !== ($entry = $d->read())) {
-		if (substr($entry,-2) == '.o') {
+		if (substr($entry,-4) == '.png') {
 			//$text.="<a href=\"javascript:gloryIO('?a=interface.ad.swapchar&char={$entry}');\">$entry</a><br />\n";
-			$text.="<a onMouseOver=\"var e=document.getElementById('ad_char_preview'); e.src='admin/viewmodel.php?model={$entry}';\" href=\"javascript:gloryIO('?a=interface.ad.swapchar&char={$entry}');\">$entry</a><br />\n";
+			$text.="<a onMouseOver=\"var e=document.getElementById('ad_char_preview'); e.src='images/elements/{$entry}';\" href=\"javascript:gloryIO('?a=interface.ad.swapchar&char={$entry}');\">$entry</a><br />\n";
 		}
 	}
 	$d->close();

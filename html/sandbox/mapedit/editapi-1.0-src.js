@@ -110,7 +110,7 @@ function json_message(msg) {
 	json_clearmessage();
 }
   
-function json_save(action, msg_start, msg_complete, extra_data){
+function json_save(action, filename, msg_start, msg_complete, extra_data){
 	if (!$defined(action)) action='save';
 	if (!$defined(msg_start)) msg_start='Saving...';
 	if (!$defined(msg_complete)) msg_complete='Saved!';
@@ -133,7 +133,7 @@ function json_save(action, msg_start, msg_complete, extra_data){
 			rqdata.push(gdata);
 		}				
 
-		var json = new Json.Remote('feed.php?a='+action, {
+		var json = new Json.Remote('feed.php?a='+action+'&f='+filename, {
 			headers: {'X-Request': 'JSON'},
 			onComplete: function(obj) {
 				json_message(msg_complete);
@@ -147,10 +147,28 @@ function json_save(action, msg_start, msg_complete, extra_data){
 	}
 }
 
-function json_load() {
+function json_regdefobj(grid, name){
+	json_message('Defining...');
+	try {
+		var json = new Json.Remote('feed.php?a=rdef', {
+			headers: {'X-Request': 'JSON'},
+			onComplete: function(obj) {
+				json_message('Defined!');
+				oloader_update();
+			},
+			onFailure: function(err) {
+				json_message('Error! '+err);
+			}
+		}).send({'grid':grid, 'name':name});
+	} catch (e) {
+		json_message('Error! '+e.message);
+	}
+}
+
+function json_load(filename) {
 	json_message('Loading...');
 	try {
-		var json = new Json.Remote('feed.php?a=load', {
+		var json = new Json.Remote('feed.php?a=load&f='+filename, {
 			headers: {'X-Request': 'JSON'},
 			onComplete: function(data) {
 			
@@ -201,6 +219,7 @@ function json_defobj(grid) {
 		var json = new Json.Remote('feed.php?a=define', {
 			headers: {'X-Request': 'JSON'},
 			onComplete: function(data) {
+				json_message('Defined!');
 				oloader_update();
 			},
 			onFailure: function(err) {
@@ -338,6 +357,7 @@ function win_editobj_cancel() {
   * Interface button feedback handler
   *
   */
+var ui_lastfile='';
 
 function ui_new() {
 	if (window.confirm('Do you really want to erase this map? This action is not undoeable!')) {
@@ -349,18 +369,25 @@ function ui_new() {
 }
 
 function ui_save() {
-	json_save();
+	var fname = window.prompt('Please enter the filename to save to:', ui_lastfile);
+	if (!fname) return;
+	ui_lastfile=fname;
+	
+	json_save('save',fname);
 }
 
 function ui_load() {
-	json_load();
+	var fname = window.prompt('Please enter the filename to load from:', ui_lastfile);
+	if (!fname) return;
+	ui_lastfile=fname;	
+	json_load(fname);
 	ui_put();
 }
 
 function ui_compile() {
 	var name = window.prompt("Please enter the map title:");
 	if (!name) return;
-	json_save('compile','Compiling...','Compiled!', {'title':name});
+	json_save('compile', name, 'Compiling...','Compiled!', {'title':name});
 }
 
 function ui_cgrid_put() {
@@ -370,12 +397,14 @@ function ui_cgrid_put() {
 	$('objects_edit').setStyles({'background-color':''});
 	$('objects_put').setStyles({'background-color':''});
 	$('cgrid_clear').setStyles({'background-color':''});
+	$('objects_region').setStyles({'background-color':''});
 	$('cgrid_put').setStyles({'background-color':'#FFFFFF'});
 	brush_erase=false;
 	brush_put=false;
 	object_put=false;
 	object_edit=false;
 	object_erase=false;
+	object_regdef=false;
 	cgrid_put=true;
 	cgrid_erase=false;
 	$('content_collision').setStyle('display','');
@@ -391,11 +420,13 @@ function ui_cgrid_erase() {
 	$('objects_put').setStyles({'background-color':''});
 	$('cgrid_clear').setStyles({'background-color':'#FFFFFF'});
 	$('cgrid_put').setStyles({'background-color':''});
+	$('objects_region').setStyles({'background-color':''});
 	brush_erase=false;
 	brush_put=false;
 	object_put=false;
 	object_edit=false;
 	object_erase=false;
+	object_regdef=false;
 	cgrid_put=false;
 	cgrid_erase=true;
 	$('content_collision').setStyle('display','');
@@ -411,11 +442,13 @@ function ui_clear() {
 	$('objects_put').setStyles({'background-color':''});
 	$('cgrid_clear').setStyles({'background-color':''});
 	$('cgrid_put').setStyles({'background-color':''});
+	$('objects_region').setStyles({'background-color':''});
 	brush_erase=true;
 	brush_put=false;
 	object_put=false;
 	object_edit=false;
 	object_erase=false;
+	object_regdef=false;
 	cgrid_put=false;
 	cgrid_erase=false;
 	$('content_collision').setStyle('display','none');
@@ -431,11 +464,13 @@ function ui_put() {
 	$('objects_put').setStyles({'background-color':''});
 	$('cgrid_clear').setStyles({'background-color':''});
 	$('cgrid_put').setStyles({'background-color':''});
+	$('objects_region').setStyles({'background-color':''});
 	brush_erase=false;
 	brush_put=true;
 	object_put=false;
 	object_edit=false;
 	object_erase=false;
+	object_regdef=false;
 	cgrid_put=false;
 	cgrid_erase=false;
 	$('content_collision').setStyle('display','none');
@@ -451,11 +486,13 @@ function ui_objclear() {
 	$('tiles_put').setStyles({'background-color':''});
 	$('cgrid_clear').setStyles({'background-color':''});
 	$('cgrid_put').setStyles({'background-color':''});
+	$('objects_region').setStyles({'background-color':''});
 	brush_erase=false;
 	brush_put=false;
 	object_put=false;
 	object_edit=false;
 	object_erase=true;
+	object_regdef=false;
 	cgrid_put=false;
 	cgrid_erase=false;
 	$('content_collision').setStyle('display','none');
@@ -470,11 +507,13 @@ function ui_objput() {
 	$('tiles_put').setStyles({'background-color':''});
 	$('cgrid_clear').setStyles({'background-color':''});
 	$('cgrid_put').setStyles({'background-color':''});
+	$('objects_region').setStyles({'background-color':''});
 	brush_erase=false;
 	brush_put=false;
 	object_put=true;
 	object_edit=false;
 	object_erase=false;
+	object_regdef=false;
 	cgrid_put=false;
 	$('content_collision').setStyle('display','none');
 	cgrid_erase=false;
@@ -488,11 +527,34 @@ function ui_objedit() {
 	$('cgrid_put').setStyles({'background-color':''});
 	$('tiles_clear').setStyles({'background-color':''});
 	$('tiles_put').setStyles({'background-color':''});
+	$('objects_region').setStyles({'background-color':''});
 	brush_erase=false;
 	brush_put=false;
 	object_put=false;
 	object_edit=true;
 	object_erase=false;
+	object_regdef=false;
+	cgrid_put=false;
+	cgrid_erase=false;
+	$('content_collision').setStyle('display','none');
+	brush_reset();
+}
+
+function ui_objdefregion() {
+	$('objects_clear').setStyles({'background-color':''});
+	$('objects_put').setStyles({'background-color':''});
+	$('objects_edit').setStyles({'background-color':''});
+	$('objects_region').setStyles({'background-color':'#FFFFFF'});
+	$('cgrid_clear').setStyles({'background-color':''});
+	$('cgrid_put').setStyles({'background-color':''});
+	$('tiles_clear').setStyles({'background-color':''});
+	$('tiles_put').setStyles({'background-color':''});
+	brush_erase=false;
+	brush_put=false;
+	object_put=false;
+	object_edit=false;
+	object_erase=false;
+	object_regdef=true;
 	cgrid_put=false;
 	cgrid_erase=false;
 	$('content_collision').setStyle('display','none');
@@ -518,7 +580,7 @@ function ui_defobject() {
 		}
 		i++;
 	}
-	json_defobj({'grid':grid,'name':objects_active+name});
+	json_defobj({'grid':grid,'name':objects_active+'-'+name});
 }
 
 /**
@@ -759,16 +821,44 @@ function object_store(img) {
   */
 var object_put = false;
 var object_edit = false;
+var object_regdef = false;
 var object_erase = false;
 var object_active = "";
 var object_grid = [];
 var object_datagrid = [];
 
+function object_regiondef() {
+	var name = window.prompt('Define the object name:');
+	if (!name) return;
+	name = objects_active+'-'+name;
+	
+	var l=brush_selection.x+scroll_offset.x;
+	var r=l+brush_selection.w;
+	var t=brush_selection.y+scroll_offset.y;
+	var b=t+brush_selection.h;
+	
+	var obj_grid=[];
+	for (var l=0; l<3; l++) {
+		obj_grid[l]=[];
+		for (var y=t; y<b; y++) {
+			obj_grid[l][y]=[];
+			for (var x=l; x<r; x++) {
+				var id=x+','+y;
+				obj_grid[l][y][x]=false;
+				if ($defined(paint_grid[l][id])) {
+					obj_grid[l][y][x]=paint_grid[l][id].src;
+				}
+			}
+		}
+	}
+	
+	json_regdefobj(obj_grid,name);
+}
+
 function object_select(img, yoffset) {
 	object_active = img;
 	brush_selection_useobject(img);
 	brush_yoffset=Math.floor(yoffset/32);
-	window.alert('Object has height '+yoffset+' which is '+brush_yoffset+' blocks');
 	brush_show();
 }
 
@@ -1473,7 +1563,7 @@ $(window).addEvent('load', function(e){
 				scroller_start(e.client.x+p.x,e.client.y+p.y);
 				scroll_active = true;
 			} else {
-				if (brush_erase || brush_put || cgrid_put || cgrid_erase) {
+				if (brush_erase || brush_put || cgrid_put || cgrid_erase || object_regdef) {
 					brush_dragging = true;			
 				} else {
 					
@@ -1485,7 +1575,7 @@ $(window).addEvent('load', function(e){
 	
 	$('content_host').addEvent('mouseup', function(e){
 		var e = new Event(e);		
-		if (brush_erase || brush_put || cgrid_put || cgrid_erase) {
+		if (brush_erase || brush_put || cgrid_put || cgrid_erase || object_regdef) {
 			if (brush_dragging) {
 				if (e.shift) {
 					paint_layer=3;
@@ -1497,8 +1587,10 @@ $(window).addEvent('load', function(e){
 				
 				if (brush_erase || brush_put) {
 					brush_apply();
-				} else {
+				} else if (cgrid_put || cgrid_erase) {
 					cgrid_apply_brush();
+				} else if (object_regdef) {
+					object_regiondef();
 				}
 			}
 			brush_dragging = false;

@@ -150,7 +150,7 @@ if (!isset($_REQUEST['f'])) {
     <div id="categories-1" class="widget widget_categories">
         <div class="sb_tit"><div class="sb_tit_wrap1"><div class="sb_tit_wrap2"><h2>General</h2></div></div></div>		
         <ul>
-            <li class="cat-item"><a href="#">News</a></li>
+            <li class="cat-item"><a href="?">News</a></li>
             <li class="cat-item"><a href="#">Game Guide</a></li>
             <li class="cat-item"><a href="#">Forum</a></li>
             <li class="cat-item"><a href="#">Community</a></li>
@@ -160,7 +160,7 @@ if (!isset($_REQUEST['f'])) {
     <div id="categories-2" class="widget widget_categories">
         <div class="sb_tit"><div class="sb_tit_wrap1"><div class="sb_tit_wrap2"><h2>Account</h2></div></div></div>		
         <ul>
-            <li class="cat-item"><a href="#">Create Account</a></li>
+            <li class="cat-item"><a href="?f=1">Create Account</a></li>
             <li class="cat-item"><a href="#">Profile</a></li>
             <li class="cat-item"><a href="#">Messages</a></li>
             <li class="cat-item"><a href="#">Contributions</a></li>
@@ -211,7 +211,7 @@ if (!isset($_REQUEST['f'])) {
             <div style="padding-left: 6px; font-size: 11px;">
             <table width="100%">
 				<tr>
-                	<td valign="top" width="32"><div style="background-image: url(images/UI/rect-border-transp.gif); padding: 4px;"> <img src="images/portraits/clans_alchemist.gif" width="33" height="33" /></div></td>
+                	<td valign="top" width="32"><div style="background-image: url(images/UI/rect-border-transp.gif); padding: 4px; display: block; width: 35px; height: 35px; background-repeat: no-repeat;"> <img src="images/portraits/clans_alchemist.gif" width="33" height="33" /></div></td>
                     <td valign="top">
                     	<div>Hours played: <b>4</b></div>
                     	<div>Skill points: <b>441</b></div>

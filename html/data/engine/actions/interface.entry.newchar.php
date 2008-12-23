@@ -10,6 +10,15 @@ if ($_REQUEST['action']=='create') {
 		if (!$guid) {
 			$act_result['error']='Cannot instance character';
 		} else {
+			// Reset tips for the new user
+			$sql->query('SELECT `index` FROM `data_tips`');
+			$tips = array();
+			while ($tip = $sql->fetch_array(MYSQL_NUM)) {
+				$tips[$tip[0]] = true;
+			}
+			gl_update_guid_vars($guid, array('tips' => $tips));
+			
+			// Assign the new GUID
 			$_SESSION[PLAYER][GUID]=$guid;
 			gl_redirect('interface.entry');
 		}

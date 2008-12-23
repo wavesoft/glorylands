@@ -266,6 +266,7 @@ select {font-family: 'Verdana'; color: #1a0603; font-size: 11px;}
 #sidebar-left ul {display:inline-block; position:relative; padding:3px 3px 5px 0px; list-style:none;}
 #sidebar-right ul {display:inline-block; position:relative; padding:3px 0px 5px 3px; list-style:none;}
 #sidebars ul li {display:block; position:relative; font-size: 12px; color:#1a0603; padding:2px 10px 6px 12px; background: url(images/sblist_underline.gif) center bottom no-repeat;}
+	.widget ul {width: 100%;}
 	.widget_categories ul li {background:none !important; padding:0px !important;}
 * html #sidebars ul li {display:inline-block;}
 *:first-child+html #sidebars ul li {display:inline-block;}
