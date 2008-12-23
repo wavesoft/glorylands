@@ -619,10 +619,6 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 					// Are there new render coordinates?
 					if ($defined(obj.x)) grid_x=obj.x;
 					if ($defined(obj.y)) grid_y=obj.y;
-										
-					// Do we have objects
-					if ($defined(obj.objects)) {
-					}
 
 					// Is there a map name defined?
 					if ($defined(obj.map)) {
@@ -636,6 +632,17 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 					
 					// If we have objects, update map objects
 					if ($defined(obj.objects)) {
+						
+						// Update image paths for static images
+						$each(obj.objects, function(o,k) {
+							if ($defined(o.image)) {
+								var s = new String(o.image);
+								if (s.indexOf('.php')>0){
+								} else {
+									obj.objects[k].image='images/elements/'+o.image;
+								}
+							}
+						});							
 						map_updatedata(obj.objects);	
 					}
 
@@ -907,12 +914,22 @@ function map_preload() {
 	
 	// Find out all the images that are required
 	var images=map_info.images; /* (1) Overlaies */
+	
+	// Append the appropriate path on the static images
+	$each(images, function(e,k) {
+		var s = new String(e);
+		if (s.indexOf('.php')>0){
+		} else {
+			images[k]='images/elements/'+e;
+		}
+	});
+
 	for (var x=0; x<map_info.background.xsize; x++) { /* (2) Background layers */
 		for (var y=0; y<map_info.background.ysize; y++) {
-			images.push(map_info.background.name+'-'+x+'-'+y+'.png');
+			images.push('data/maps/'+map_info.background.name+'-'+x+'-'+y+'.png');
 		};
 	};
-	images.push(map_info.background); /* (3) Background tile */
+	images.push('images/tiles/'+map_info.background); /* (3) Background tile */
 	
 	// Precache all map images
 	new Asset.images(images, {
@@ -959,7 +976,7 @@ function map_finalize() {
 	var zDig=0;
 	for (var x=0; x<map_info.background.xsize; x++) { /* (2) Background layers */
 		for (var y=0; y<map_info.background.ysize; y++) {
-			var src = map_info.background.name+'-'+x+'-'+y+'.png';
+			var src = 'data/maps/'+map_info.background.name+'-'+x+'-'+y+'.png';
 			var elm = $(document.createElement('img'));
 			elm.src = src;
 			$('datapane').appendChild(elm);
@@ -991,16 +1008,27 @@ function map_finalize() {
   *
   */
 function map_objecttrigger(id, trigger, e) {
-	// Get Scroll position
-	var scrl = getScrollPosition();
-
-	if (trigger=='contextmenu') {
-		piemenu_dispose();
-		piemenu_init(e.client.x+scrl.x,e.client.y+scrl.y,map_objects[id].info.guid,'MAP');
-	} else if (trigger == 'mousemove') {
-		hoverShow(map_objects[id].info.name, e.client.x+scrl.x, e.client.y+scrl.y);
-	} else if (trigger == 'mouseout') {
-		hoverShow(false);
+	try {
+		
+		// Get Scroll position
+		var scrl = getScrollPosition();	
+		
+		if (trigger=='contextmenu') {
+			piemenu_dispose();
+			if ($defined(map_objects[id].info.guid)) {
+				piemenu_init(e.client.x+scrl.x,e.client.y+scrl.y,map_objects[id].info.guid,'MAP');
+			}
+		} else if (trigger == 'mousemove') {
+			if ($defined(map_objects[id].info.name)) {
+				var content = map_objects[id].info.name;
+				if ($defined(map_objects[id].info.subname)) content+='<br /><font color="#33FF33" size="1"><em>'+map_objects[id].info.subname+'</em></font>';
+				hoverShow(content, e.client.x+scrl.x, e.client.y+scrl.y);
+			}
+		} else if (trigger == 'mouseout') {
+			hoverShow(false);
+		}
+		
+	} catch (e) {
 	}
 }
 
@@ -1126,17 +1154,16 @@ function map_addobject(data) {
 		
 	// Create and insert image
 	var im = $(document.createElement('img'));
-	im.src = 'images/elements/'+data.image;
+	im.src = data.image;
 	$('datapane').appendChild(im);
 	var size = im.getSize().size;
 
 	// Re-map x-y
 	var x=data.x*32-data.cx;
-	var y=data.y*32-data.cy-size.y+32;
+	var y=data.y*32-data.cy-size.y;
 
 	// Calculate new Z-Index
-	var y32bit = Math.round(y/32);
-	var zindex = y32bit*500+x;
+	var zindex = data.y*500+x;
 	if (zindex<0) zindex=1;
 
 	// Apply image styles
@@ -1350,16 +1377,15 @@ function map_updateobject(uid,data) {
 	if (!$defined(data.y)) data.y=old_data.info.y;
 	
 	// Update image
-	old_data.object.src = 'images/elements/'+data.image;
+	old_data.object.src = data.image;
 	var size = old_data.object.getSize().size;
 
 	// Re-map x-y
 	var x=data.x*32-data.cx;
-	var y=data.y*32-data.cy-size.y+32;
+	var y=data.y*32-data.cy-size.y;
 
 	// Calculate new Z-Index
-	var y32bit = Math.round(y/32);
-	var zindex = y32bit*500+x;
+	var zindex = data.y*500+x;
 	if (zindex<0) zindex=1;
 
 	// Update cache
@@ -2040,10 +2066,6 @@ $(document).addEvent('keydown', function(e){
 	} else if (e.key == 'down') {
 		e.stop();
 		v_center.y=200;
-	} else if (e.key == 'd') {
-		e.stop();
-		window.alert($trace(map_object_index));
-		window.alert($trace(map_objects));
 	}
 
 	if ((v_center.x!=v_last.x) || (v_center.y!=v_last.y)) {
@@ -2069,11 +2091,12 @@ $(document).addEvent('contextmenu', function(e){
 	var e = new Event(e);
 	// Disable right click on the document
 	piemenu_dispose();	
-	e.stop();
+	//e.stop();
 });
 
 // Initialize mouse handler on window
 $(document).addEvent('mousemove', function(e) {
+	try {
 	e = new Event(e);							
 	
 	// Get DataPane left offset
@@ -2126,6 +2149,8 @@ $(document).addEvent('mousemove', function(e) {
 			if (r.getStyle('display')!='none') r.setStyles({left:(bxP-rectinfo.bx)*32, top:(byP-rectinfo.by)*32, width: rectinfo.w*32, height:rectinfo.h*32, display:''});
 		}		
 		
+	}
+	} catch (e) {
 	}
 });
 

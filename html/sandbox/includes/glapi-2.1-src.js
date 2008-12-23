@@ -84,9 +84,9 @@ function map_status(text) {
 
 $(window).addEvent('load', function(e){										
 	map_curtain(true);
-	map_loadbase('luskan');
-	map_addobject({x:5,y:6,image:'images/column.png', cx:32, cy:160});
-	map_addobject({x:5,y:2,image:'images/ancetre-chinois.png', title:'Player', focus:true, guid:3312, cx:19, cy:69, dynamic: true});
+	map_loadbase('test');
+	//map_addobject({x:5,y:6,image:'images/column.png', cx:32, cy:160});
+	//map_addobject({x:5,y:2,image:'images/ancetre-chinois.png', title:'Player', focus:true, guid:3312, cx:19, cy:69, dynamic: true});
 
 	var data = new Json.Remote('maps/feed.php', {
 			onComplete: function(o) {
@@ -256,7 +256,7 @@ function map_reset() {
 function map_loadbase(mapname) {	
 	// Download the JSON map
 	map_status('Loading Map...');
-	var data = new Json.Remote('maps/'+mapname+'.php', {
+	var data = new Json.Remote('maps/'+mapname+'.map', {
 			onComplete: function(o) {
 				// Store map info
 				map_info = o;				
@@ -284,7 +284,13 @@ function map_preload() {
 	var lt_finalized=false;
 	
 	// Find out all the images that are required
-	var images=map_info.images; /* (1) Overlaies */
+	var images=map_info.images; /* (1) Overlaies from objects */
+	
+	// Append the appropriate path (removed for compression)
+	$each(images, function(e,k) {
+		images[k]='objects/'+e;					   
+	});
+	
 	for (var x=0; x<map_info.background.xsize; x++) { /* (2) Background layers */
 		for (var y=0; y<map_info.background.ysize; y++) {
 			images.push(map_info.background.name+'-'+x+'-'+y+'.png');
@@ -504,10 +510,11 @@ function map_addobject(data) {
 	var im = $(document.createElement('img'));
 	im.src = data.image;
 	$('datapane').appendChild(im);
+	var sz = im.getSize().size;
 	im.setStyles({
 		'position': 'absolute',
 		'left': x,
-		'top': y,
+		'top': y-sz.y,
 		'z-index': zindex
 	});
 	var size = im.getSize().size;

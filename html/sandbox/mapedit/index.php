@@ -77,7 +77,15 @@
 		<div class="content">
 			<span id="objects_status"></span>
 			<select onchange="oloader_download(this.value)" style="width: 100%;" id="objects_set">
-			<option value="furniture">furniture</option>
+			<option value="furniture">Furniture</option>
+			<option value="plant">Plants</option>
+			<option value="building">Buildings</option>
+			<option value="npc">NPCs</option>
+			<option value="element">Elements</option>
+			<option value="nature">Nature</option>
+			<option value="village">Village</option>
+			<option value="dungeon">Dungeon</option>
+			<option value="internal">Internal</option>
 			</select>
 		</div>
 		<div class="objects_host" id="objects_host">

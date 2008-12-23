@@ -7,7 +7,7 @@ $(window).addEvent('load', function(e) {
 	try {
 	// Create some chat required elements
 	eChatFloat = $(document.createElement('div'));
-	eChatFloat.setStyles({'position':'absolute', 'visibility':'hidden', 'z-index':2000});
+	eChatFloat.setStyles({'position':'absolute', 'visibility':'hidden'});
 	eChatFloat.setHTML('\
 		<table class="modchat_popup" cellspacing="0" cellpadding="0">\
 		<tr>\
@@ -41,7 +41,24 @@ $(window).addEvent('load', function(e) {
 	
 });
 
-function find_overlay_info(objectname) {	
+function find_overlay_info(objectname) {
+	var result = false;
+	$each(map_objects, function(obj) {
+		if ($defined(obj.info.name)) {
+			if (obj.info.name == objectname) {				
+				// Get DataPane left offset
+				var dpX = $('datapane').getLeft();
+				var dpY = $('datapane').getTop();
+				
+				result = {'x':obj.x+dpX-glob_x_base, 'y':obj.y+dpY-glob_y_base, 'guid':obj.info.guid};	
+			}
+		}
+	});
+	return result;
+}
+
+
+function find_overlay_info_depreciated_and_will_be_deleted(objectname) {	
 	// Traverse into overlay grid to fild an object with the name defined
 	var elog=''; var found_obj=false;
 	$each(nav_grid, function(y_obj, x) {				
@@ -80,10 +97,11 @@ function displayBubble(user, text) {
 		}
 	});
 	var gps = find_overlay_info(user);
-	if (gps) {
+	if (gps == false) {
+	} else {
 		try {
 			eChatText.setHTML('<span class="user">['+user+']</span> '+text);
-			eChatFloat.setStyles({'left': gps.x, 'top': gps.y, 'visibility':'visible', 'opacity':0});
+			eChatFloat.setStyles({'left': gps.x, 'top': gps.y, 'visibility':'visible', 'opacity':0, 'z-index': lastZ++});
 			hideBubble=false;
 			fadeFX.stop();
 			fadeFX.start({'opacity': 1});

@@ -82,7 +82,7 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		
 		// GL Map render variables
 		'x' => $row['x'],
-		'y' => $row['y'],
+		'y' => $row['y']+1,
 		'image' => $row['model'],
 		'id' => $row['guid'],
 		'dynamic' => true,
@@ -115,7 +115,7 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	$objects[] = array(
 		'guid' => $row['guid'],
 		'x' => $row['x'],
-		'y' => $row['y'],
+		'y' => $row['y']+1,
 		'image' => $row['model'],
 		'name' => $row['name'],
 		'icon' => $row['icon'],
@@ -154,12 +154,12 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	$myobj = array(
 		'guid' => $row['guid'],
 		'x' => $row['x'],
-		'y' => $row['y'],
+		'y' => $row['y']+1,
 		'image' => $row['model'],
 		'name' => $row['name'],
 		'icon' => $row['icon'],
 		'flags' => $row['flags'],
-		'subname' => $row['subname'],
+		'subname' => '<img src="images/'.$row['icon'].'" />',
 		'id' => $row['guid'],
 		'dynamic' => true,
 		'fx_show' => 'fade',
