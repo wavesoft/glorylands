@@ -1,4 +1,5 @@
 <?php
+//file_put_contents('dump.txt', print_r($_REQUEST,true));
 include "includes/renderer.php";
 
 if ($_REQUEST['a']=='save') {
@@ -24,7 +25,8 @@ if ($_REQUEST['a']=='save') {
 	}
 	$buffer['map']=$data;
 	
-	file_put_contents('test.txt', json_encode($buffer));
+	$savefile = 'saved/'.stripslashes($_REQUEST['f']).'.sav';	
+	file_put_contents($savefile, json_encode($buffer));
 	
 	echo json_encode(array('message' => 'OK'));
 
@@ -119,9 +121,27 @@ if ($_REQUEST['a']=='save') {
 	render_object($buffer['grid'], '../../images/elements/'.$buffer['name'].'.png');
 	echo json_encode(array('message' => 'OK'));
 
+} elseif ($_REQUEST['a']=='rdef') {
+
+	$str_buffer = stripslashes($_REQUEST['json']);
+	
+	// BUGFIX: json_decode does not understand arrays in: [,,,,,,,,1,,,,3,,] format >>>>
+	$str_buffer = str_replace('[,','[false,',$str_buffer);
+	$str_buffer = str_replace(',]',',false]',$str_buffer);
+	$str_buffer = str_replace(',,',',false,',$str_buffer);
+	$str_buffer = str_replace(',,',',false,',$str_buffer);
+	// <<<<	
+	
+	$buffer = json_decode($str_buffer,true);	
+	file_put_contents('dump.txt', $str_buffer);
+	file_put_contents('trace.txt', print_r($buffer,true));
+	render_fegion_object($buffer['grid'], '../../images/elements/'.$buffer['name'].'.png');
+	echo json_encode(array('message' => 'OK'));
+
 } elseif ($_REQUEST['a']=='load') {
 
-	$f = file_get_contents('test.txt');
+	$savefile = 'saved/'.stripslashes($_REQUEST['f']).'.sav';	
+	$f = file_get_contents($savefile);
 	echo $f;
 
 } elseif ($_REQUEST['a']=='objects') {
@@ -133,7 +153,7 @@ if ($_REQUEST['a']=='save') {
 	
 	$d = dir("../../images/elements");
 	while (false !== ($entry = $d->read())) {
-		if ( (substr($entry,0,1)!='.') && (substr($entry,-4)=='.png') && (substr($entry,0,strlen($base))==$base) )  {		
+		if ( (substr($entry,0,1)!='.') && (substr($entry,-4)=='.png') && (substr($entry,0,strlen($base)+1)==$base.'-') )  {
 			$files[]='../../images/elements/'.$entry;		
 		}
 	}
