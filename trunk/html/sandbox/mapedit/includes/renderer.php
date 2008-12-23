@@ -1,7 +1,62 @@
 <?php
 
-function render_grid($grid, $filename) {
+function slice_grid($base, $width, $height) {
+	$im = imagecreatefrompng($base.'-0-0.png');
+	
+	imagedestroy($im);
+}
 
+function render_grid($data, $filename, $background, $width, $height) {
+	
+	$im = imagecreatetruecolor(($width+1)*32,($height+1)*32);
+	$c = imagecolorallocatealpha($im, 255,255,255,0);
+	imagefill($im, 0, 0, $c);
+	
+	// Get background
+	$bim = imagecreatefrompng('../../images/tiles/'.$background);
+	
+	// Render the background
+	for ($y=0; $y<=$height; $y++) {
+		for ($x=0; $x<=$width; $x++) {
+			imagecopy($im, $bim, $x*32, $y*32, 0, 0, 32, 32);
+		}
+	}
+	
+	// We are done with background
+	imagedestroy($bim);
+		
+	// Render the image
+	$cache = array();
+	foreach ($data as $gid => $grid) {
+		foreach ($grid as $eid => $element) {	
+
+			$image = $element['s'];
+			$x = $element['x'];
+			$y = $element['y'];
+		
+			if (isset($cache[$image])) {
+				$cim = $cache[$image];
+			} else {
+				$cim = imagecreatefrompng('../../images/tiles/'.$image);
+				$cache[$image] = $cim;
+			}
+						
+			imagecopy($im, $cim, $x*32, $y*32, 0, 0, 32, 32);
+		}
+	}
+
+	// Destroy cache
+	foreach ($cache as $cim) {
+		imagedestroy($cim);
+	}
+	
+	// Save image
+	imagepng($im, $filename);
+	
+	// Destroy the image
+	imagedestroy($im);
+	
+	// What? You need more? :P
 }
 
 function render_object($grid, $filename) {	

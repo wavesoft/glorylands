@@ -42,6 +42,30 @@ function get_basename(url) {
 	return parts[parts.length-1];
 }
 
+// Helper function: Identify scroll position
+function getScrollPosition () {
+	var x = 0;
+	var y = 0;
+
+	if( typeof( window.pageYOffset ) == 'number' ) {
+		x = window.pageXOffset;
+		y = window.pageYOffset;
+	} else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
+		x = document.documentElement.scrollLeft;
+		y = document.documentElement.scrollTop;
+	} else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
+		x = document.body.scrollLeft;
+		y = document.body.scrollTop;
+	}
+
+	var position = {
+		'x' : x,
+		'y' : y
+	}
+
+	return position;
+}
+
 var tiles = [];
 var images = [];
 var paint_image = '';
@@ -205,7 +229,7 @@ function win_objparm_show(infobj) {
 	win_objparm_reset();
 	win_objparm_spawncontrol('Object is dynamic','dynamic',infobj['dynamic'],'checkbox');
 	$each(infobj, function(v,id) {
-		if ((id!='x') && (id!='y') && (id!='z') && (id!='image') && (id!='dynamic')) {
+		if ((id!='x') && (id!='y') && (id!='z') && (id!='image') && (id!='dynamic') && (id!='cx') && (id!='cy')) {
 			win_objparm_spawncontrol(id,id,v);
 		}
 	});
@@ -355,6 +379,7 @@ function ui_cgrid_put() {
 	cgrid_put=true;
 	cgrid_erase=false;
 	$('content_collision').setStyle('display','');
+	brush_yoffset=0;
 	brush_reset();
 }
 
@@ -374,6 +399,7 @@ function ui_cgrid_erase() {
 	cgrid_put=false;
 	cgrid_erase=true;
 	$('content_collision').setStyle('display','');
+	brush_yoffset=0;
 	brush_reset();
 }
 
@@ -393,6 +419,7 @@ function ui_clear() {
 	cgrid_put=false;
 	cgrid_erase=false;
 	$('content_collision').setStyle('display','none');
+	brush_yoffset=0;
 	brush_reset();
 }
 
@@ -412,6 +439,7 @@ function ui_put() {
 	cgrid_put=false;
 	cgrid_erase=false;
 	$('content_collision').setStyle('display','none');
+	brush_yoffset=0;
 	brush_updateview();
 }
 
@@ -490,7 +518,7 @@ function ui_defobject() {
 		}
 		i++;
 	}
-	json_defobj({'grid':grid,'name':name});
+	json_defobj({'grid':grid,'name':objects_active+name});
 }
 
 /**
@@ -633,7 +661,12 @@ function oloader_download(objectset) {
 
 	var data = new Json.Remote('feed.php?a=objects&base='+objectset, {
 			onComplete: function(o) {
-				oloader_preload(o);
+				if (o.length>0) {
+					oloader_preload(o);
+				} else {
+					$('objects_status').setStyles({'display':'none'});
+					$('objects_set').setStyles({'display':''});					
+				}
 			},
 			onFailure: function(e) {
 				window.alert(e.message);
@@ -708,9 +741,10 @@ function object_store(img) {
 	});
 
 	$('objects_host').appendChild(a);
+	var siz = i.getSize().size;
 	a.addEvent('click', function(e) {
 		var e = new Event(e);
-		object_select(img);
+		object_select(img,siz.y);
 		ui_objput();
 		e.stop();
 	});
@@ -730,9 +764,11 @@ var object_active = "";
 var object_grid = [];
 var object_datagrid = [];
 
-function object_select(img) {
+function object_select(img, yoffset) {
 	object_active = img;
 	brush_selection_useobject(img);
+	brush_yoffset=Math.floor(yoffset/32);
+	window.alert('Object has height '+yoffset+' which is '+brush_yoffset+' blocks');
 	brush_show();
 }
 
@@ -745,9 +781,7 @@ function object_resetgrid() {
 }
 
 function object_instance_bybrush() {
-	var zindex = brush_position.y*500+brush_position.x;
-	if (zindex<0) zindex=1;
-	object_instance({'x':brush_position.x+scroll_offset.x, 'y':brush_position.y+scroll_offset.y, 'z':zindex});
+	object_instance({'x':brush_position.x+scroll_offset.x, 'y':brush_position.y+scroll_offset.y+brush_yoffset});
 }
 
 function object_remove(obj) {
@@ -770,10 +804,22 @@ function object_instance(data) {
 		'border': 0,
 		'src': data.image
 	});
+		
+	var siz = o.getSize().size;
 	o.setStyles({
 		'left': data.x*32,
-		'top': data.y*32				
+		'top': data.y*32-siz.y
 	});
+	
+	// Calculate the place point (used by the compiled map to render correctly the depth)
+	if (!$defined(data.cx)) data.cx=0;
+	if (!$defined(data.cy)) data.cy=Math.ceil(siz.y/32);
+	
+	// Calculate z-index
+	var zypos = data.y;
+	if ($defined(data.z)) zypos+=data.z;		
+	var zindex = zypos*500+brush_position.x;
+	if (zindex<0) zindex=1;
 	
 	o.addEvent('mouseenter', function(e){
 		var e = new Event(e);
@@ -806,7 +852,8 @@ function object_instance(data) {
 		e.stop();									  
     });
 
-	if ($defined(data.z)) o.setStyle('z-index', data.z);
+	//if ($defined(data.z)) o.setStyle('z-index', data.z);
+	o.setStyle('z-index', zindex);
 	
 	object_grid.push(o);
 	object_datagrid.push(data);
@@ -894,6 +941,7 @@ var brush_dragging = false;
 var brush_dragused = false;
 var brush_erase = false;
 var brush_put = true;
+var brush_yoffset = 0;
 
 function _brush_clean() {
 	for (var y=brush_selection.y; y<brush_selection.y+brush_selection.h; y++) {
@@ -1304,6 +1352,8 @@ function cgrid_reset() {
 	   }
 	});
 	cgrid_elements = [];
+	cgrid_data = [];
+	cgrid_datagrid = [];
 }
 
 function cgrid_draw(x,y,value) {
@@ -1388,11 +1438,12 @@ $(window).addEvent('load', function(e){
 
 	$('content_host').addEvent('mousemove', function(e){
 		var e = new Event(e);
+		var p = getScrollPosition();
 		
 		var offset = $('content_host').getSize().scroll;
 		var position = e.client;
-		var x = e.client.x+offset.x-$('content_host').getLeft();
-		var y = e.client.y+offset.y-$('content_host').getTop();
+		var x = e.client.x+offset.x-$('content_host').getLeft()+p.x;
+		var y = e.client.y+offset.y-$('content_host').getTop()+p.y;
 		
 		x=Math.floor(x/32);
 		y=Math.floor(y/32);
@@ -1413,12 +1464,13 @@ $(window).addEvent('load', function(e){
 	$('content_host').addEvent('mousedown', function(e){
 		var e = new Event(e);
 		dropdown_dispose();	
+		var p = getScrollPosition();
 		if (e.event.button == 1) {
-			scroller_start(e.client.x,e.client.y);
+			scroller_start(e.client.x+p.x,e.client.y+p.y);
 			scroll_active = true;
 		} else if (e.event.button == 0) {
 			if (e.alt) {
-				scroller_start(e.client.x,e.client.y);
+				scroller_start(e.client.x+p.x,e.client.y+p.y);
 				scroll_active = true;
 			} else {
 				if (brush_erase || brush_put || cgrid_put || cgrid_erase) {
@@ -1450,7 +1502,7 @@ $(window).addEvent('load', function(e){
 				}
 			}
 			brush_dragging = false;
-		} else if (object_put && (e.event.button == 0)) {
+		} else if (object_put && (e.event.button == 0) && !e.alt) {
 			object_instance_bybrush();
 		}
 		scroll_active = false;
@@ -1466,12 +1518,13 @@ $(window).addEvent('load', function(e){
 
 	$('tiles_host').addEvent('mousedown', function(e){
 		var e = new Event(e);
+		var p = getScrollPosition();
 		if (!e.rightClick) {
 			dropdown_dispose();											   
 			var offset = $('tiles_host').getSize().scroll;
 			var position = e.client;
-			var x = e.client.x+offset.x-$('tiles_host').getLeft();
-			var y = e.client.y+offset.y-$('tiles_host').getTop();
+			var x = e.client.x+offset.x-$('tiles_host').getLeft()+p.x;
+			var y = e.client.y+offset.y-$('tiles_host').getTop()+p.y;
 			
 			if (x<1068) { /* Scrollbar */
 				if (e.shift) {
@@ -1487,7 +1540,8 @@ $(window).addEvent('load', function(e){
 
 	$('tiles_select').addEvent('contextmenu', function(e){
 		var e = new Event(e);
-		dropdown_show(e.client.x,e.client.y,[
+		var p = getScrollPosition();
+		dropdown_show(e.client.x+p.y,e.client.y+p.y,[
 			['javascript:ui_setbackground()', 'Use background'],
 			['javascript:ui_defkey()', 'Define shortcut'],
 			['javascript:ui_defobject()', 'Define object by selection']
@@ -1497,12 +1551,13 @@ $(window).addEvent('load', function(e){
 
 	$('tiles_host').addEvent('mousemove', function(e){
 		var e = new Event(e);
+		var p = getScrollPosition();
 		if (!e.rightClick) {
 			if (selection_dragging) {
 				var offset = $('tiles_host').getSize().scroll;
 				var position = e.client;
-				var x = e.client.x+offset.x-$('tiles_host').getLeft();
-				var y = e.client.y+offset.y-$('tiles_host').getTop();
+				var x = e.client.x+offset.x-$('tiles_host').getLeft()+p.x;
+				var y = e.client.y+offset.y-$('tiles_host').getTop()+p.y;
 				if (x<1068) { /* Scrollbar */
 					selection_dragto(Math.floor(x/33), Math.floor(y/33));
 				}

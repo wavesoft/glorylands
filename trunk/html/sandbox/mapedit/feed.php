@@ -13,8 +13,8 @@ if ($_REQUEST['a']=='save') {
 	// <<<<
 	
 	$buffer = json_decode($str_buffer,true);
-	file_put_contents('dump.txt', $str_buffer);
-	file_put_contents('trace.txt', print_r($buffer,true));
+	//file_put_contents('dump.txt', $str_buffer);
+	//file_put_contents('trace.txt', print_r($buffer,true));
 	
 	$data = $buffer['map'];
 	foreach ($data as $gid => $grid) {
@@ -30,10 +30,18 @@ if ($_REQUEST['a']=='save') {
 
 } elseif ($_REQUEST['a']=='compile') {
 
-	$buffer = json_decode(stripslashes($_REQUEST['json']),true);
-	file_put_contents('dump.txt', stripslashes($_REQUEST['json']));
-	file_put_contents('trace.txt', print_r($buffer,true));
+	$str_buffer = stripslashes($_REQUEST['json']);
 	
+	// BUGFIX: json_decode does not understand arrays in: [,,,,,,,,1,,,,3,,] format >>>>
+	$str_buffer = str_replace('[,','[false,',$str_buffer);
+	$str_buffer = str_replace(',]',',false]',$str_buffer);
+	$str_buffer = str_replace(',,',',false,',$str_buffer);
+	$str_buffer = str_replace(',,',',false,',$str_buffer);
+	// <<<<	
+	
+	$buffer = json_decode($str_buffer,true);	
+	
+	// Analyze map dimensions
 	$data = $buffer['map'];
 	$map_width=0;
 	$map_height=0;
@@ -46,13 +54,40 @@ if ($_REQUEST['a']=='save') {
 	}
 	$buffer['map']=$data;
 
+	// Re-map object images
 	$data = $buffer['objects'];
 	$map_images = array();
 	foreach ($data as $id => $object) {
-		$data[$id]['image'] = basename($data[$id]['image']);		
+		$img = basename($data[$id]['image']);
+		$pos = array_search($img, $map_images);
+		if ($pos === false) {
+			$pos = sizeof($map_images);
+			$map_images[$pos] = $img;
+			$data[$id]['image'] = $pos;
+		}
+		$data[$id]['image'] = $pos;
 	}
-	$buffer['map']=$data;
+	$buffer['objects']=$data;
 	
+	// Create a valid filename for the map
+	$valid_name = strtolower($buffer['data']['title']);
+	$valid_name = str_replace('\\','_', $valid_name);
+	$valid_name = str_replace('/','_', $valid_name);
+	$valid_name = str_replace('*','.', $valid_name);
+	$valid_name = str_replace('?','_', $valid_name);
+	$valid_name = str_replace(' ','_', $valid_name);
+	$valid_name = str_replace(':','.', $valid_name);
+	$valid_name = str_replace('"','-', $valid_name);
+	$valid_name = str_replace('<','(', $valid_name);
+	$valid_name = str_replace('>',')', $valid_name);
+	$valid_name = str_replace('|','~', $valid_name);
+	
+	// Calculate map ID
+	
+	// Render background
+	render_grid($buffer['map'], '../../data/maps/'.$valid_name.'-0-0.png', $buffer['background'], $map_width, $map_height);
+	
+	// Prepare result array
 	$map = array(
 		'width' => $map_width,
 		'height' => $map_height,
@@ -61,17 +96,18 @@ if ($_REQUEST['a']=='save') {
 		'images' => $map_images,		
 		'objects' => $buffer['objects'],	
 		'background' => array(
-			'fill' => $buffer['background'],
-			'name' => 'images/luskan',
+			'fill' => basename($buffer['background']),
+			'name' => $valid_name,
 			'width' => 2912,
 			'height' => 832,
 			'xsize' => 1,
 			'ysize' => 1
 		),
 		
-		'collision' => array(
-		)	
+		'collision' => $buffer['zgrid']
 	);
+	
+	file_put_contents('../../data/maps/'.$valid_name.'.map', json_encode($map));
 	
 	echo json_encode(array('message' => 'OK'));
 
@@ -80,7 +116,7 @@ if ($_REQUEST['a']=='save') {
 	$buffer = json_decode(stripslashes($_REQUEST['json']),true);
 	file_put_contents('dump.txt', stripslashes($_REQUEST['json']));
 	file_put_contents('trace.txt', print_r($buffer,true));
-	render_object($buffer['grid'], 'objects/object-'.$buffer['name'].'.png');
+	render_object($buffer['grid'], '../../images/elements/'.$buffer['name'].'.png');
 	echo json_encode(array('message' => 'OK'));
 
 } elseif ($_REQUEST['a']=='load') {
@@ -95,10 +131,10 @@ if ($_REQUEST['a']=='save') {
 	$files = array();
 	$x=0; $ok=true;
 	
-	$d = dir("objects");
+	$d = dir("../../images/elements");
 	while (false !== ($entry = $d->read())) {
-		if ( (substr($entry,0,1)!='.') && (substr($entry,-4)=='.png') )  {		
-			$files[]='objects/'.$entry;		
+		if ( (substr($entry,0,1)!='.') && (substr($entry,-4)=='.png') && (substr($entry,0,strlen($base))==$base) )  {		
+			$files[]='../../images/elements/'.$entry;		
 		}
 	}
 	$d->close();
