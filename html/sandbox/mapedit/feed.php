@@ -1,6 +1,7 @@
 <?php
 //file_put_contents('dump.txt', print_r($_REQUEST,true));
 include "includes/renderer.php";
+error_reporting(0);
 
 if ($_REQUEST['a']=='save') {
 
@@ -104,12 +105,14 @@ if ($_REQUEST['a']=='save') {
 			'height' => 832,
 			'xsize' => 1,
 			'ysize' => 1
-		),
-		
-		'collision' => $buffer['zgrid']
+		)
 	);
 	
+	// Keep map data and z-grid separately because two different
+	// engines read those files. No need to bother the one engine
+	// with junk data.
 	file_put_contents('../../data/maps/'.$valid_name.'.map', json_encode($map));
+	file_put_contents('../../data/maps/'.$valid_name.'.zmap', serialize($buffer['zgrid']));
 	
 	echo json_encode(array('message' => 'OK'));
 
@@ -179,6 +182,33 @@ if ($_REQUEST['a']=='save') {
 	}
 	
 	echo json_encode($files);
+
+} elseif ($_REQUEST['a']=='filelist') {
+
+	$files = array();
+	$x=0; $ok=true;
+	
+	$ext='';
+	if ($_REQUEST['f']=='saved') {
+		$d = dir("saved");
+		$ext='.sav';
+	} elseif ($_REQUEST['f']=='compile') {
+		$d = dir("../../data/maps");
+		$ext='.map';
+	}
+	while (false !== ($entry = $d->read())) {
+		if ((substr($entry,0,1)!='.') && (substr($entry,-4)==$ext))  {
+			$files[]=substr($entry,0,-4);
+		}
+	}
+	$d->close();
+	
+	if (sizeof($files)==0) {
+		echo json_encode(false);
+	} else {
+		echo json_encode($files);
+	}
+
 }
 
 ?>

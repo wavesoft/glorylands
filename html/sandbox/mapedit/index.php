@@ -119,16 +119,16 @@
             </div>
         </div>
 		<div>
-        	Difficulty to enter the tile:<br />
+        	Number of tiles this tile will attenuate the walk for:<br />
         	<div class="slider">
-            	<a href="javascript:;" onclick="cgrid_setatt(0,this);" style="background-color:#D5FFD6;">No</a>
-            	<a href="javascript:;" onclick="cgrid_setatt(5,this);" style="background-color:#E9FFD5;">5%</a>
-            	<a href="javascript:;" onclick="cgrid_setatt(10,this);" style="background-color:#F2FFD5;">10%</a>
-            	<a href="javascript:;" onclick="cgrid_setatt(20,this);" style="background-color:#FFFED5;">20%</a>
-            	<a href="javascript:;" onclick="cgrid_setatt(50,this);" style="background-color:#FFEED5;">50%</a>
-            	<a href="javascript:;" onclick="cgrid_setatt(70,this);" style="background-color:#FFE4D5;">70%</a>
-            	<a href="javascript:;" onclick="cgrid_setatt(80,this);" style="background-color:#FFD5D5;">80%</a>
-            	<a href="javascript:;" onclick="cgrid_setatt(100,this);" style="background-color:#E9E9E9;">Full</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(1/4,this);" style="background-color:#D5FFD6;">1/4</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(1/3,this);" style="background-color:#E9FFD5;">1/3</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(1/2,this);" style="background-color:#F2FFD5;">1/2</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(1,this);" style="background-color:#FFFED5;">1</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(2,this);" style="background-color:#FFEED5;">2</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(3,this);" style="background-color:#FFE4D5;">3</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(4,this);" style="background-color:#FFD5D5;">4</a>
+            	<a href="javascript:;" onclick="cgrid_setatt(0,this);" style="background-color:#E9E9E9;">Wall</a>
             </div>
         </div>
 	</div>
@@ -170,6 +170,20 @@
 	</div>
 	<div id="ui_objinfo_data" class="dynamic_input">
 			
+	</div>
+</div>
+<div class="border" id="ui_opensave" style="position: absolute; left: 250px; top: 100px; width: 340px; height: 250px; background-color:#FFFFFF; visibility: hidden; z-index:10003">
+	<div class="lt"></div><div class="rt"></div><div class="lb"></div><div class="rb"></div>
+	<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
+	<div class="header" id="win_opensave_header">Open/Save Map</div>
+	<div class="content" style="height: 32px;">
+		<div class="topmenu">
+			<input type="text" id="win_opensave_filename" />
+			<a href="javascript:;" onclick="win_opensave_save($('win_opensave_filename').value);"><img src="images/button_ok.png" border="0" align="absmiddle" /> <u>O</u>k </a>
+			<a href="javascript:;" onclick="win_opensave_cancel();"><img src="images/button_cancel.png" border="0" align="absmiddle" /> <u>C</u>ancel </a>
+		</div>			
+	</div>
+	<div id="ui_opensave_data">
 	</div>
 </div>
 <div id="msg"></div>

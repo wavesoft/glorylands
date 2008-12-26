@@ -20,7 +20,7 @@ var mapOfsY = 8;
 {/literal}
 <script language="javascript" src="includes/mootools-release-1.11.js"></script>
 <!-- <script language="javascript" src="includes/glapi-1.1.src.js"></script> -->
-<script language="javascript" src="includes/glapi-2.0.src.js"></script>
+<script language="javascript" src="includes/glapi-2.1.src.js"></script>
 <script language="javascript" src="includes/popup.js"></script>
 {$javascript}
 <link href="{$theme}/style.css" rel="stylesheet" type="text/css" />
@@ -159,8 +159,11 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 		<td>
 		<div id="datahost">
 			<div id="datapane">
-			<!-- Datapane Contents -->	
+			<!-- GRID Contents -->	
 			<!-- <div style="border: solid 2px #FF0000; z-index: 1000000; text-align:center; width: 32px; height:32px; position:absolute;" id="zp">&nbsp;</div> -->
+			</div>
+			<div id="databuffer">
+			<!-- MAIN Data buffer contents -->
 			</div>
 			<div id="dataloader"><div id="dataloader_text"></div></div>
 		</div>

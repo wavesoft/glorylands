@@ -36,7 +36,7 @@ $(window).addEvent('load', function(e) {
 	eChatText = $('modchat_floattext');
 	
 	} catch (e) {
-		window.alert(e.message);	
+		window.alert('ChatAPI Init Error: '+e.message);
 	}
 	
 });
@@ -49,8 +49,9 @@ function find_overlay_info(objectname) {
 				// Get DataPane left offset
 				var dpX = $('datapane').getLeft();
 				var dpY = $('datapane').getTop();
+				var objH = obj.object.getSize().size.y/2;
 				
-				result = {'x':obj.x+dpX-glob_x_base, 'y':obj.y+dpY-glob_y_base, 'guid':obj.info.guid};	
+				result = {'x':obj.x+dpX-glob_x_base, 'y':obj.y+dpY-glob_y_base-objH, 'guid':obj.info.guid};	
 			}
 		}
 	});
@@ -112,7 +113,7 @@ function displayBubble(user, text) {
 				fadeFX.start({'opacity': 0});
 			}, 3000);
 		} catch (e) {
-			window.alert(e);
+			window.alert('DisplayBuffle Error'+e);
 		}
 	}
 }
