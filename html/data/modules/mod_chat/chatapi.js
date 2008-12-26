@@ -24,7 +24,7 @@ $(window).addEvent('load', function(e) {
 		</tr>\
 		<tr>\
 			<td class="bl" width="17">&nbsp;</td>\
-			<td class="arrow" width="45">&nbsp;</td>\
+			<td class="b" width="45"><div class="arrow">&nbsp;</div></td>\
 			<td class="b">&nbsp;</td>\
 			<td class="br  width="17"">&nbsp;</td>\
 		</tr>\
@@ -122,10 +122,12 @@ callback.register('message', function(msg) {
 	// ## Handle CHAT messages ##
 	if (msg[0] == 'CHAT') {
 		$$('#chat_content').each(function(e) {
+			var e = $(e);
+			var HTML = e.innerHTML;			
 			if (msg[2].toLowerCase() == 'system') {
-				e.innerHTML+='<br /><font color="gold">'+msg[1]+'</font>';
+				e.setHTML(HTML+'<p><font color="gold">'+msg[1]+'</font></p>');
 			} else {
-				e.innerHTML+='<br /><b>['+msg[2]+']</b>'+': '+msg[1];
+				e.setHTML(HTML+'<p><strong>['+msg[2]+']</strong>'+': '+msg[1]+'</p>');
 			}
 			
 			displayBubble(msg[2],msg[1]);

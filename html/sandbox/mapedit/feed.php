@@ -89,6 +89,10 @@ if ($_REQUEST['a']=='save') {
 	
 	// Render background
 	render_grid($buffer['map'], '../../data/maps/'.$valid_name.'-0-0.png', $buffer['background'], $map_width, $map_height);
+	$im = imagecreatefrompng('../../data/maps/'.$valid_name.'-0-0.png');
+	$back_width = imagesx($im);
+	$back_height = imagesy($im);
+	imagedestroy($im);
 	
 	// Prepare result array
 	$map = array(
@@ -101,8 +105,8 @@ if ($_REQUEST['a']=='save') {
 		'background' => array(
 			'fill' => basename($buffer['background']),
 			'name' => $valid_name,
-			'width' => 2912,
-			'height' => 832,
+			'width' => $back_width,
+			'height' => $back_height,
 			'xsize' => 1,
 			'ysize' => 1
 		)

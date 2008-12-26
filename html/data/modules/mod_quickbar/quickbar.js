@@ -4,7 +4,8 @@ var qb_currently_dragging=null;
 var droppables = [];
 
 // Function to make an object moevable from the quick bar
-function qb_makeqbutton(element, guid, slot) {
+function qb_makeqbutton(v_element, guid, slot) {
+	var element = $(v_element);
 	
 	// Add context menu and required parameters
 	element.addEvent('contextmenu',function(e) {
@@ -99,74 +100,79 @@ function qb_makedraggable(element, guid, moveable, host_guid, host_view) {
 	
 	if (!moveable) {
 		item.addEvent('mousedown', function(e) {
+			var e = new Event(e);
 			qb_currently_dragging=null;
-			if (e.button!=0) {
-				e = new Event(e).stop();
+			if (e.event.button!=1) {
+				e.stop();
 				return;
 			}
-			e = new Event(e).stop();
 			
-			var clone = this.clone()
-				.setStyles(this.getCoordinates()) // this returns an object with left/top/bottom/right, so its perfect
-				.setStyles({'opacity': 0.7, 'position': 'absolute', 'z-index': 500000})
-				.setProperty('guid', guid)
-				.setProperty('host', host_guid)
-				.setProperty('hostview', host_view)
-				.addEvent('emptydrop', function() {
+			var clone = this.clone();
+				clone.setStyles(this.getCoordinates()); // this returns an object with left/top/bottom/right, so its perfect				
+				clone.setStyles({'opacity': 0.7, 'position': 'absolute', 'z-index': lastZ});
+				clone.setProperty('guid', guid);
+				clone.setProperty('host', host_guid);
+				clone.setProperty('hostview', host_view);
+				clone.addEvent('emptydrop', function() {
 					this.remove();
 				}).inject(document.body);
-	  
+			
 			var drag = clone.makeDraggable({
 				droppables: $$('#quickbar div')
 			}); // this returns the dragged element
 	 
+			e.stop();
 			drag.start(e); // start the event manual
 		});
 	} else {
 		item.addEvent('mousedown', function(e) {
+			e = new Event(e);
 			qb_currently_dragging=null;
-			if (e.button!=0) {
+			if (e.event.button!=1) {
 				e = new Event(e).stop();
 				return;
 			}
-			e = new Event(e);
 			
 			// Make this object the dragger host
 			qb_currently_dragging = this;
 			
 			// Create clone
-			var startcoord = this.getCoordinates();
-			var clone = this.clone()
+			var startcoord = $(this).getCoordinates();
+			var clone = $(this).clone()
 				.setStyles(this.getCoordinates()) // this returns an object with left/top/bottom/right, so its perfect
-				.setStyles({'opacity': 0.7, 'position': 'absolute', 'z-index': 500000})
+				.setStyles({'opacity': 0.7, 'position': 'absolute', 'z-index': lastZ})
 				.setProperty('guid', guid)
 				.setProperty('host', host_guid)
 				.setProperty('hostview', host_view)
 				.addEvent('emptydrop', function() {	
-					var ccoord = this.getCoordinates();
+					var ccoord = $(this).getCoordinates();
 					this.remove();
 					// Check if we were really dragged and not clicked (moved at least 5 px)
 					if ((Math.abs(ccoord.left-startcoord.left)>5) || (Math.abs(ccoord.top-startcoord.top)>5)) {
 						qb_currently_dragging.remove();
 						qb_currently_dragging=null;
 						gloryIO('?a=quickbar.remove&guid='+guid+'&slot='+this.getProperty('slot')+'&host='+host_guid+'&view='+host_view);
+					
+					// If not, it means we were clicked
+					} else {
+						gloryIO('?a=quickbar.use&guid='+guid+'&slot='+this.getProperty('slot')+'&host='+host_guid+'&view='+host_view);						
 					}
 				})
 				.addEvent('mouseup', function() {	
-					var ccoord = this.getCoordinates();
+					var ccoord = $(this).getCoordinates();
 					if ((Math.abs(ccoord.left-startcoord.left)<=5) && (Math.abs(ccoord.top-startcoord.top)<=5)) {
 						gloryIO('?a=quickbar.use&guid='+guid+'&slot='+this.getProperty('slot')+'&host='+host_guid+'&view='+host_view);
 					}
 				})
 				.inject(document.body);
-			startcoord = this.getCoordinates();
+			startcoord = $(this).getCoordinates();
 	  
 			var drag = clone.makeDraggable({
 				droppables: $$('#quickbar div')
 			}); // this returns the dragged element
 	 
+			e.stop();
 			drag.start(e); // start the event manual
-			
 		});
 	}
 }
@@ -174,8 +180,8 @@ function qb_makedraggable(element, guid, moveable, host_guid, host_view) {
 callback.register('message', function(msg) {
 	// ## Handle QBAR messages ##
 	if (msg[0] == 'QBAR') {
-		$$('#chat_content').each(function(e) {
-			$('quickbar_data').setHTML(msg[1]);
+		$$('#quickbar_data').each(function(e) {
+			e.setHTML(msg[1]);
 			qb_init_droppables();
 		});
 	}

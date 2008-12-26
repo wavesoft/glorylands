@@ -79,3 +79,18 @@
 .modchat_popup .user{
 	color: #990000;
 }
+
+
+#chat_content {
+	padding: 2px; 
+	font-size: 12px; 
+	color: #333333; 
+	height: 200px;
+	overflow: auto;
+}
+
+#chat_content p {
+	padding: 0px;
+	margin: 0px;
+	height: 14px;
+}
