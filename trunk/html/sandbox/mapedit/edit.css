@@ -259,6 +259,11 @@ body {
 	height: 24px;
 }
 
+.topmenu input {
+	float: left;
+	margin-top: 5px;
+}
+
 .topmenu a {
 	display: block;
 	float: left;
@@ -454,4 +459,29 @@ body {
 .slider a:hover {
 	background-image: url(images/selection.png);
 	color: #FFFFFF;
+}
+
+#ui_opensave_data a {
+	background-image: url(images/mime_map.gif);
+	background-repeat: no-repeat;
+	padding-left: 20px;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-bottom: 2px;
+	width: 140px;
+	display: block;
+	color: #666666;
+	background-position: 2px 2px;
+	text-decoration: none;
+	border: solid 1px #FFFFFF;
+	float: left;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+#ui_opensave_data a:hover {
+	background-color: #6694E3;
+	border-color: #E8E8E8;
+	color: #FFFFFF;
+	float: left;
 }

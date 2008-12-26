@@ -11,6 +11,7 @@ function render_grid($data, $filename, $background, $width, $height) {
 	$im = imagecreatetruecolor(($width+1)*32,($height+1)*32);
 	$c = imagecolorallocatealpha($im, 255,255,255,0);
 	imagefill($im, 0, 0, $c);
+	imagealphablending($im,true);
 	
 	// Get background
 	$bim = imagecreatefrompng('../../images/tiles/'.$background);
@@ -38,10 +39,11 @@ function render_grid($data, $filename, $background, $width, $height) {
 				$cim = $cache[$image];
 			} else {
 				$cim = imagecreatefrompng('../../images/tiles/'.$image);
+				imagealphablending($cim,true);
 				$cache[$image] = $cim;
 			}
 						
-			imagecopy($im, $cim, $x*32, $y*32, 0, 0, 32, 32);
+			imagecopymerge($im, $cim, $x*32, $y*32, 0, 0, 32, 32,100);
 		}
 	}
 
@@ -129,7 +131,7 @@ function render_fegion_object($grid, $filename) {
 	
 	// Render map
 	foreach ($grid as $l => $xygrid) {
-		if (is_array($xygrid))
+		if (is_array($xygrid) && ($l>0))
 		foreach ($xygrid as $y => $grid_y) {
 			if (is_array($grid_y))
 			foreach ($grid_y as $x => $image) {	

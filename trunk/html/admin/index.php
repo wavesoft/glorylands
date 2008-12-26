@@ -15,14 +15,13 @@
 </ul>
 <h2>Developing</h2>
 <ul>
-<li><a href="tiles.php">Autimatic charactel model generator</a></li>
-<li><a href="develop_cleanchars.php">Build characters package</a></li>
-<li><a href="modelmaker/">Model designer</a></li>
+<li><a href="mapedit/">On-line map editor</a></li>
+<li><a href="editor/">Game components editor</a></li>
 <li><a href="develop_findevents.php">Find interrupt hooks (events)</a></li>
-<li><a href="mkguid.php">Make a GUID</a></li>
+<li><a href="mkguid.php">Make a hash</a></li>
 <li><a href="analyzeguid.php">Analyze GUID</a></li>
 <li><a href="guid_instance.php">Instance a new object</a></li>
-<li><a href="syseval.php">Evaluation Console</a></li>
+<li><a href="syseval.php">Script Console</a></li>
 </ul>
 <h2>Maintenance</h2>
 <ul>

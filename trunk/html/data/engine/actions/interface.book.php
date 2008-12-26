@@ -11,7 +11,7 @@ ob_end_clean();
 $act_result=array(
 
 	# Theese variables will reach JSON untouched
-	'mode'=>'DEDICATED',
+	'mode'=>'MAIN',
 	'width'=>800,
 	'height'=>500, 
 	'rollback'=>true,

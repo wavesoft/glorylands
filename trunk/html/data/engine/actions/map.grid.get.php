@@ -170,18 +170,23 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	// Focus on the player's object
 	if ($row['guid']==$_SESSION[PLAYER][GUID]) {
 		$myobj['focus'] = true;
+		$myobj['player'] = true;
 	}
 	$objects[] = $myobj;
 }
 
-// If cached ZID is not the one current grid has, reload it (if not in quick mode)
+// If cached collision grid is not the one current grid has, reload it (if not in quick mode)
 if (!$quick) {
 	if ($_SESSION['GRID']['ID'] != $map) {
 		if (file_exists(DIROF('DATA.MAP').$map_info['filename'].'.zmap')) {
-			// Raise Update grid Event
-			//$grid = unserialize(file_get_contents($_CONFIG[GAME][BASE].'/data/maps/'.$map_info['filename'].'.zmap'));		
-			$_SESSION['GRID']['ZID'] = unserialize(file_get_contents(DIROF('DATA.MAP').$map_info['filename'].'.zmap'));
-			callEvent('map.updategrid', $_SESSION['GRID']['ZID'], $map_info['filename']);
+			// Update collision grid
+			$data = unserialize(file_get_contents(DIROF('DATA.MAP').$map_info['filename'].'.zmap'));
+			if (!is_array($data)) {
+				echo "<h1>Data:<pre>".print_r($data,true)."</pre></h1>";
+			} else {
+				$_SESSION['GRID']['ZID'] = $data;
+				callEvent('map.updategrid', $_SESSION['GRID']['ZID'], $map_info['filename']);
+			}
 		}
 		$_SESSION['GRID']['ID'] = $map;
 	}
@@ -189,10 +194,9 @@ if (!$quick) {
 
 // Notify infogrid on linked modules
 callEvent('map.infogrid', $nav_grid, $map_info['filename']);
-callEvent('map.render');
 
-$act_result = array_merge($act_result, array(
-	'mode' => 'GRID',
+// Prepare final data and perform the appropriate notifications
+$data = array(
 	'objects' => $objects,
 	'map' => $map_info['filename'],
 	'head_image'=>'UI/navbtn_help.gif', 
@@ -200,6 +204,11 @@ $act_result = array_merge($act_result, array(
 	'title'=>$map_info['name'],
 	'x' => $Gx,
 	'y' => $Gy
-));
+);
+callEvent('map.render', $data);
+
+// Store the results
+$data['mode']='GRID';
+$act_result = array_merge($act_result, $data);
 
 ?>

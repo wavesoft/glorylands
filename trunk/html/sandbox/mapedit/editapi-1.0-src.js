@@ -237,6 +237,68 @@ function json_defobj(grid) {
   *
   */
 
+//### Save/Open window ###
+var win_opensave_elements = [];
+var win_opensave_callback = null;
+
+function win_opensave_save(filename) {
+	win_opensave_hide();
+	win_opensave_callback(filename);
+}
+
+function win_opensave_cancel() {
+	win_opensave_hide();
+}
+
+function win_opensave_addfile(filename) {
+	var im = $(document.createElement('a'));
+	im.setHTML(filename);
+	im.href='javascript:;';
+	im.addEvent('click', function(e) {
+		var e = new Event(e);
+		win_opensave_save(filename);
+		e.stop();
+	});
+	$('ui_opensave_data').appendChild(im);
+	win_opensave_elements.push(im);
+}
+
+function win_opensave_cleanup() {
+	$each(win_opensave_elements, function(e){
+		e.remove();
+	});
+	win_opensave_elements = [];
+}
+
+function win_opensave_hide() {
+	$('ui_opensave').setStyle('visibility','hidden');
+}
+
+function win_opensave_show(title, folder, callback) {
+	$('ui_opensave').setStyle('visibility','visible');
+	win_opensave_cleanup();
+	win_opensave_callback=callback;
+	
+	$('win_opensave_filename').value = ui_lastfile;
+	$('ui_opensave_data').setHTML('Loading...');
+	$('win_opensave_header').setHTML(title);
+	
+	var json = new Json.Remote('feed.php?a=filelist&f='+folder, {
+		headers: {'X-Request': 'JSON'},
+		onComplete: function(obj) {
+			$('ui_opensave_data').setHTML('');
+			if (obj != false) {
+				$each(obj, win_opensave_addfile);
+			}
+		},
+		onFailure: function(err) {
+			json_message('Error! '+err);
+		}
+	}).send();
+
+}
+
+
 //### Interface window for object parameters ###
 var win_objparm_active_infobj = null;
 var win_objparm_inputs = [];
@@ -369,25 +431,24 @@ function ui_new() {
 }
 
 function ui_save() {
-	var fname = window.prompt('Please enter the filename to save to:', ui_lastfile);
-	if (!fname) return;
-	ui_lastfile=fname;
-	
-	json_save('save',fname);
+	win_opensave_show('Save map','saved',function(fname){
+		ui_lastfile=fname;
+		json_save('save',fname);
+	});
 }
 
 function ui_load() {
-	var fname = window.prompt('Please enter the filename to load from:', ui_lastfile);
-	if (!fname) return;
-	ui_lastfile=fname;	
-	json_load(fname);
-	ui_put();
+	win_opensave_show('Load map','saved',function(fname){
+		ui_lastfile=fname;
+		json_load(fname);
+		ui_put();
+	});
 }
 
 function ui_compile() {
-	var name = window.prompt("Please enter the map title:");
-	if (!name) return;
-	json_save('compile', name, 'Compiling...','Compiled!', {'title':name});
+	win_opensave_show('Compie map', 'compile', function(name){
+		json_save('compile', name, 'Compiling...','Compiled!', {'title':name});
+	});
 }
 
 function ui_cgrid_put() {
@@ -832,17 +893,17 @@ function object_regiondef() {
 	if (!name) return;
 	name = objects_active+'-'+name;
 	
-	var l=brush_selection.x+scroll_offset.x;
-	var r=l+brush_selection.w;
-	var t=brush_selection.y+scroll_offset.y;
-	var b=t+brush_selection.h;
-	
+	var cl=brush_selection.x+scroll_offset.x;
+	var cr=cl+brush_selection.w;
+	var ct=brush_selection.y+scroll_offset.y;
+	var cb=ct+brush_selection.h;
+		
 	var obj_grid=[];
-	for (var l=0; l<3; l++) {
+	for (var l=1; l<3; l++) {
 		obj_grid[l]=[];
-		for (var y=t; y<b; y++) {
+		for (var y=ct; y<cb; y++) {
 			obj_grid[l][y]=[];
-			for (var x=l; x<r; x++) {
+			for (var x=cl; x<cr; x++) {
 				var id=x+','+y;
 				obj_grid[l][y][x]=false;
 				if ($defined(paint_grid[l][id])) {
@@ -1459,13 +1520,27 @@ function cgrid_draw(x,y,value) {
 	
 	cgrid_datagrid[y][x]=value;
 	cgrid_data[y][x]=elm;
-	elm.setHTML(value);
 	
-	var op = Math.ceil(10+(100*50/(100-value)))/100;
+	if (value<1){
+		elm.setHTML('1/'+(1/value));
+	} else {
+		elm.setHTML(value);
+	}
+	
+	b='#003366';
+	if (value==1/4) b='#66FFFF';
+	if (value==1/3) b='#00FF00';
+	if (value==1/2) b='#66FF99';
+	if (value==1) b='#FFFF66';
+	if (value==2) b='#FFCC00';
+	if (value==3) b='#FF9900';
+	if (value==4) b='#FF0000';
+	
 	elm.setStyles({
 		'left': x*32,
 		'top': y*32,
-		'opacity': op
+		'opacity': 0.7,
+		'background-color': b
 	});
 }
 

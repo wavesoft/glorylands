@@ -15,13 +15,20 @@ if ($ans) {
 	while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		$vars = gl_get_guid_vars($row['guid']);
 
-		array_push($objects, array(
+		$data = array(
 			'name' => $vars['name'], 
 			'image' => $vars['icon'], 
 			'guid' => $row['guid'], 
 			'desc' => $vars['description'], 
-			'cost' => 0
-		));
+			'cost' => 0,
+			'handler' => 'info.guid'
+		);
+		
+		// Do some special handlings for some special items (instead of just displaying it's info)
+		if ($vars['class'] == 'CONTAINER') $data['handler']='interface.container';
+	
+		
+		array_push($objects,$data);
 	}
 }
 

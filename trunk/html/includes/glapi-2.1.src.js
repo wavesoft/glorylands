@@ -466,24 +466,35 @@ function handleMessages(msg) {
 			} else if (mType=='RECT') {
 				var r = $('grid_rect');
 				try {
-				if ($defined(r)) {
-					if (mText) {
-						rectinfo.w=1; rectinfo.h=1; rectinfo.bx=0; rectinfo.by=0; rectinfo.url=''; rectinfo.clickdispose=true;
-						rectinfo.silent=false;
-						if ($defined(msg.message[i][2])) rectinfo.url=msg.message[i][2];
-						if ($defined(msg.message[i][3])) rectinfo.w=msg.message[i][3];
-						if ($defined(msg.message[i][4])) rectinfo.h=msg.message[i][4];
-						if ($defined(msg.message[i][5])) rectinfo.bx=msg.message[i][5];
-						if ($defined(msg.message[i][6])) rectinfo.by=msg.message[i][6];
-						if ($defined(msg.message[i][7])) rectinfo.clickdispose=msg.message[i][7];
-						if ($defined(msg.message[i][8])) rectinfo.silent=msg.message[i][8];
-						r.setStyles({'display':''});
-					} else {
-						r.setStyles({'display':'none'});
+					if ($defined(r)) {
+						if (mText) {
+							rectinfo.w=1; rectinfo.h=1; rectinfo.bx=0; rectinfo.by=0; rectinfo.url=''; rectinfo.clickdispose=true;
+							rectinfo.silent=false;
+							if ($defined(msg.message[i][2])) rectinfo.url=msg.message[i][2];
+							if ($defined(msg.message[i][3])) rectinfo.w=msg.message[i][3];
+							if ($defined(msg.message[i][4])) rectinfo.h=msg.message[i][4];
+							if ($defined(msg.message[i][5])) rectinfo.bx=msg.message[i][5];
+							if ($defined(msg.message[i][6])) rectinfo.by=msg.message[i][6];
+							if ($defined(msg.message[i][7])) rectinfo.clickdispose=msg.message[i][7];
+							if ($defined(msg.message[i][8])) rectinfo.silent=msg.message[i][8];
+							r.setStyles({'display':''});
+						} else {
+							r.setStyles({'display':'none'});
+						}
 					}
-				}
 				} catch (e) {
-					window.alert(e);	
+					window.alert('RECT Error'+e);	
+				}
+
+			// ## Alter a map object ##
+			} else if (mType=='ALTER') {
+
+			// ## Show action grid ##
+			} else if (mType=='ACTIONGRID') {
+
+				if ($defined(msg.message[i][1])) {
+					wgrid_design(msg.message[i][1],true);
+					wgrid_show();
 				}
 
 			// ## Set feeder interval ##
@@ -657,7 +668,7 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 						ddwin_show(width,height,obj.text);
 					}
 					catch (e) {
-						window.alert(e);
+						window.alert('DDWin Show Error: '+e);
 					}
 
 				// ## HTML Data for dropdown menu ##
@@ -689,8 +700,8 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 				if (oncomplete_callback) oncomplete_callback(obj);	
 			},
 			onFailure: function(obj) {
+				window.alert('GloryIO Error: '+obj.message);
 				if (!silent) showStatus('<font color=\"red\">Connection failure!</font>', 1000);
-				window.alert(obj.message);
 				if (oncomplete_callback) oncomplete_callback(false);	
 			}
 		}).send(data);
@@ -847,7 +858,6 @@ function map_curtain(visible) {
   *
   */
 function map_reset() {
-	window.alert('Resetting map');
 	// Remove foreground
 	$each(map_objects, function(e,k){
 		e.object.remove();
@@ -1027,22 +1037,41 @@ function map_objecttrigger(id, trigger, e) {
 			}
 		} else if (trigger == 'mousemove') {
 			if ($defined(map_objects[id].info.name)) {
+				
+				// Prepare and show hover tip window
 				var content = map_objects[id].info.name;
 				if ($defined(map_objects[id].info.subname)) content+='<br /><font color="#33FF33" size="1"><em>'+map_objects[id].info.subname+'</em></font>';
 				hoverShow(content, e.client.x+scrl.x, e.client.y+scrl.y);
+				
+				// Display action range
 				if ($defined(map_objects[id].info.range)) {
-					var z = map_objects[id].object.getStyle('z-index')-1;
-					wgrid_design(map_objects[id].info.x,map_objects[id].info.y-1,map_objects[id].info.range,z);
+					var pos = map_objects[id].object.getPosition();
+					var siz = map_objects[id].object.getSize().size;
+					var h = pos.y+(siz.y/2); // Display range only if cursor is below the hald of the char
+					if (e.client.y+scrl.y>h) {
+						if (!wgrid_visible) {
+							wgrid_design(map_objects[id].info.range);
+							wgrid_show();
+						}
+					}
+				}
+			}
+		} else if (trigger == 'click') {
+			// If clicked, display action range without mouse position checking
+			if ($defined(map_objects[id].info.range)) {
+				if (!wgrid_visible) {
+					wgrid_design(map_objects[id].info.range);
 					wgrid_show();
 				}
 			}
+
 		} else if (trigger == 'mouseout') {
 			hoverShow(false);
-			wgrid_hide();
+			if (!wgrid_hard_dispose) wgrid_hide();
 		}
 		
 	} catch (e) {
-		window.alert(e);
+		window.alert('Object Trigger Error: '+e);
 	}
 }
 
@@ -1232,6 +1261,11 @@ function map_addobject(data) {
 			map_objecttrigger(id, 'mouseup', e);
 			e.stop();
 		});
+		im.addEvent('click', function(e) {
+			var e = new Event(e);
+			map_objecttrigger(id, 'click', e);
+			e.stop();
+		});
 		
 		if ($defined(data.fx_show)) {						
 			switch (data.fx_show) {
@@ -1375,24 +1409,27 @@ function map_removeobject(uid, nofx) {
   * continuous position given in the grid 
   *
   */
-function map_fx_pathmove(object, grid) {
+function map_fx_pathmove(object, path) {
 	var i=0;
 
 	var px_transition=new Fx.Styles(object, {duration: 200, unit: 'px', transition: Fx.Transitions.linear});
 	var walk_step = function() {
 		// Check if we have more steps to go
-		if (!$defined(grid[i])) return;
+		if (!$defined(path[i])) return;
 		var j=i;
 		i++;
 		
 		// Calculate new Z-Index
-		var zindex = grid[j].y*500+grid[j].x;
+		var zindex = path[j].y*500+path[j].x;
+		var dim = object.getSize().size;
 		if (zindex<0) zindex=1;
 		px_transition.start({
-			'left': grid[j].x*32,
-			'top': grid[j].y*32
+			'left': path[j].x*32,
+			'top': path[j].y*32-dim.y+32
 		}).chain(walk_step);
 	}
+	
+	walk_step();
 }
 
 /**
@@ -1478,11 +1515,11 @@ function map_updateobject(uid,data) {
 				break;
 				
 			case 'path':
-				if ($defined(data.path)) {
-					map_fx_pathmove(old_data.object, data.path);
+				if ($defined(data.fx_path)) {
+					map_fx_pathmove(old_data.object, data.fx_path);
 					
 					// No need to keep the grid in memory any more
-					delete data.path;
+					delete data.fx_path;
 					break;
 				}
 				
@@ -1522,18 +1559,30 @@ var wgrid_host=null;
 var wgrid_pos={'x':0,'y':0};
 var wgrid_last_design_pos={'x':0,'y':0};
 var wgrid_visible=false;
+var wgrid_dispose_timer=null;
+var wgrid_hard_dispose=false;
 
 function wgrid_show() {
+	// If we are about to hide the window, but this event
+	// (probably from the grid elements) is called, stop disposion
+	if (wgrid_dispose_timer!=null) {
+		clearTimeout(wgrid_dispose_timer);
+		wgrid_dispose_timer=null;
+	}
+	
+	// If really hidden, show it
 	if (wgrid_host==null) return;
 	if (wgrid_visible) return;
-	wgrid_host.setStyle('visibility','visible');
+	wgrid_host.setStyle('display','');
 	wgrid_visible=true;
 }
 
 function wgrid_hide() {
 	if (!wgrid_visible) return;
-	wgrid_host.setStyle('visibility','hidden');
-	wgrid_visible=false;
+	wgrid_dispose_timer = window.setTimeout(function(){
+		wgrid_host.setStyle('display','none');
+		wgrid_visible=false;
+	},200);
 }
 
 function wgrid_dispose(partial_dispose) {
@@ -1557,7 +1606,7 @@ function wgrid_dispose(partial_dispose) {
   * Build the walking grid
   *
   */
-function wgrid_put(x,y,z) {
+function wgrid_put(x,y,href,data) {
 	// Create and initialize element
 	var e = $(document.createElement('a'));
 	e.href='javascript:;';
@@ -1571,14 +1620,17 @@ function wgrid_put(x,y,z) {
 		'height':32,
 		'background-color': '#00FF00',
 		'position': 'absolute',
-		'z-index': z,
 		'opacity': 0.5,
 		'text-decoration': 'none'
 	});
+	
+	if ($defined(data.color)) e.setStyle('background-color', data.color);
+	if ($defined(data.title)) e.setProperty('title', data.title);
+	
 	e.addEvent('click', function(e){
 		var e=new Event(e);
 		wgrid_dispose();
-		gloryIO('?a=map.grid.get',{'x':x,'y':y},false);
+		gloryIO(href,{'id':data.id},true);
 		e.stop();
 	});
 		
@@ -1587,18 +1639,17 @@ function wgrid_put(x,y,z) {
 }
 
 /**
-  * Build the walking grid
+  * Build and show the action grid
+  *
+  * If hard_dispose is true, the action grid will not be disposed
+  * if the mouse cursor moves away of the region
   *
   */
-function wgrid_design(x,y,strength,grid,zbase) {
+function wgrid_design(data,hard_dispose) {
 	var enter_grid = [];
-	
-	// Check if new grid is the same, so we design the grid only once
-	if ((wgrid_last_design_pos.x==x) && (wgrid_last_design_pos.y==y)) { return;};
-	wgrid_last_design_pos.x=x;
-	wgrid_last_design_pos.y=y;
-	
+		
 	// Dispose old grid
+	wgrid_hard_dispose = hard_dispose;
 	wgrid_dispose(true);
 	
 	// Prepare the host
@@ -1609,66 +1660,26 @@ function wgrid_design(x,y,strength,grid,zbase) {
 		'background-color': '#000000',
 		'left':0,
 		'top':0,
-		'z-index': zbase
+		'z-index': lastZ++
 	});
 	$('datapane').appendChild(wgrid_host);
-	wgrid_host.addEvent('mouseout',function(e){
-		wgrid_hide();										
+
+	// Do not use mouse to dispose grid in hard dispose mode
+	if (!hard_dispose) {
+		wgrid_host.addEvent('mouseleave',function(e){
+			wgrid_hide();										
+		});
+		wgrid_host.addEvent('mouseenter',function(e){
+			wgrid_show();
+		});
+	}
+
+	// Render the elements
+	$each(data.grid, function(e) {
+		wgrid_put(e.x,e.y,data.base,e);
 	});
 	
-	// Init walker and walk through the grid
-	var walk = function(x,y,range_left,direction) {
-		try{		
-		// If we have not enough range, quit
-		if (range_left<1) return false;
-		
-		// No attennuation exists? We cannot enter there...
-		if (!grid[y]) return false;
-		if (!grid[y][x]) return false;
-		
-		// By entering this tile, it means we can enter this
-		var id = x+','+y;
-		if (!$defined(enter_grid[id])) {
-			enter_grid[id]=true;
-			wgrid_put(x,y,zbase);
-		}
-				
-		// Handle the attennuation effect for the 2nd tile and further
-		var att = Number(grid[y][x]);
-		if (direction!=-1) {
-			var new_range = range_left-att;
-		} else {
-			var new_range = range_left;
-		}
-		
-		// Try entering the other grid points
-		var range_spots = [
-			{'x':0,  'y':-1, 'd':1},
-		/*	{'x':0,  'y':0,  'd':0}, */
-			{'x':0,  'y':1,  'd':0},
-		//	{'x':1,  'y':-1, 'd':7},
-			{'x':1,  'y':0,  'd':3},
-		//	{'x':1,  'y':1,  'd':5},
-		//	{'x':-1, 'y':-1, 'd':4},
-			{'x':-1, 'y':0,  'd':2}
-		//	{'x':-1, 'y':1,  'd':2}
-		];		
-		
-		for (var i=0; i<4; i++) {
-			if (range_spots[i].d!=direction) { // Do not go back, from the direction we came from
-				var nx=Number(range_spots[i].x);
-				var ny=Number(range_spots[i].y);
-				nx+=Number(x); ny+=Number(y);
-				
-				walk(nx,ny,new_range,i);
-			}
-		}
-		
-		} catch (e){
-			window.alert(e.message);	
-		}
-	};
-	walk(x,y,strength,-1);
+	wgrid_visible=true;
 }
 
 
@@ -1846,7 +1857,7 @@ function renderActionRange(chunk) {
 	
 	renderActionPane(HTML, chunk.point.x - glob_x_base, chunk.point.y - glob_y_base);
 	} catch (e) {
-	window.alert(e);	
+	window.alert('RenderActionRange Error: '+e);	
 	}
 }
 
@@ -2292,15 +2303,17 @@ $(document).addEvent('keyup', function(e){
 });
 
 $(document).addEvent('mouseup', function(e){
-	// Dispose dropdown menu
-	piemenu_dispose();	
+	// Dispose any probably open popups
+	piemenu_dispose();	//## Pie Menu
+	wgrid_hide();		//## Walking grid
 });
 
 $(document).addEvent('contextmenu', function(e){
 	var e = new Event(e);
-	// Disable right click on the document
-	piemenu_dispose();	
-	//e.stop();
+	// Dispose any probably open popups
+	piemenu_dispose();	//## Pie Menu
+	wgrid_hide();		//## Walking grid
+	e.stop();
 });
 
 // Initialize mouse handler on window
