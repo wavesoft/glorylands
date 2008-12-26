@@ -40,9 +40,9 @@ global $act_result, $act_operation, $act_interface, $act_profile, $_CONFIG;
 
 // Detect JSON input and merge those variables with the request array
 $headers = apache_request_headers();
-if (isset($headers['X-Request']) && isset($_REQUEST['json']) && ($headers['X-Request'] == 'JSON')) {
+if (isset($_REQUEST['json'])) {
 	$arr = json_decode(stripslashes($_REQUEST['json']), true);
-	if ($arr) $_REQUEST = array_merge($_REQUEST, $arr);
+	if (is_array($arr)) $_REQUEST = array_merge($_REQUEST, $arr);
 }
 
 // Prepare default values for some missing variables

@@ -517,7 +517,7 @@ function handleMessages(msg) {
 // ======================================================
 var data_io_time = 0;
 function gloryIO(url, data, silent, oncomplete_callback) {	
-//	try {
+	try {
 		// Reset feeder timer
 		reset_feeder();
 	
@@ -525,7 +525,7 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 	//	window.alert(url);
 		data_io_time = $time();
 		var json = new Json.Remote(url, {
-			headers: {'X-Request': 'JSON'},
+			headers: {'X-StreamID': '41293'},
 			onComplete: function(obj) {
 				showStatus();
 				data_io_time = $time()-data_io_time;
@@ -700,16 +700,17 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 				if (oncomplete_callback) oncomplete_callback(obj);	
 			},
 			onFailure: function(obj) {
-				window.alert('GloryIO Error: '+obj.message);
+				window.alert('JSON Error: '+obj.message);
 				if (!silent) showStatus('<font color=\"red\">Connection failure!</font>', 1000);
 				if (oncomplete_callback) oncomplete_callback(false);	
 			}
 		}).send(data);
-/*	}
+	}
 	catch (e) {
+		window.alert('GloryIO Error: '+obj.message);
 		if (!silent) showStatus('<font color=\"red\">Data Error!</font>', 1000);
 	}
-*/
+
 }
 
 // ======================================================
@@ -994,13 +995,15 @@ function map_finalize() {
 		for (var y=0; y<map_info.background.ysize; y++) {
 			var src = 'data/maps/'+map_info.background.name+'-'+x+'-'+y+'.png';
 			var elm = $(document.createElement('img'));
-			elm.src = src;
+			elm.setProperty('src',src);
 			$('datapane').appendChild(elm);
 			elm.setStyles({
 				'left':(x*map_info.background.width),
 				'top':(y*map_info.background.height),
 				'z-index':zDig--,
-				'position': 'absolute'
+				'position': 'absolute',
+				'width': map_info.background.width,
+				'height': map_info.background.height
 			});
 			map_back.push({object:elm, x:(x*map_info.background.width), y:(y*map_info.background.height)});
 		};
@@ -1420,13 +1423,19 @@ function map_fx_pathmove(object, path) {
 		i++;
 		
 		// Calculate new Z-Index
-		var zindex = path[j].y*500+path[j].x;
-		var dim = object.getSize().size;
+		var zindex = (path[j].y+1)*500+path[j].x;
 		if (zindex<0) zindex=1;
+		
+		// Update z index
+		object.setStyle('z-index',zindex);
+		
+		// Move object
+		var dim = object.getSize().size;
 		px_transition.start({
 			'left': path[j].x*32,
 			'top': path[j].y*32-dim.y+32
 		}).chain(walk_step);
+		
 	}
 	
 	walk_step();
@@ -1580,8 +1589,11 @@ function wgrid_show() {
 function wgrid_hide() {
 	if (!wgrid_visible) return;
 	wgrid_dispose_timer = window.setTimeout(function(){
-		wgrid_host.setStyle('display','none');
-		wgrid_visible=false;
+		try {
+			wgrid_host.setStyle('display','none');
+			wgrid_visible=false;
+		} catch(e) {
+		}
 	},200);
 }
 
@@ -1592,6 +1604,10 @@ function wgrid_dispose(partial_dispose) {
 		});
 		wgrid_host.remove();
 	} catch(e){
+	}
+	if (wgrid_dispose_timer!=null) {
+		clearTimeout(wgrid_dispose_timer);
+		wgrid_dispose_timer=null;
 	}
 	wgrid_elements=[];
 	wgrid_host=null;
@@ -1609,8 +1625,15 @@ function wgrid_dispose(partial_dispose) {
 function wgrid_put(x,y,href,data) {
 	// Create and initialize element
 	var e = $(document.createElement('a'));
-	e.href='javascript:;';
+	e.setProperty('href','javascript:;');
 	e.setHTML('&nbsp;');
+	e.addEvent('click', function(e){
+		var e=new Event(e);
+		wgrid_dispose();
+		gloryIO(href,{'id':data.id},true);
+		e.stop();
+	});
+	
 	wgrid_host.appendChild(e);
 	e.setStyles({
 		'left': x*32,
@@ -1626,14 +1649,7 @@ function wgrid_put(x,y,href,data) {
 	
 	if ($defined(data.color)) e.setStyle('background-color', data.color);
 	if ($defined(data.title)) e.setProperty('title', data.title);
-	
-	e.addEvent('click', function(e){
-		var e=new Event(e);
-		wgrid_dispose();
-		gloryIO(href,{'id':data.id},true);
-		e.stop();
-	});
-		
+			
 	// Store elements for removal
 	wgrid_elements.push(e);
 }
@@ -1997,7 +2013,7 @@ function piemenu_spawnicon(x,y,icon,tip,url) {
 	var host_ani=new Fx.Styles(host, {duration: 400, transition: Fx.Transitions.Back.easeOut});
 
 	var btn_link = $(document.createElement('a'));
-	btn_link.setAttribute('href','javascript:;');
+	btn_link.setProperty('href','javascript:;');
 	btn_link.addEvent('click', function(e) {
 		e = new Event(e);
 		piemenu_dispose();
