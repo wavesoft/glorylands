@@ -647,7 +647,7 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 								var s = new String(o.image);
 								if (s.indexOf('.php')>0){
 								} else {
-									obj.objects[k].image='images/elements/'+o.image;
+									obj.objects[k].image='images/'+o.image;
 								}
 							}
 						});							
@@ -700,7 +700,7 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 				if (oncomplete_callback) oncomplete_callback(obj);	
 			},
 			onFailure: function(obj) {
-				window.alert('JSON Error: '+obj.message);
+				window.alert('JSON Error: '+$trace(obj));
 				if (!silent) showStatus('<font color=\"red\">Connection failure!</font>', 1000);
 				if (oncomplete_callback) oncomplete_callback(false);	
 			}
@@ -753,6 +753,7 @@ var map_last_id = 0;			// Used to provide unique IDs while storing objects
 var map_viewpoint = {x:0,y:0};	// The center of the current view
 var map_center_fx = null;		// This holds the last instance of the center Fx class - Used to stop animation
 var map_current = '';			// The currently active MAP
+var map_playeruid = 0;			// The player's object UniqueID
 
 /**
   *
@@ -1027,11 +1028,12 @@ function map_finalize() {
   * This function is used as callback for the events on the map objects
   *
   */
-function map_objecttrigger(id, trigger, e) {
+function map_objecttrigger(uid, trigger, e) {
 	try {
 		
 		// Get Scroll position
 		var scrl = getScrollPosition();	
+		var id=map_object_index.indexOf(uid);
 		
 		if (trigger=='contextmenu') {
 			piemenu_dispose();
@@ -1066,6 +1068,10 @@ function map_objecttrigger(id, trigger, e) {
 					wgrid_design(map_objects[id].info.range);
 					wgrid_show();
 				}
+			
+			// Elseways, if we have click-action, perform it now
+			} else if ($defined(map_objects[id].info.click)) {
+				gloryIO(map_objects[id].info.click, false, false);
 			}
 
 		} else if (trigger == 'mouseout') {
@@ -1235,38 +1241,41 @@ function map_addobject(data) {
 		'object': im
 	}
 	
+	// Check if this object is the player, and update UID value
+	if ($defined(data.player)) map_playeruid=uid;	
+	
 	// If the object is dynamic, append triggers and allow advanced show effects
 	if (data.dynamic) {
 		im.addEvent('contextmenu', function(e) {
 			var e = new Event(e);
-			map_objecttrigger(id, 'contextmenu', e);						
+			map_objecttrigger(uid, 'contextmenu', e);						
 			e.stop();
 		});
 		im.addEvent('mousemove', function(e) {
 			var e = new Event(e);
 			im.setStyles({'opacity':0.7});
-			map_objecttrigger(id, 'mousemove', e);
+			map_objecttrigger(uid, 'mousemove', e);
 			e.stop();
 		});
 		im.addEvent('mouseout', function(e) {
 			var e = new Event(e);
 			im.setStyles({'opacity':1});
-			map_objecttrigger(id, 'mouseout', e);
+			map_objecttrigger(uid, 'mouseout', e);
 			e.stop();
 		});
 		im.addEvent('mousedown', function(e) {
 			var e = new Event(e);
-			map_objecttrigger(id, 'mousedown', e);
+			map_objecttrigger(uid, 'mousedown', e);
 			e.stop();
 		});
 		im.addEvent('mouseup', function(e) {
 			var e = new Event(e);
-			map_objecttrigger(id, 'mouseup', e);
+			map_objecttrigger(uid, 'mouseup', e);
 			e.stop();
 		});
 		im.addEvent('click', function(e) {
 			var e = new Event(e);
-			map_objecttrigger(id, 'click', e);
+			map_objecttrigger(uid, 'click', e);
 			e.stop();
 		});
 		
@@ -1423,14 +1432,14 @@ function map_fx_pathmove(object, path) {
 		i++;
 		
 		// Calculate new Z-Index
-		var zindex = (path[j].y+1)*500+path[j].x;
+		var dim = object.getSize().size;
+		var zindex = (path[j].y+Math.round(dim.y/32))*500+path[j].x;
 		if (zindex<0) zindex=1;
 		
 		// Update z index
 		object.setStyle('z-index',zindex);
 		
 		// Move object
-		var dim = object.getSize().size;
 		px_transition.start({
 			'left': path[j].x*32,
 			'top': path[j].y*32-dim.y+32
@@ -1481,7 +1490,10 @@ function map_updateobject(uid,data) {
 	old_data.width = size.x;
 	old_data.height = size.y;
 	old_data.info = data;
-	
+
+	// Check if this object is the player, and update UID value
+	if ($defined(data.player)) map_playeruid=uid;	
+
 	// If we have transition, use them.
 	if (data.fx_move) {
 		switch (data.fx_move) {
@@ -2291,17 +2303,28 @@ $(document).addEvent('keydown', function(e){
 			window.alert($trace(map_objects));
 		}
 	} else if (e.key == 'right') {
-		e.stop();
 		v_center.x=200;
+		e.stop();
 	} else if (e.key == 'left') {
-		e.stop();
 		v_center.x=-200;
+		e.stop();
 	} else if (e.key == 'up') {
-		e.stop();
 		v_center.y=-200;
-	} else if (e.key == 'down') {
 		e.stop();
+	} else if (e.key == 'down') {
 		v_center.y=200;
+		e.stop();
+	} else if (e.key == 'm') {
+		var id=map_object_index.indexOf(map_playeruid);
+		if (id>-1) {
+			var scrl = getScrollPosition();	
+			if ($defined(map_objects[id].info.range)) {
+				if (!wgrid_visible) {
+					wgrid_design(map_objects[id].info.range);
+					wgrid_show();
+				}
+			}			
+		}
 	}
 	
 	if ((v_center.x!=v_last.x) || (v_center.y!=v_last.y)) {

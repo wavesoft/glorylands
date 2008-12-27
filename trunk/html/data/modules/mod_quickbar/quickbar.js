@@ -25,63 +25,67 @@ function qb_makeqbutton(v_element, guid, slot) {
 }
 
 function qb_init_droppables() {
-	$$('#quickbar div').each(function(drop, index){
-		drop.removeEvents();
-		drop.addEvents({
-			'over': function(el, obj){
-				this.setStyle('opacity', 0.5);
-			},
-			'leave': function(el, obj){
-				this.setStyle('opacity', 1);
-			},
-			'drop': function(el, obj){
-				this.setStyle('opacity', 1);
-				var guid = el.getProperty('guid');
-				var host_guid = el.getProperty('host');
-				var host_view = el.getProperty('hostview');
-				var slot = drop.getProperty('slot');
-				
-				// Do not accept elements if I am already filled
-				var children = drop.getChildren();
-				if (children.length>0) {
+	try {
+		$$('#quickbar_data div').each(function(drop, index){
+			drop.removeEvents();
+			drop.addEvents({
+				'over': function(el, obj){
+					this.setStyle('opacity', 0.5);
+				},
+				'leave': function(el, obj){
+					this.setStyle('opacity', 1);
+				},
+				'drop': function(el, obj){
+					this.setStyle('opacity', 1);
+					var guid = el.getProperty('guid');
+					var host_guid = el.getProperty('host');
+					var host_view = el.getProperty('hostview');
+					var slot = drop.getProperty('slot');
 					
-					// Remove floating
-					el.remove();
-
-					// Notify system that a user attempted to mix 2 objects
-					var childguid = children[0].getProperty('guid');
-					if (childguid != guid) {
-						// Notify system for a button change
-						gloryIO('?a=quickbar.mix&guid1='+guid+'&guid2='+childguid+'&slot='+slot+'&host='+host_guid+'&view='+host_view);
+					// Do not accept elements if I am already filled
+					var children = drop.getChildren();
+					if (children.length>0) {
+						
+						// Remove floating
+						el.remove();
+	
+						// Notify system that a user attempted to mix 2 objects
+						var childguid = children[0].getProperty('guid');					
+						if (childguid != guid) {
+							// Notify system for a button change
+							gloryIO('?a=quickbar.mix&guid1='+guid+'&guid2='+childguid+'&slot='+slot+'&host='+host_guid+'&view='+host_view);
+						}
+											
+						return;	
 					}
-										
-					return;	
+								
+					// Create new draggable element
+					var myobj = new Element('img', {
+									'src': el.src								
+								});
+					
+					// Make this element moeavable
+					qb_makeqbutton(myobj, guid, slot);
+					myobj.inject(drop);
+					
+					// Store some usefull information on the hosted object
+					myobj.setProperty('slot', slot);
+					
+					// Remove floater and floater host
+					el.remove();
+					if (qb_currently_dragging) {
+						qb_currently_dragging.remove();
+						qb_currently_dragging=null;
+					}
+	
+					// Notify system for a button change
+					gloryIO('?a=quickbar.move&guid='+guid+'&slot='+slot+'&host='+host_guid+'&view='+host_view);
 				}
-							
-				// Create new draggable element
-				var myobj = new Element('img', {
-								'src': el.src								
-							});
-				
-				// Make this element moeavable
-				qb_makeqbutton(myobj, guid, slot);
-				myobj.inject(drop);
-				
-				// Store some usefull information on the hosted object
-				myobj.setProperty('slot', slot);
-				
-				// Remove floater and floater host
-				el.remove();
-				if (qb_currently_dragging) {
-					qb_currently_dragging.remove();
-					qb_currently_dragging=null;
-				}
-
-				// Notify system for a button change
-				gloryIO('?a=quickbar.move&guid='+guid+'&slot='+slot+'&host='+host_guid+'&view='+host_view);
-			}
-		});
-	});	
+			});
+		});	
+	} catch (e) {
+		window.alert('QB Init Droppables Error: '+e.message);	
+	}
 }
 
 // Function to initialize droppable objects
@@ -102,7 +106,7 @@ function qb_makedraggable(element, guid, moveable, host_guid, host_view) {
 		item.addEvent('mousedown', function(e) {
 			var e = new Event(e);
 			qb_currently_dragging=null;
-			if (e.event.button!=1) {
+			if (e.rightClick) {
 				e.stop();
 				return;
 			}
@@ -118,7 +122,7 @@ function qb_makedraggable(element, guid, moveable, host_guid, host_view) {
 				}).inject(document.body);
 			
 			var drag = clone.makeDraggable({
-				droppables: $$('#quickbar div')
+				droppables: $$('#quickbar_data div')
 			}); // this returns the dragged element
 	 
 			e.stop();
@@ -128,7 +132,7 @@ function qb_makedraggable(element, guid, moveable, host_guid, host_view) {
 		item.addEvent('mousedown', function(e) {
 			e = new Event(e);
 			qb_currently_dragging=null;
-			if (e.event.button!=1) {
+			if (e.rightClick) {
 				e = new Event(e).stop();
 				return;
 			}
@@ -168,7 +172,7 @@ function qb_makedraggable(element, guid, moveable, host_guid, host_view) {
 			startcoord = $(this).getCoordinates();
 	  
 			var drag = clone.makeDraggable({
-				droppables: $$('#quickbar div')
+				droppables: $$('#quickbar_data div')
 			}); // this returns the dragged element
 	 
 			e.stop();
@@ -177,12 +181,66 @@ function qb_makedraggable(element, guid, moveable, host_guid, host_view) {
 	}
 }
 
+var qb_items=[];
+
+/**
+  * Spawn an item on the QBar
+  */
+function qb_spawn_item(slot, image, title, guid) {
+	try {
+		var e = $(document.createElement('div'));
+		$('quickbar_data').appendChild(e);
+		e.setProperties({
+			'slot': slot
+		});
+		qb_items.push(e);		
+		
+		if (!image) {
+			// Empty? Return..	
+		} else {
+			// Has image? Spawn it...
+			var i = $(document.createElement('img'));
+			i.setProperties({
+				'src': 'images/'+image,
+				'title': title
+			});
+			e.appendChild(i);
+			qb_makeqbutton(i,guid,slot);
+			qb_items.push(i);
+		}
+	} catch (e) {
+		window.alert('QB Spawn error: '	+e.message);
+	}
+}
+
+/**
+  * Remove all qbar items
+  */
+function qb_items_reset() {
+	$each(qb_items, function(e){
+		try {
+			e.remove();
+		} catch(e) {			
+		}
+	});
+	qb_items=[];
+}
+
 callback.register('message', function(msg) {
 	// ## Handle QBAR messages ##
 	if (msg[0] == 'QBAR') {
-		$$('#quickbar_data').each(function(e) {
-			e.setHTML(msg[1]);
+		try {
+			qb_items_reset();
+			$each(msg[1], function(e,slot) {
+				if ($defined(e.image)) {
+					qb_spawn_item(slot, e.image, e.name, e.guid);
+				} else {
+					qb_spawn_item(slot);
+				}
+			});
 			qb_init_droppables();
-		});
+		} catch (e) {
+			window.alert('QBInit error: '+e.message);	
+		}
 	}
 });

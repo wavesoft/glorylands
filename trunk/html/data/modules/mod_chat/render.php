@@ -7,7 +7,7 @@
 <tr>
 	<td height="20">
 		<form onsubmit="chat_send(this.elements[0].value); this.elements[0].value=''; return false;">
-		<input style="width: 100%" type="text" name="chat" />
+		<input id="chat_input" style="width: 100%" type="text" name="chat" />
 		</form>
 	</td>
 </tr>

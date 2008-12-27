@@ -32,6 +32,10 @@ $(window).addEvent('load', function(e) {
    ');
 	document.body.appendChild(eChatFloat);
 	
+	$$('#chat_input').each(function(e) {
+
+	});
+	
 	// Obdain the float element from the text above
 	eChatText = $('modchat_floattext');
 	
