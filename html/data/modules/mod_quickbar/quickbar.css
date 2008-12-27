@@ -1,7 +1,11 @@
 @charset "iso-8859-7";
 /* CSS Document */
 
-#quickbar div {
+#quickbar_data {
+	text-align: center;
+}
+
+#quickbar_data div {
 	width: 41px;
 	height: 41px;
 	background-image: url(../../../images/UI/qbar-emptyslot.jpg);
@@ -9,8 +13,10 @@
 	background-repeat: no-repeat;
 	text-align: center;
 	vertical-align: middle;
+	padding: 2px;
+	float: left;
 }
-#quickbar div img {
+#quickbar_data div img {
 	margin: 2px;
 	width: 37px;
 	height: 37px;

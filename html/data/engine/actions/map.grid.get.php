@@ -83,7 +83,7 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		// GL Map render variables
 		'x' => $row['x'],
 		'y' => $row['y']+1,
-		'image' => $row['model'],
+		'image' => 'elements/'.$row['model'],
 		'id' => $row['guid'],
 		'dynamic' => true,
 		'fx_move' => 'fade',
@@ -112,11 +112,11 @@ $ans=$sql->query("SELECT
 	`npc_instance`.`map` = $map
 ");
 while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
-	$objects[] = array(
+	$myobj = array(
 		'guid' => $row['guid'],
 		'x' => $row['x'],
 		'y' => $row['y']+1,
-		'image' => $row['model'],
+		'image' =>'chars/'. $row['model'],
 		'name' => $row['name'],
 		'icon' => $row['icon'],
 		'flags' => $row['flags'],
@@ -126,6 +126,14 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		'fx_show' => 'fade',
 		'fx_hide' => 'fade'
 	);
+	$details = gl_get_guid_vars($row['guid']);
+	if (strstr($details['flags'],'VENDOR')) {
+		$myobj['name'] = '<font color="gold">'.$row['name'].'</font>';
+		$myobj['subname'] = '(Click to trade)';
+		$myobj['click'] = '?a=interface.book&guid='.$row['guid'];
+	}
+	
+	$objects[] = $myobj;
 }
 
 // Get Players
@@ -155,7 +163,7 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		'guid' => $row['guid'],
 		'x' => $row['x'],
 		'y' => $row['y']+1,
-		'image' => $row['model'],
+		'image' => 'elements/'.$row['model'],
 		'name' => $row['name'],
 		'icon' => $row['icon'],
 		'flags' => $row['flags'],
