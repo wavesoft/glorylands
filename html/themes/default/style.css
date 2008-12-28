@@ -209,7 +209,7 @@ table.book h2 {
 	background-image: url(../../images/UI/frame128.gif);
 	width: 128px;
 	height: 128px;
-	background-position: center;
+	background-position: top;
 	background-repeat: no-repeat;
 }
 .br2_lt {
@@ -492,3 +492,55 @@ a.actgrid_link:hover {
 	width: 32px;
 	height: 32px;
 }
+
+/* ======[ Merchant window ]==================================== */
+
+.merchant_sell {
+	height: 440px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	background-image: url(images/UI/background.jpg);
+}
+
+.merchant_sell div {
+	position: relative;
+	height: 50px;
+	width: 100%;
+}
+
+.merchant_sell img {
+	position:absolute;
+	left: 2px;
+	top: 1px;
+}
+
+.merchant_sell a {
+	position:absolute;
+	left: 2px;
+	top: 1px;
+	width: 570px;
+	text-decoration: none;
+	color: #000000;
+}
+
+.merchant_sell a img {
+	position:absolute;
+	left: 7px;
+	top: 6px;
+}
+
+.merchant_sell a h4 {
+	position:absolute;
+	left: 50px;
+	top: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+
+.merchant_sell a div {
+	position:absolute;
+	left: 50px;
+	top: 16px;
+	font-size: 10px;
+}
+
