@@ -24,7 +24,7 @@ define('LANG','LANG');
 
 ### The database configuration
 $_CONFIG[DB][HOST] 			= "localhost";
-$_CONFIG[DB][DATABASE] 		= "glory";
+$_CONFIG[DB][DATABASE] 		= "gl_empty";
 $_CONFIG[DB][USER] 			= "glory";
 $_CONFIG[DB][PASSWORD] 		= "lands";
 
@@ -34,7 +34,7 @@ $_CONFIG[GAME][TITLE] 		= "Glory Lands";
 $_CONFIG[GAME][CHARSET] 	= "iso-8859-7";
 $_CONFIG[GAME][THEME] 		= "default";
 $_CONFIG[GAME][BASE] 		= "C:/xampp/htdocs/gl-sf";
-$_CONFIG[GAME][REF_URL] 	= "/gl-sf";
+$_CONFIG[GAME][REF_URL] 	= "";
 $_CONFIG[GAME][INDX_INTERFACE] = 'interface.entry';
 
 ### Tuning variables
