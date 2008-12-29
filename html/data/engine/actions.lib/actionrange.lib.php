@@ -1,10 +1,10 @@
 <?php
 
-function range_calculate($x, $y, $distance, $callback) {
+function range_calculate($x, $y, $distance, $callback, $callback_always) {
 	global $enter_grid;
 	$enter_grid = array();
 	
-	function walk($x,$y,$range_left,$direction,$walk_trace, $callback) {
+	function walk($x,$y,$range_left,$direction,$walk_trace, $callback, $callback_always) {
 		global $enter_grid;
 		
 		try{		
@@ -22,6 +22,11 @@ function range_calculate($x, $y, $distance, $callback) {
 			if (!isset($enter_grid[$id])) {
 				$enter_grid[$id]=true;
 				call_user_func($callback, $x,$y,$walk_trace);
+			} else {
+				// Do we hit the same position again? Use the other callback
+				if (isset($callback_always)) {
+					call_user_func($callback_always, $x,$y,$walk_trace);
+				}
 			}
 					
 			// Handle the attennuation effect for the 2nd tile and further
@@ -48,7 +53,7 @@ function range_calculate($x, $y, $distance, $callback) {
 					
 					$stack = $walk_trace;
 					array_push($stack, array('x'=>$nx,'y'=>$ny));
-					walk($nx,$ny,$new_range,$i,$stack,$callback);
+					walk($nx,$ny,$new_range,$i,$stack,$callback,$callback_always);
 				}
 			}
 			
@@ -61,7 +66,7 @@ function range_calculate($x, $y, $distance, $callback) {
 	
 	// Generate walk range
 	$stack = array(array('x'=>$_SESSION[PLAYER][DATA]['x'],'y'=>$_SESSION[PLAYER][DATA]['y']));
-	walk($x, $y, $distance, -1, $stack, $callback);
+	walk($x, $y, $distance, -1, $stack, $callback, $callback_always);
 
 }
 

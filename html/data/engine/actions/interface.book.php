@@ -6,7 +6,7 @@ $row = $sql->fetch_array();
 $objects = array(
 	array('name' => 'Shuriken', 'icon' => 'inventory/shuriken-48x48.png', 'desc' => 'Traditional japanese Shuriken', 'cost' => 32),
 	array('name' => 'Kunai', 'icon' => 'inventory/Kunai-48x48.png', 'desc' => 'Ninja Kunai', 'cost' => 32),
-	array('name' => 'Nunchaku', 'icon' => 'inventory/Nunchaku-48x48.png', 'desc' => 'Ninja Nunchaku', 'cost' => 32),
+	array('name' => 'Nunchaku', 'icon' => 'inventory/Nunchaku-48x48.png', 'desc' => 'Ninja Nunchaku', 'cost' => '3,000'),
 	array('name' => 'Sacred Scroll', 'icon' => 'inventory/parchemin-48x48.png', 'desc' => 'Sacred scroll of protection', 'cost' => 32)
 );
 
