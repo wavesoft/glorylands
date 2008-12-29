@@ -3,11 +3,29 @@
 include_once(DIROF('ACTION.LIBRARY')."/actionrange.lib.php");
 
 function renderRange(&$data) {
-	global $result;
+	global $result, $mapper;
 	$result = array();
+	$mapper = array();
+
+	// Used to update walkID trace with the shortest animation path
+	function walk_gridfix($x,$y,$walk_trace) {
+		global $result, $mapper;	
+		$my_steps = sizeof($walk_trace);
+		$id = $x.','.$y;
+		if (isset($mapper[$id])) {
+			$index = $mapper[$id];
+			$entry = $result[$index];
+			
+			$steps = sizeof($_SESSION[DATA]['WALKID'][$entry['id']]['steps']);
+			if ($my_steps < $steps) {
+				$_SESSION[DATA]['WALKID'][$entry['id']]['steps'] = $walk_trace;
+			}
+		}
+	}
 	
+	// Used to mark the positions the player can enter
 	function walk_hit($x,$y,$walk_trace) {
-		global $result, $sql;	
+		global $result, $sql, $mapper;	
 		
 		// Map XY-ID
 		$id = sizeof($_SESSION[DATA]['WALKID']);
@@ -27,8 +45,12 @@ function renderRange(&$data) {
 			$ans['title'] = 'Teleport point';
 		}
 				
+		// Store the mapper index for quickly obdaining the index
+		$index = $x.','.$y;
+		$mapper[$index] = sizeof($result);
+
 		// Store the result		
-		array_push($result, $ans);
+		array_push($result, $ans);		
 	}	
 	
 	// Extract (if existing) the walk key steps from WALKID stack
@@ -39,7 +61,7 @@ function renderRange(&$data) {
 	$_SESSION[DATA]['WALKID'] = array();
 
 	// Generate walk range
-	range_calculate($_SESSION[PLAYER][DATA]['x'], $_SESSION[PLAYER][DATA]['y'], 5, 'walk_hit');
+	range_calculate($_SESSION[PLAYER][DATA]['x'], $_SESSION[PLAYER][DATA]['y'], 5, 'walk_hit', 'walk_gridfix');
 	
 	// Store the result in the range field of the player's map object
 	foreach ($data['objects'] as $id => $obj) {
@@ -86,3 +108,4 @@ function opinitTranslateID($lastop, $newop) {
 }
 
 ?>
+ 
