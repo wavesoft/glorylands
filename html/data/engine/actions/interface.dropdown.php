@@ -16,11 +16,17 @@ if (isset($vars['x'], $vars['y'])) {
 	}
 }
 
-// Initialize reply stack
+// Initialize basic reply stack
 $data = array(
 	array('url'=>'?a=info.guid&guid='.$_REQUEST['guid'], 'icon' => 'images/UI/piemenu/help.gif', 'text'=>'View information'),
 	array('url'=>'?a=interface.container&guid='.$_REQUEST['guid'], 'icon' => 'images/UI/piemenu/find.gif', 'text'=>'Search Object')
 );
+
+// Add more specific options
+if (strstr($vars['flags'], 'VENDOR')) $data[]=array('url'=>'?a=merchant.sell&guid='.$_REQUEST['guid'], 'icon' => 'images/UI/piemenu/trade.gif', 'text'=>'Trade');
+if (strstr($vars['flags'], 'CHAT')) $data[]=array('url'=>'?a=npc.chat&guid='.$_REQUEST['guid'], 'icon' => 'images/UI/piemenu/chat.gif', 'text'=>'Chat');
+if (strstr($vars['flags'], 'QUEST')) $data[]=array('url'=>'?a=merchant.sell&guid='.$_REQUEST['guid'], 'icon' => 'images/UI/piemenu/quest.gif', 'text'=>'Quest');
+
 $text = '';
 
 // Dropdown system is mostly based on the interrupt system

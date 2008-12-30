@@ -22,6 +22,7 @@ var mapOfsY = 8;
 <!-- <script language="javascript" src="includes/glapi-1.1.src.js"></script> -->
 <script language="javascript" src="includes/glapi-2.1.src.js"></script>
 <script language="javascript" src="includes/popup.js"></script>
+<script language="javascript" src="includes/merchant-functions.js"></script>
 {$javascript}
 <link href="{$theme}/style.css" rel="stylesheet" type="text/css" />
 {$stylesheet}

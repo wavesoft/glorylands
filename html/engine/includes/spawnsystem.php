@@ -45,36 +45,52 @@ function gl_spawn_check() {
 		// Check if the hit is successfull
 		if (gl_chance($row['successrate'])) {
 			
-			// Get information about the container
+			// Get information about the container and the spawning item
+			$container = gl_analyze_guid($row['container']);
 			$template = gl_analyze_guid($row['guid']);
 			
-			// Count the spawned items for this container
-			$sql->query("SELECT COUNT(*) FROM `{$template['group']}_instance` WHERE `parent` = ".$row['container']." AND `template` = ".$template['index']);
-			$items = $sql->fetch_array(MYSQL_NUM);
-			$items = $items[0];
+			// If the container is template, loop for each instanced objects of this template
+			$containers = array();
+			if ($container['template']) {			
+				$sql->query("SELECT `guid` FROM `{$container['group']}_instance` WHERE `template` = {$container['index']}");
+				while ($c_guid = $sql->fetch_array(MYSQL_NUM)) {
+					$containers[] = $c_guid[0];
+				}
+			} else {
+				$containers = array($row['container']);
+			}
 			
-			// Check if there are items available
-			if ($items < $row['maxitems']) {
-			
-				// If yes, create new item instance(s) and place them on the container
-				$vars = array();
-				if ($row['variables']!='') $vars=unserialize($row['variables']);
+			// For every container we must handle, perform the instance
+			foreach($containers as $container) {
+						
+				// Count the spawned items for this container
+				$sql->query("SELECT COUNT(*) FROM `{$template['group']}_instance` WHERE `parent` = ".$container." AND `template` = ".$template['index']);
+				$items = $sql->fetch_array(MYSQL_NUM);
+				$items = $items[0];
 				
-				// #@# IF THE CONTAINER IS TEMPLATE GUID, ALL THE INSTANCED GUIDS SHALL GET THIS ITEM #@#
-				$vars['parent'] = $row['container'];
+				// Check if there are items available
+				if ($items < $row['maxitems']) {
 				
-				// Loop import sequence till we reach the maximum import entries
-				$spawncount = $row['maxitems']-$items;
-
-				if ($spawncount>$row['spawncount']) $spawncount=$row['spawncount'];
-				for ($i=1; $i<=$spawncount; $i++) {
+					// If yes, create new item instance(s) and place them on the container
+					$vars = array();
+					if ($row['variables']!='') $vars=unserialize($row['variables']);
 					
-					// Instance the object
-					$obj = gl_instance_object($row['guid'], $vars);
-
-					// Update it's container
-					gl_dynupdate_update($row['container']);
+					// #@# IF THE CONTAINER IS TEMPLATE GUID, ALL THE INSTANCED GUIDS SHALL GET THIS ITEM #@#
+					$vars['parent'] = $container;
 					
+					// Loop import sequence till we reach the maximum import entries
+					$spawncount = $row['maxitems']-$items;
+	
+					if ($spawncount>$row['spawncount']) $spawncount=$row['spawncount'];
+					for ($i=1; $i<=$spawncount; $i++) {
+						
+						// Instance the object
+						$obj = gl_instance_object($row['guid'], $vars);
+	
+						// Update it's container
+						gl_dynupdate_update($container);
+						
+					}
 				}
 			}
 		}

@@ -210,17 +210,33 @@ function gl_count_guid_children($parent, $group=false) {
 
 
 /**
+  * Disable stacking for those results
+  */
+define('STACK_NONE',false);
+
+/**
+  * Stack all the objects in a single group
+  */
+define('STACK_ALWAYS',1);
+
+/**
+  * Stack the objects using each object's stacking variable
+  */
+define('STACK_AUTO',2);
+
+/**
   * Retrive all the guids that have the same parent GUID
   *  
   * This function automatically detects the instance table by the specified GUID and
   * searches for a matched parent field. If you don't want automatic detection, you
   * can specify a custom group
   *
-  * @param int $parent 		The parent GUID whose children are to be counted
+  * @param int $parent 		The parent GUID whose children are to be obdained
   * @param string $group	An optional parameter that specifies the instance group to check for children
+  * @param boolean $stack	An optional parameter that specifies if the stacking mode of the objecs (see STACK_* constants)
   * @return int 			Returns the number of children
-  */
-function gl_get_guid_children($parent, $group=false) {
+  */  
+function gl_get_guid_children($parent, $group=false, $stack=false) {
 	global $sql;
 	
 	// Detect group if not specified
@@ -236,17 +252,128 @@ function gl_get_guid_children($parent, $group=false) {
 	} 
 	
 	// Search the GUID table for items
-	$ans=$sql->query("SELECT `guid` FROM `{$group}_instance` WHERE `parent` = ".$parent);
+	$ans=$sql->query("SELECT `guid`,`template` FROM `{$group}_instance` WHERE `parent` = ".$parent);
 	if (!$ans) { debug_error($sql->getError()); return false; }
-	$guids=array();
+	$guids=array(); $templates=array();
 	while ($row = $sql->fetch_array(MYSQL_NUM)) {
 		$guids[] = $row[0];
+		$templates[] = $row[1]; /* We keep it separated since if stacking is not used, only $guids is returned */
+	}
+	
+	// If we use stack groupping, do some more processing
+	if ($stack!=false) {
+		
+		// Find the different templates for the items resolved
+		$tpl = implode(",",array_unique($templates));
+		$stacks = array();
+		$stack_counters = array();
+		
+		// Get the stacking information for each template
+		$ans=$sql->query("SELECT `stackable`,`template` FROM `{$group}_template` WHERE `template` IN (".$tpl.")");
+		if (!$ans) {
+			// The field 'stackable' is probably missing. Ignore this error...
+		} else {
+		
+			// Get the number of objects on each table and the stackable ammount
+			while ($row = $sql->fetch_array(MYSQL_NUM)) {
+				$stacks[$row[1]]=$row[0];
+			}
+		}
+		
+		// If we use the STACK_ALWAYS algorithm, just count the objects of each type
+		if ($stack==STACK_ALWAYS) {
+			
+			// Count the object for each template
+			$template_count = array();
+			$template_guid = array();
+			foreach ($guids as $index => $guid) {
+				$template = $templates[$index];				
+				if (!isset($template_guid[$template])) {
+					$template_guid[$template] = $guid;
+					$template_count[$template] = 1;
+				} else {
+					$template_count[$template]++;
+				}				
+			}
+			
+			// Build the answer
+			$guids=array();
+			foreach ($template_count as $template => $count) {
+				$guids[$template_guid[$template]] = $count;
+			}
+		
+		// Elseways, use the default, STACK_AUTO algorithm
+		} else {
+			// Assign the objects into stacks
+			$last_template_guid = array();
+			$ans = array();
+			foreach ($guids as $index => $guid) {
+				$template = $templates[$index];
+				
+				if (isset($stack_counters[$template])) {
+					$stack_counters[$template]++;
+					if ($stack_counters[$template]>$stacks[$template]) {
+						$ans[$guid] = $stacks[$template];
+						$stack_counters[$template]=1;
+					}
+				} else {
+					// Hold the first GUID used
+					$last_template_guid[$template] = $guid;
+					$stack_counters[$template]=1;
+				}				
+			}
+			
+			// Each of the remaining counters inside the stack_counters spawns new, incomplete chunks
+			foreach ($stack_counters as $template => $count) {
+				$ans[$last_template_guid[$template]] = $count;
+			}
+			
+			// Replace the result
+			$guids = &$ans;
+			
+		}
+		
 	}
 	
 	// Return the result
 	return $guids;
 }
 
+/**
+  * Retrive all the simmilar objects inside another object
+  *  
+  * This function is used when groupping is used. The groupping is done using the first GUID
+  * found inside another GUID and the number of occurences. If you want to get all those objects
+  * you should use this function, passing the first GUID and the number of elements to retrive
+  * as parameters.
+  *
+  * @param int $match		The GUID used for matching
+  * @param int $parent 		The parent GUID whose children are to be obdained
+  * @param int $count		The number of simmilar elements to retrive
+  * @return int 			Returns the number of children
+  */  
+function gl_get_guid_simmilar($match, $parent, $count) {
+	global $sql;
+	
+	// Get matching GUID information
+	$template = gl_get_guid_template($match);
+	$info = gl_analyze_guid($template);
+	
+	// Obdain the elements that have the same template ID and same Parent
+	$ans=$sql->query("SELECT `guid` FROM `{$info['group']}_instance` WHERE `parent` = $parent AND `template` = {$info['index']} LIMIT 0, {$count}");
+	if (!$ans) {
+		debug_error("Cannot find simmilar GUIDS for $match");
+		return false;
+	}
+	
+	// Return the element stack
+	$guids=array();
+	while ($row = $sql->fetch_array_fromresults($ans,MYSQL_NUM)) {
+		$guids[] = $row[0];
+	}
+	return $guids;
+	
+}
 
 /**
   * Obdain a guid's template group

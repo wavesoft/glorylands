@@ -35,13 +35,13 @@
 			<div class="item">
 				<img src="images/UI/merchant-border.gif" />
 				{if $_my.objects[id].count>1 }
-				<a href="javascript:;" onclick="mf_count_items(this,'?a=merchant.sell&guid={$_my.guid}&sell={$_my.objects[id].guid}',{$_my.objects[id].count})">
+				<a href="javascript:;" onclick="mf_count_items(this,'?a=merchant.buy&guid={$_my.guid}&buy={$_my.objects[id].guid}',{$_my.objects[id].count})">
 				{else}
-				<a href="javascript:;" onclick="gloryIO('?a=merchant.sell&guid={$_my.guid}&sell={$_my.objects[id].guid}')">
+				<a href="javascript:;" onclick="gloryIO('?a=merchant.buy&guid={$_my.guid}&buy={$_my.objects[id].guid}')">
 				{/if}
 					<img src="images/{$_my.objects[id].icon}" width="32" height="32" border="0" />
 					<h4>{$_my.objects[id].name}</h4>
-					<div>{$_my.objects[id].desc}<br /><span class="money">{$_my.objects[id].cost}</span></div>				
+					<div>{$_my.objects[id].desc}<br /><span class="money">{$_my.objects[id].cost}</span></div>
 					{if $_my.objects[id].count>1 }
 					<small>{$_my.objects[id].count}</small>
 					{/if}
@@ -50,12 +50,12 @@
 			{/section}
 
 			<div class="count" id="mf_counter_host" style="visibility: hidden;">
-				<div>How many items to sell?</div>
+				<div>How many items to buy?</div>
 				{section name=c start=1 loop=21 step=1}<a href="javascript:;" id="fm_count_{$smarty.section.c.index}" onmouseover="mf_count_move({$smarty.section.c.index});" onclick="mf_count_set({$smarty.section.c.index});">&nbsp;</a>{/section} <span id="mf_counter">0</span>
 			</div>
 		</div>
 		{else}
-		You have nothing that can be sold!
+		I am sorry, I have nothing you can buy.
 		{/if}
 		</td>
 	</tr>

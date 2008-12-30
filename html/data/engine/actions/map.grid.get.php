@@ -130,7 +130,7 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	if (strstr($details['flags'],'VENDOR')) {
 		$myobj['name'] = '<font color="gold">'.$row['name'].'</font>';
 		$myobj['subname'] = '(Click to trade)';
-		$myobj['click'] = '?a=interface.book&guid='.$row['guid'];
+		$myobj['click'] = '?a=merchant.buy&guid='.$row['guid'];
 	}
 	
 	$objects[] = $myobj;
@@ -207,8 +207,6 @@ callEvent('map.infogrid', $nav_grid, $map_info['filename']);
 $data = array(
 	'objects' => $objects,
 	'map' => $map_info['filename'],
-	'head_image'=>'UI/navbtn_help.gif', 
-	'head_link'=>'?a=interface.book&book='.$map_info['index'],
 	'title'=>$map_info['name'],
 	'x' => $Gx,
 	'y' => $Gy
