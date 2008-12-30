@@ -205,6 +205,16 @@ table.book h2 {
 	font-size: 12px;
 	color: #333333;
 }
+.book_menu ul {
+	list-style-image: none;
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+}
+.book_menu li {
+	margin: 0px;
+	padding: 0px;
+}
 .frame128 {
 	background-image: url(../../images/UI/frame128.gif);
 	width: 128px;
@@ -497,50 +507,117 @@ a.actgrid_link:hover {
 
 .merchant_sell {
 	height: 440px;
-	overflow-y: scroll;
+	overflow: auto;
+	overflow-y: auto;
 	overflow-x: hidden;
 	background-image: url(images/UI/background.jpg);
 }
 
-.merchant_sell div {
+.merchant_sell div.item {
 	position: relative;
 	height: 50px;
 	width: 100%;
 }
 
-.merchant_sell img {
+.merchant_sell div.item img {
 	position:absolute;
 	left: 2px;
 	top: 1px;
 }
 
-.merchant_sell a {
+.merchant_sell div.item a {
+	height: 50px;
 	position:absolute;
 	left: 2px;
 	top: 1px;
-	width: 570px;
+	width: 620px;
 	text-decoration: none;
 	color: #000000;
 }
 
-.merchant_sell a img {
+.merchant_sell div.item a:hover {
+	background-image:url(../../images/UI/merchant-hover.png);
+}
+
+.merchant_sell div.item a img {
 	position:absolute;
 	left: 7px;
 	top: 6px;
 }
 
-.merchant_sell a h4 {
+.merchant_sell div.item a h4 {
 	position:absolute;
 	left: 50px;
 	top: 0px;
 	padding: 0px;
 	margin: 0px;
+	cursor: pointer;
 }
 
-.merchant_sell a div {
+.merchant_sell div.item a div {
 	position:absolute;
 	left: 50px;
 	top: 16px;
 	font-size: 10px;
+	cursor: pointer;
 }
 
+.merchant_sell div.item a small {
+	position:absolute;
+	left: 27px;
+	top: 34px;
+	font-size: 10px;
+	font-weight:bold;
+	color: #FFFFFF;
+	background-image:url(../../images/UI/stack-back.png);
+	background-repeat: no-repeat;
+	width: 20px;
+	height: 15px;
+	text-align: center;
+	vertical-align: middle;
+	background-position: 0px 3px;
+}
+
+.merchant_sell div.count {
+	position:absolute;
+	left: 50px;
+	top: 22px;
+	background-image: url(../../images/UI/many-back.png);
+	width: 174px;
+	height: 68px;
+	padding-top: 40px;
+	padding-left: 15px;
+	color: #FFFFFF;
+	background-repeat: no-repeat;
+	font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.merchant_sell div.count a {
+	text-decoration: none;
+	font-size: 5px;
+	padding: 2px;
+	margin: 0px;
+	border: solid 1px #999999;
+	background-color: #000000;
+}
+
+.merchant_sell div.count a:hover {
+	background-color: #00FF00;
+}
+
+.merchant_sell div.count a.disabled {
+	border: solid 1px #999999;
+	background-color: #666666;
+}
+
+.merchant_sell div.count a.disabled:hover {
+	background-color: #666666;
+}
+
+.merchant_sell div.count a.active {
+	background-color: #33CC00;
+}
+
+.merchant_sell div.count a.active:hover {
+	background-color: #00FF00;
+}

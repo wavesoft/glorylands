@@ -96,6 +96,7 @@ function showStatus(text,timeout) {
 			$('waiter').setHTML(text);	
 			if (!waiterShown) {
 				$('waiter_host').setStyles({'display':''});
+				$('waiter_host').setStyles({'z-index':lastZ});
 				waiterShown=true;
 				waiterFX.stop();
 				waiterFX.start({
@@ -295,6 +296,13 @@ function displayBuffer(buffer, hLink, hImg, hText) {
 
 var ddw_visible = false;
 
+function ddwin_change(url) {
+	var prepare = ddwin_prepare();
+	prepare.chain = function() {
+		gloryIO(url,false,true);
+	};
+}
+
 function ddwin_dispose() {
 	if (ddw_visible) {
 		var popup = new Fx.Styles('dd_popup', {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
@@ -369,6 +377,7 @@ function ddwin_prepare() {
 	var iHost = $('dd_host');
 	var popup = new Fx.Styles('dd_popup', {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
 	var content = new Fx.Styles('dd_content', {duration: 500, transition: Fx.Transitions.Cubic.easeOut});
+	var ret_chain = {chain:null}; // We use objects to perform by reference alteration after the function has returned
 	
 	// If DDWin is not visible, do a clean fade in
 	if (!ddw_visible) {
@@ -376,10 +385,13 @@ function ddwin_prepare() {
 		iPopup.setStyles({opacity: 0});
 		iContent.setStyles({opacity: 1});
 		iContent.setHTML('Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait...');
-		popup.start({
-			'opacity': 1			
-		});
 		ddw_visible = true;
+		ret_chain=popup.start({
+			'opacity': 1,
+			'width': 120,
+			'height': 20
+		}).chain(ret_chain.chain);
+		
 	// If already exists, fade out the content and reset it
 	} else {
 		content.start({
@@ -389,8 +401,14 @@ function ddwin_prepare() {
 			content.start({
 				'opacity': 1			  
 			});
+			ret_chain=popup.start({
+				'width': 120,
+				'height': 20
+			}).chain(ret_chain.chain);
 		});
 	}
+	
+	return ret_chain;
 }
 
 /* ==================================================================================================================================== */
@@ -650,8 +668,8 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 									obj.objects[k].image='images/'+o.image;
 								}
 							}
-						});							
-						map_updatedata(obj.objects);	
+						});
+						map_preloaded_update(obj.objects);	
 					}
 
 
@@ -684,6 +702,9 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 						piemenu_show(menus, text);
 					}
 
+				// ## Error response ##
+				} else if (mode=='ERROR') {
+					if (!silent) showStatus('<font color=\"red\">'+obj.error+'</font>', 5000);					
 
 				// ## Unknown Interface ##
 				} else {
@@ -1085,6 +1106,43 @@ function map_objecttrigger(uid, trigger, e) {
 }
 
 /**
+  * Preload dynamic objecs
+  *
+  * This function is used to preload any delay-loaded objects (using JSON)
+  * Thi is used to make sure the newly objects contain the correct dimensions.
+  *
+  */
+  
+var map_preloaded_stack = [];
+function map_preloaded_update(data) {
+	// And place them on map
+	var images = [];
+	var lt_timer = null;
+	var lt_finalized = false;
+	
+	$each(data, function(e,k) {						 
+		// Accelerate operation by keeping the names of the objects
+		// that are already loaded
+		if (map_preloaded_stack.indexOf(e.image)<0) {
+			images.push(e.image);
+			map_preloaded_stack.push(e.image);
+		}
+	});	
+	
+	// Precache all map images
+	if (images.length>0) {
+		new Asset.images(images, {
+			onComplete: function(){
+				map_updatedata(data);
+			}
+		});
+	} else {
+		map_updatedata(data);	
+	}
+
+}
+
+/**
   * Place/Update dynamic map objects
   *
   * This function places new dynamic objects on the map or
@@ -1207,7 +1265,7 @@ function map_addobject(data) {
 	// Create and insert image
 	var im = $(document.createElement('img'));
 	im.src = data.image;
-	$('datapane').appendChild(im);
+	$('datapane').appendChild(im);	
 	var size = im.getSize().size;
 
 	// Re-map x-y

@@ -23,6 +23,10 @@ if (!isset($_SESSION[PLAYER][DATA])){
 	if (!$ans) return false;
 }
 
+// Check for valid GUID number if GUID is defined in the URL
+if (isset($_REQUEST['guid'])) {
+	if (!gl_guid_valid($_REQUEST['guid'])) return false;
+}
 
 return true;
 ?>
