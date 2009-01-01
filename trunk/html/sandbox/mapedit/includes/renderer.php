@@ -1,9 +1,41 @@
 <?php
 
-function slice_grid($base, $width, $height) {
+function slice_grid($base) {
 	$im = imagecreatefrompng($base.'-0-0.png');
 	
+	// Here are the suggested dimensions:
+	$block_w=200;
+	$block_h=200;
+	
+	// Calculate the actual ones
+	$tiles_x = round(imagesx($im)/$block_w);
+	$tiles_y = round(imagesy($im)/$block_h);
+	$block_w = round(imagesx($im)/$tiles_x);
+	$block_h = round(imagesy($im)/$tiles_y);
+	
+	$jx=0; $jy=0; $maxx=0; $maxy=0;
+	for ($x=0; $x<imagesx($im); $x+=$block_w) {
+		$jy=0;
+		for ($y=0; $y<imagesy($im); $y+=$block_h) {				
+			$w=$block_w;
+			$h=$block_h;
+			if (($x+$w)>imagesx($im)) $w=imagesx($im)-$x;
+			if (($y+$h)>imagesy($im)) $h=imagesy($im)-$y;
+			
+			$cim = imagecreatetruecolor($w,$h);
+			imagecopy($cim, $im, 0, 0, $x, $y, $w, $h);
+			imagepng($cim, $base.'-'.$jx.'-'.$jy.'.png');
+			imagedestroy($cim);
+			
+			$jy++;
+			if ($jy>$maxy) $maxy=$jy;
+		}
+		$jx++;
+		if ($jx>$maxx) $maxx=$jx;
+	}
+	
 	imagedestroy($im);
+	return array('x'=>$maxx, 'y'=>$maxy, 'w'=>$block_w, 'h'=>$block_h);
 }
 
 function render_grid($data, $filename, $background, $width, $height) {

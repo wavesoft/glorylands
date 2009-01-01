@@ -19,8 +19,7 @@ var mapOfsY = 8;
 </script>
 {/literal}
 <script language="javascript" src="includes/mootools-release-1.11.js"></script>
-<!-- <script language="javascript" src="includes/glapi-1.1.src.js"></script> -->
-<script language="javascript" src="includes/glapi-2.1.src.js"></script>
+<script language="javascript" src="includes/glapi.js"></script>
 <script language="javascript" src="includes/popup.js"></script>
 <script language="javascript" src="includes/merchant-functions.js"></script>
 {$javascript}
@@ -212,9 +211,7 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 			<tr>
 				<td class="br1_l" width="10">&nbsp;</td>
 				<td align="left">
-				<a href="#" onclick="javascript:gloryIO('?a=admin.addobj');" title="Place a building"><img border="0" src="images/UI/navbtn_repair.gif" /></a>
 				<a href="#" onclick="javascript:gloryIO('?a=interface.inventory');" title="Open Inventory"><img border="0" src="images/UI/navbtn_explore.gif" /></a>
-				<a href="#" onclick="javascript:gloryIO('?a=interface.ad.swapchar');" title="Change Characther"><img border="0" src="images/UI/navbtn_act.gif" /></a>
 				{$modules.1}				</td>
 				<td class="br1_r" width="10"></td>
 			</tr>

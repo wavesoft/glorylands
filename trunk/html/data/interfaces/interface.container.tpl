@@ -7,7 +7,7 @@
 	<img onclick="javascript:gloryIO('?a={$_my.objects[id].handler}&guid={$_my.objects[id].guid}');" onload="qb_makedraggable(this,{$_my.objects[id].guid},false,{$_my.parent},'interface.container');" src="images/{$_my.objects[id].image}" />
 	<a href="javascript:gloryIO('?a={$_my.objects[id].handler}&guid={$_my.objects[id].guid}');">{$_my.objects[id].name}</a>
 	<span>{$_my.objects[id].desc}</span>
-	<p>{$_my.objects[id].cost}</p>
+	<p>You have <b>{$_my.objects[id].count}</b></p>
 </li>
 {/section}
 </ul>

@@ -1022,7 +1022,6 @@ function map_finalize() {
 			elm.setStyles({
 				'left':(x*map_info.background.width),
 				'top':(y*map_info.background.height),
-				'z-index':zDig--,
 				'position': 'absolute',
 				'width': map_info.background.width,
 				'height': map_info.background.height
@@ -1131,8 +1130,10 @@ function map_preloaded_update(data) {
 	
 	// Precache all map images
 	if (images.length>0) {
+		showStatus('Loading new objects...');
 		new Asset.images(images, {
 			onComplete: function(){
+				showStatus();
 				map_updatedata(data);
 			}
 		});

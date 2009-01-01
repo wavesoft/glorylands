@@ -9,27 +9,26 @@ if (isset($_REQUEST['guid'])) {
 	$act_result = array('mode'=>'NONE');
 	return;
 }
-$ans=$sql->query("SELECT `guid` FROM `item_instance` WHERE `parent` = {$root_guid}");
 
-if ($ans) {
-	while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
-		$vars = gl_get_guid_vars($row['guid']);
+$guids = gl_get_guid_children($root_guid, 'item', STACK_AUTO);
+foreach ($guids as $guid => $count) {
+	$vars = gl_get_guid_vars($guid);
 
-		$data = array(
-			'name' => $vars['name'], 
-			'image' => $vars['icon'], 
-			'guid' => $row['guid'], 
-			'desc' => $vars['description'], 
-			'cost' => 0,
-			'handler' => 'info.guid'
-		);
-		
-		// Do some special handlings for some special items (instead of just displaying it's info)
-		if ($vars['class'] == 'CONTAINER') $data['handler']='interface.container';
+	$data = array(
+		'name' => $vars['name'], 
+		'image' => $vars['icon'], 
+		'guid' => $guid, 
+		'desc' => $vars['description'], 
+		'cost' => $vars['sell_price'],
+		'count' => $count,
+		'handler' => 'info.guid'
+	);
 	
-		
-		array_push($objects,$data);
-	}
+	// Do some special handlings for some special items (instead of just displaying it's info)
+	if ($vars['class'] == 'CONTAINER') $data['handler']='interface.container';
+	
+	// Stack the object
+	array_push($objects,$data);
 }
 
 // Get the object variabls

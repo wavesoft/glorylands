@@ -94,6 +94,9 @@ if ($_REQUEST['a']=='save') {
 	$back_height = imagesy($im);
 	imagedestroy($im);
 	
+	// Slice background into parts for easier download
+	$mapsize = slice_grid('../../data/maps/'.$valid_name);
+	
 	// Prepare result array
 	$map = array(
 		'width' => $map_width,
@@ -105,10 +108,10 @@ if ($_REQUEST['a']=='save') {
 		'background' => array(
 			'fill' => basename($buffer['background']),
 			'name' => $valid_name,
-			'width' => $back_width,
-			'height' => $back_height,
-			'xsize' => 1,
-			'ysize' => 1
+			'width' => $mapsize['w'],
+			'height' => $mapsize['h'],
+			'xsize' => $mapsize['x'],
+			'ysize' => $mapsize['y']
 		)
 	);
 	

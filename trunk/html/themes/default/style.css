@@ -403,15 +403,11 @@ div.bag_container li span {
 div.bag_container li p {
 	position: absolute;
 	top: 32px;
-	left: 132px;
-	padding-right: 13px;
+	right: 0px;
 	margin: 0px;
 	font-size: 10px;
-	background-image: url(../../images/UI/gold.gif);
-	background-repeat: no-repeat;
-	background-position: right;
-	color: #996600;
-	width: 50px;
+	color: #333333;
+	width: 100px;
 	text-align: right;
 }
 
