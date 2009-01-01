@@ -1,6 +1,10 @@
 /*
-Complete SQL Database for revisions 65+
-Date: 3/11/2008 2:41:10 μμ
+MySQL Data Transfer
+Source Host: localhost
+Source Database: gl_for_release
+Target Host: localhost
+Target Database: gl_for_release
+Date: 1/1/2009 2:51:09 μμ
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -380,6 +384,9 @@ CREATE TABLE `item_template` (
   `item_level` int(11) default NULL,
   `require_level` int(11) default NULL,
   `contributor` int(11) NOT NULL default '0',
+  `stackable` int(11) NOT NULL default '0',
+  `sell_price` int(11) NOT NULL default '0',
+  `buy_price` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -665,8 +672,8 @@ CREATE TABLE `users_accounts` (
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `char_template` VALUES ('1', 'map=1&x=5&y=5&visible=1&state=NORMAL&model=bizarre36.o&INT=10&STR=50&DEX=10&CON=3&WIS=3&CHA=20', 'Human', 'portraits/clans_alchemist.gif', null, 'This is a human player. It is said that human players tend to have better abilities on trade operations that any other race.', '0');
-INSERT INTO `char_template` VALUES ('2', 'map=4&x=5&y=5&visible=1&state=NORMAL&model=cape-grise.o&INT=40&STR=10&DEX=10&CON=50&WIS=50&CHA=10', 'Elf', 'portraits/neutral_elfranger.gif', null, 'This is an elf player.', '0');
+INSERT INTO `char_template` VALUES ('1', 'map=1&x=5&y=5&visible=1&state=NORMAL&model=char-pillard.png&INT=10&STR=50&DEX=10&CON=3&WIS=3&CHA=20', 'Human', 'portraits/clans_alchemist.gif', null, 'This is a human player. It is said that human players tend to have better abilities on trade operations that any other race.', '0');
+INSERT INTO `char_template` VALUES ('2', 'map=4&x=5&y=5&visible=1&state=NORMAL&model=char-cape-grise.png&INT=40&STR=10&DEX=10&CON=50&WIS=50&CHA=10', 'Elf', 'portraits/neutral_elfranger.gif', null, 'This is an elf player.', '0');
 INSERT INTO `char_vardesc` VALUES ('race', 'Race', '0', '0', '(Unknown)', 'RAW', null, '0');
 INSERT INTO `char_vardesc` VALUES ('money', 'Money', '0', '1', '42', 'MONEY', null, '0');
 INSERT INTO `char_vardesc` VALUES ('itelligence', 'Itelligence', '0', '1', '10', 'SCRIPT', 'if ($var > 90) {\r\n	$color=\'red\';\r\n} elseif ($var > 50) {\r\n	$color=\'blue\';\r\n} elseif ($var > 30) {\r\n	$color=\'green\';\r\n} else {\r\n	$color=\'grey\';\r\n}\r\nreturn \"<font color=\\\"$color\\\">$var %</font>\";', '0');
@@ -716,11 +723,11 @@ INSERT INTO `interface_module_resources` VALUES ('6', 'QUICKBAR', 'JS', '{DATA.M
 INSERT INTO `interface_modules` VALUES ('CHATWIN', 'Chat Window', 'Cross-player chat window and system message receiver for any User Interface', 'chat');
 INSERT INTO `interface_modules` VALUES ('SIDEBAR', 'Side Bar', 'A sidebar that displays the user\'s current statistics', 'sidebar');
 INSERT INTO `interface_modules` VALUES ('QUICKBAR', 'Qucik Access Bar', 'A bar with 12 buttons with droppable/customizable ability that allows user to hold there items and actions', 'quickbar');
-INSERT INTO `item_template` VALUES ('1', null, 'Light Sword', 'A quite light sword, mostly used by dwarfs', 'WEAPON', 'ONEHAND-SWORD', 'inventory/Kunai-128x128.png', '1', '2', '1', '0');
-INSERT INTO `item_template` VALUES ('2', null, 'Woodsman Sword', 'A Wooden excercising sword', 'WEAPON', 'TWOHAND-SWORD', 'inventory/Kunai-128x128.png', '2', '20', '0', '0');
-INSERT INTO `item_template` VALUES ('3', 'slots=10', 'Woolen Bag', 'A bag made of wool. This bag can carry up to 10 items', 'CONTAINER', 'GENERIC', 'inventory/box128.png', '1', '5', '0', '0');
-INSERT INTO `item_template` VALUES ('4', null, 'Dragon Book', 'One of the sacrest books of the Wulz\'ar Kingdom!', 'BOOK', null, 'inventory/Address-Book-128x128.png', '3', '20', '20', '0');
-INSERT INTO `item_template` VALUES ('5', null, 'Fire orb', 'This is a small, soft orb with a fire rune carved on it', 'CONSUMABLE', 'GEM', 'inventory/orbz-fire-128x128.png', '4', '100', '10', '0');
+INSERT INTO `item_template` VALUES ('1', null, 'Light Sword', 'A quite light sword, mostly used by dwarfs', 'WEAPON', 'ONEHAND-SWORD', 'inventory/Kunai-128x128.png', '1', '2', '1', '0', '0', '0', '0');
+INSERT INTO `item_template` VALUES ('2', null, 'Woodsman Sword', 'A Wooden excercising sword', 'WEAPON', 'TWOHAND-SWORD', 'inventory/Kunai-128x128.png', '2', '20', '0', '0', '0', '0', '0');
+INSERT INTO `item_template` VALUES ('3', 'slots=10', 'Woolen Bag', 'A bag made of wool. This bag can carry up to 10 items', 'CONTAINER', 'GENERIC', 'inventory/box128.png', '1', '5', '0', '0', '0', '0', '0');
+INSERT INTO `item_template` VALUES ('4', null, 'Dragon Book', 'One of the sacrest books of the Wulz\'ar Kingdom!', 'BOOK', null, 'inventory/Address-Book-128x128.png', '3', '20', '20', '0', '0', '0', '0');
+INSERT INTO `item_template` VALUES ('5', null, 'Fire orb', 'This is a small, soft orb with a fire rune carved on it', 'CONSUMABLE', 'GEM', 'inventory/orbz-fire-128x128.png', '4', '100', '10', '0', '0', '0', '0');
 INSERT INTO `item_vardesc` VALUES ('quality', 'Quality', '0', '1', 'Common', 'ALIAS', '0=%3Cfont+color%3D%23666666%3EJunk%3C%2Ffont%3E&1=%3Cfont+color%3D%23009900%3ENormal%3C%2Ffont%3E&2=%3Cfont+color%3D%230033CC%3ERare%3C%2Ffont%3E&3=%3Cfont+color%3D%23663399%3ELegendary%3C%2Ffont%3E&4=%3Cfont+color%3D%23FF9900%3EEpic%3C%2Ffont%3E&5=%3Cfont+color%3D%23FF0000%3EHeroic%3C%2Ffont%3E', '0');
 INSERT INTO `item_vardesc` VALUES ('class', 'Class', '0', '1', 'Unknown', 'SCRIPT', '$name = ucfirst(strtolower($var));\r\nif ($var==\'CONTAINER\') {\r\n  $name .= \" <a href=\\\"javascript:gloryIO(\'?a=interface.container&guid=\".$guid.\"\');\\\"><small><em>(Open)<em></small></a>\";\r\n}\r\nreturn $name;\r\n', '0');
 INSERT INTO `item_vardesc` VALUES ('parent', 'Is On', '0', '0', null, 'GUID', null, '0');
