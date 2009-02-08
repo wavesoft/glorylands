@@ -198,7 +198,8 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 				<td class="br1_b"></td>
 				<td class="br1_rb" width="10"></td>
 			</tr>
-			</table>		</td>
+			</table>		
+		</td>
 	</tr>
 	<tr>
 		<td>
@@ -210,9 +211,10 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 			</tr>
 			<tr>
 				<td class="br1_l" width="10">&nbsp;</td>
-				<td align="left">
-				<a href="#" onclick="javascript:gloryIO('?a=interface.inventory');" title="Open Inventory"><img border="0" src="images/UI/navbtn_explore.gif" /></a>
-				{$modules.1}				</td>
+				<td align="left spanaligned">
+				<span><a href="#" onclick="javascript:gloryIO('?a=interface.inventory');" title="Open Inventory"><img border="0" src="images/UI/navbtn_explore.gif" /></a></span>
+				{$modules.1}				
+				</td>
 				<td class="br1_r" width="10"></td>
 			</tr>
 			<tr height="12">

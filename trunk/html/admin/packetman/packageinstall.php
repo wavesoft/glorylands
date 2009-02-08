@@ -214,7 +214,7 @@ if ($_REQUEST['a'] == 'upload') {
 	<td colspan="2">
 	
 	<p>
-	<fieldset><legend>Create a custom hook</legend>
+	<fieldset><legend>Install a new package</legend>
 	<form action="" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="a" value="upload" />
 	<table>

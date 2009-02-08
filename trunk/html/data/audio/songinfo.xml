@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="iso-8859-7"?>
+<songs>
+	<song id="simple" default="true" filename="data/audio/default.mp3" size="2661462" byterate="8000" />
+	<song id="test" filename="data/audio/the fire brigade.mp3" size="1038628" byterate="16000" />
+	<song id="fight" filename="data/audio/fight.mp3" size="220809" byterate="16000" />
+	<song id="merchant" filename="data/audio/merchant.mp3" size="1859419" byterate="12000" />
+	<song id="default" filename="data/audio/simple.mp3" size="1722496" byterate="12000" />
+</songs>

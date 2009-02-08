@@ -1,2 +1,2 @@
-<div id="quickbar_data">
+<div id="qbar_host" class="bag_slotted">
 </div>

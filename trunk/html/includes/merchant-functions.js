@@ -29,7 +29,8 @@ function mf_count_items(element, url, count) {
 		'visibility': 'visible'
 	});
 	$('mf_counter_host').addEvent('mouseup', function(e){
-		new Event(e).stop();												  
+		var e = new Event(e);
+		e.stop();
 	});
 	$(document).addEvent('mouseup', mf_count_dispose);
 }

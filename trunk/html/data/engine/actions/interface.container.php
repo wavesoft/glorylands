@@ -10,10 +10,39 @@ if (isset($_REQUEST['guid'])) {
 	return;
 }
 
+// Search for an empty item
+function free_slot($array) {
+	$min=100000000;
+	$max=0;
+	
+	// Calculate bounds
+	foreach ($array as $index => $data) {
+		if ($index<$min) $min=$index;
+		if ($index>$max) $max=$index;
+	}
+	
+	// Search for free slot
+	for ($i=$min; $i<=$max; $i++) {
+		if (!isset($array[$i])) {
+			return $i;
+		}
+	}
+	
+	// Not found by now? Create new
+	return ($max+1);
+}
+
+$maxslots = 0;
 $guids = gl_get_guid_children($root_guid, 'item', STACK_AUTO);
 foreach ($guids as $guid => $count) {
 	$vars = gl_get_guid_vars($guid);
-
+	$desc = gl_translate_vars('item', $vars, 3);
+	$desc_html = '<table>';
+	foreach ($desc as $var) {
+		$desc_html.='<tr><td>'.$var['name'].'</td><td>'.$var['value']."</td></tr>\n";		
+	}
+	$desc_html.="</table>\n";		
+	
 	$data = array(
 		'name' => $vars['name'], 
 		'image' => $vars['icon'], 
@@ -21,18 +50,40 @@ foreach ($guids as $guid => $count) {
 		'desc' => $vars['description'], 
 		'cost' => $vars['sell_price'],
 		'count' => $count,
+		'tip' => htmlspecialchars('<b>'.$vars['name'].'</b><br />'.$vars['description'].'<br />'.$desc_html),
 		'handler' => 'info.guid'
 	);
 	
-	// Do some special handlings for some special items (instead of just displaying it's info)
-	if ($vars['class'] == 'CONTAINER') $data['handler']='interface.container';
+	// Calculate slot if it is not defined
+	$slot=$vars['slot'];
+	if ($slot=='') {
+		$slot=sizeof($objects)+1;	
+	} else {
+		// Check if the slot defined is already occupied
+		if (isset($objects[$slot])) {
+			// Find a free slot
+			$slot = free_slot($objects);
+		}
+	}
+	if ($slot>$maxslots) $maxslots=$slot;
 	
 	// Stack the object
-	array_push($objects,$data);
+	$objects[$slot] = $data;
 }
 
 // Get the object variabls
 $object_vars = gl_get_guid_vars($root_guid);
+
+// Check and prepare slots
+if (!isset($object_vars['slots'])) {
+	$slots = 5;
+} else {
+	if ($object_vars['slots'] == '') {	
+		$slots = 5;
+	} else {
+		$slots = $object_vars['slots']; 
+	}
+}
 
 // Build the result
 $act_result = array(
@@ -43,7 +94,8 @@ $act_result = array(
 	
 	'_my'=>array(
 		'objects' => $objects,
-		'parent' => $root_guid
+		'parent' => $root_guid,
+		'slots' => $slots
 	)
 );
 

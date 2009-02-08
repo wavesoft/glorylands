@@ -15,7 +15,7 @@ $guidinfo = gl_analyze_guid($_REQUEST['guid']);
 $vars = gl_get_guid_vars($_REQUEST['guid']);
 
 // Translate GUID variables
-$transvar = gl_translate_vars($guidinfo['group'], $vars, $_REQUEST['guid']);
+$transvar = gl_translate_vars($guidinfo['group'], $vars, 2);
 
 // Process event operations to add/remove any variables
 callEvent('interface.guidinfo', $_REQUEST['guid'], $vars, $transvar, $vars['icon']);

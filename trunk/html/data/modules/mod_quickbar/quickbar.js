@@ -1,230 +1,361 @@
-// The currently dragging host element
-var qb_currently_dragging=null;
-// The list of drop destinations
-var droppables = [];
+var drag_hosts = [];
+var drag_ables = [];
+var drag_element = null;
 
-// Function to make an object moevable from the quick bar
-function qb_makeqbutton(v_element, guid, slot) {
-	var element = $(v_element);
-	
-	// Add context menu and required parameters
-	element.addEvent('contextmenu',function(e) {
-		var e = new Event(e);
-		// Get Scroll position
-		var scrl = getScrollPosition();
-
-		piemenu_dispose();
-		piemenu_init(e.event.clientX+scrl.x,e.event.clientY+scrl.y,guid,'QUICKBAR',slot)
-		e.stop();
-	});
-	element.setProperty('guid', guid);
-	element.setProperty('slot', slot);
-	
-	// Make this element moeavable
-	qb_makedraggable(element, guid, true);
-}
-
-function qb_init_droppables() {
+function drag_callback(mode, src, dst) {
 	try {
-		$$('#quickbar_data div').each(function(drop, index){
-			drop.removeEvents();
-			drop.addEvents({
-				'over': function(el, obj){
-					this.setStyle('opacity', 0.5);
-				},
-				'leave': function(el, obj){
-					this.setStyle('opacity', 1);
-				},
-				'drop': function(el, obj){
-					this.setStyle('opacity', 1);
-					var guid = el.getProperty('guid');
-					var host_guid = el.getProperty('host');
-					var host_view = el.getProperty('hostview');
-					var slot = drop.getProperty('slot');
-					
-					// Do not accept elements if I am already filled
-					var children = drop.getChildren();
-					if (children.length>0) {
-						
-						// Remove floating
-						el.remove();
-	
-						// Notify system that a user attempted to mix 2 objects
-						var childguid = children[0].getProperty('guid');					
-						if (childguid != guid) {
-							// Notify system for a button change
-							gloryIO('?a=quickbar.mix&guid1='+guid+'&guid2='+childguid+'&slot='+slot+'&host='+host_guid+'&view='+host_view);
-						}
-											
-						return;	
-					}
-								
-					// Create new draggable element
-					var myobj = new Element('img', {
-									'src': el.src								
-								});
-					
-					// Make this element moeavable
-					qb_makeqbutton(myobj, guid, slot);
-					myobj.inject(drop);
-					
-					// Store some usefull information on the hosted object
-					myobj.setProperty('slot', slot);
-					
-					// Remove floater and floater host
-					el.remove();
-					if (qb_currently_dragging) {
-						qb_currently_dragging.remove();
-						qb_currently_dragging=null;
-					}
-	
-					// Notify system for a button change
-					gloryIO('?a=quickbar.move&guid='+guid+'&slot='+slot+'&host='+host_guid+'&view='+host_view);
-				}
-			});
-		});	
-	} catch (e) {
-		window.alert('QB Init Droppables Error: '+e.message);	
+		if (mode=='MOVE') {
+			if ($defined(src)) src.remove();
+			dst.setStyle('opacity',1);	
+		} else if (mode=='COPY') {	
+			src.setStyle('opacity',1);
+			dst.setStyle('opacity',1);	
+		} else if (mode=='CANCEL') {
+			if ($defined(dst)) dst.remove();
+			src.setStyle('opacity',1);
+		} else if (mode=='DELETE') {
+			if ($defined(src)) src.remove();
+			if ($defined(dst)) dst.remove();
+		}	
+	} catch(e) {
 	}
-}
+}		
 
-// Function to initialize droppable objects
-$(window).addEvent('load', function(e) {
-	qb_init_droppables();
-});
+function drag_update() {
 
-// Function to make an object draggable to the sidebar
-// Element	: The HTML DOM element to make draggable
-// Guid		: The GUID this item provides
-// Moevable : If TRUE the item will be moved instead of cloned
-// Host_guid: The GUID of the hosting object (Ex. a container)
-// Host_view: The type of the visual representation of the hosting object (Ex. as GUID info, as a container etc...)
-function qb_makedraggable(element, guid, moveable, host_guid, host_view) {
-	var item = $(element);
-	
-	if (!moveable) {
-		item.addEvent('mousedown', function(e) {
-			var e = new Event(e);
-			qb_currently_dragging=null;
-			if (e.rightClick) {
-				e.stop();
-				return;
+	// Find all drag hosts
+	var drag_hosts_new=[];
+	$$('.drag_host').each(function(e) {	
+		// Check if this item already exists		
+		var i = drag_hosts.indexOf(e);
+		if (i>=0) {
+			drag_hosts_new.push(e);
+			return; // already exists
+		}
+		drag_hosts_new.push(e);
+		
+		// Get information provided in the class and sore
+		// them inside the element
+		var info = e.getProperty('class').split(' ');
+		var slot = info[1];
+		var container = info[2];
+		if (slot) e.setProperty('slot', slot);
+		if (container) e.setProperty('container', container);
+		
+		//alert('Found host SLOT='+slot+' CONTAINER='+container);
+		
+		// Make those item droppables
+		e.removeEvents();
+		e.addEvents({
+			'over': function(el, obj){
+				this.setStyle('opacity', 0.5);
+			},
+			'leave': function(el, obj){
+				this.setStyle('opacity', 1);
+			},
+			'drop': function(el, obj){
+				this.setStyle('opacity', 1);
+				
+				var container = this.getProperty('container');
+				var slot = this.getProperty('slot');
+				var guid = el.getProperty('guid');
+				var srcelm = drag_element;
+				var count = srcelm.getProperty('count');
+				
+				// Do not accept elements if I am already filled
+				var children = this.getChildren();
+				if (children.length>0) {
+					
+					// Remove floating
+					el.remove();
+
+					// Notify system that a user attempted to mix 2 objects
+					var child = children[0];
+					var childguid = children[0].getProperty('guid');
+					if (childguid != guid) {
+						// Notify system for a button change
+						/* ### */
+						var host = this;
+						gloryIO('?a=dragdrop&mode=mix&guid='+guid+'&target='+childguid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
+							if (data.mode == 'DRAG') {
+								if (data.action == 'REPLACE') {
+									srcelm.remove();
+									child.setProperties({
+										'src': data.item.src,
+										'title': data.item.name,
+										'guid': data.item.guid
+									});
+									child.setStyles({
+										'width': 38,
+										'height': 38,
+										'padding': 1,										
+									});
+									if (!isInternetExplorer) {
+										child.setAttribute('class', 'drag_able '+data.item.guid);
+									} else {
+										child.setAttribute('className', 'drag_able '+data.item.guid);
+									}									
+								} else if (data.action == 'CANCEL')  {									
+								} else {
+									drag_callback(data.action, srcelm, child);
+								}
+							}					
+						});
+					}
+										
+					return;	
+				}
+							
+				// Create new draggable element on me
+				var myobj = el.clone();
+				myobj.setStyles({
+					'position':'',
+					'width': 38,
+					'height': 38,
+					'padding': 1
+				});
+				myobj.inject(this);
+								
+				// Remove floater
+				el.remove();
+				
+				// Refresh droppables/draggables
+				drag_update();
+
+				// Notify system for a button change
+				/* ### */
+				if (!count) count=1;
+				var src_parent = srcelm.getParent();
+				var src_slot = src_parent.getProperty('slot');
+				if (!src_slot) src_slot=-1;
+				var src_container = src_parent.getProperty('container');
+				if (!src_container) src_container=-1;
+				gloryIO('?a=dragdrop&mode=move&guid='+guid+'&slot='+slot+'&container='+container+'&fromslot='+src_slot+'&fromcontainer='+src_container+'&count='+count, false,true,  function(data) {
+					if (data.mode == 'DRAG') {
+						drag_callback(data.action, srcelm, myobj);
+					}					
+				});
+				//setTimeout(drag_callback ,1000, 'MOVE',drag_element,myobj);
 			}
-			
-			var clone = this.clone();
-				clone.setStyles(this.getCoordinates()); // this returns an object with left/top/bottom/right, so its perfect				
-				clone.setStyles({'opacity': 0.7, 'position': 'absolute', 'z-index': lastZ});
-				clone.setProperty('guid', guid);
-				clone.setProperty('host', host_guid);
-				clone.setProperty('hostview', host_view);
-				clone.addEvent('emptydrop', function() {
-					this.remove();
-				}).inject(document.body);
-			
-			var drag = clone.makeDraggable({
-				droppables: $$('#quickbar_data div')
-			}); // this returns the dragged element
-	 
-			e.stop();
-			drag.start(e); // start the event manual
 		});
-	} else {
-		item.addEvent('mousedown', function(e) {
+		
+	});
+	drag_hosts=drag_hosts_new;
+	
+	// Find all draggables
+	var drag_ables_new=[];
+	$$('.drag_able').each(function(e) {
+		// Check if this item already exists
+		var i = drag_ables.indexOf(e);
+		if (i>=0) {
+			drag_ables_new.push(e);
+			return; // already exists
+		}
+		drag_ables_new.push(e);
+		
+		// Store some usefull info inside the element
+		var info = e.getProperty('class').split(' ');
+		var guid=info[1];
+		if (guid) e.setProperty('guid',guid);
+		var tip=e.getProperty('tip');		
+		//alert('Found item GUID='+guid);
+
+		// If we have title, add the hover window
+		if (tip) {
+			e.setProperty('title','');
+			e.addEvent('mousemove', function(e) {
+				var e = new Event(e);
+				var scrl = getScrollPosition();
+				var tip = this.getProperty('tip');
+				//window.alert(tip+', '+Number(e.client.x+scrl.x)+', '+Number(e.client.y+scrl.y));
+				hoverShow(tip, e.client.x+scrl.x+10, e.client.y+scrl.y, 'left');
+				e.stop();
+			});
+			e.addEvent('mouseout', function(e) {											
+				hoverShow();
+			});
+		}
+		
+		// Add a dropdown menu
+		e.addEvent('contextmenu', function(e) {
+			var e = new Event(e);
+			var scrl = getScrollPosition();
+			var guid = this.getProperty('guid');
+			var slot_element = this.getParent();
+			var slot=0;
+			var container=0;
+			if (slot_element) {
+				if (slot_element.getProperty('slot')) {
+					slot=slot_element.getProperty('slot');
+					container=slot_element.getProperty('container');
+				}
+			}
+			piemenu_init(e.client.x+scrl.x, e.client.y+scrl.y, guid, slot, container);
+			e.stop();
+		});
+
+		// Make the item draggable
+		e.addEvent('mousedown', function(e) {
+			// Make sure we are clicked with left click
 			e = new Event(e);
-			qb_currently_dragging=null;
 			if (e.rightClick) {
 				e = new Event(e).stop();
 				return;
 			}
 			
-			// Make this object the dragger host
-			qb_currently_dragging = this;
-			
 			// Create clone
+			drag_element = this;
 			var startcoord = $(this).getCoordinates();
 			var clone = $(this).clone()
 				.setStyles(this.getCoordinates()) // this returns an object with left/top/bottom/right, so its perfect
 				.setStyles({'opacity': 0.7, 'position': 'absolute', 'z-index': lastZ})
-				.setProperty('guid', guid)
-				.setProperty('host', host_guid)
-				.setProperty('hostview', host_view)
 				.addEvent('emptydrop', function() {	
+			
+					// Get some information
+					var count = this.getProperty('count');
+					if (!count) count=1;
 					var ccoord = $(this).getCoordinates();
+					var guid = this.getProperty('guid');
+					var slot_element = drag_element.getParent();
+					var slot=0;
+					var container=0;
+					if (slot_element) {
+						if (slot_element.getProperty('slot')) {
+							slot=slot_element.getProperty('slot');
+							container=slot_element.getProperty('container');
+						}
+					}
+										
+					// Done with me
 					this.remove();
+					
 					// Check if we were really dragged and not clicked (moved at least 5 px)
 					if ((Math.abs(ccoord.left-startcoord.left)>5) || (Math.abs(ccoord.top-startcoord.top)>5)) {
-						qb_currently_dragging.remove();
-						qb_currently_dragging=null;
-						gloryIO('?a=quickbar.remove&guid='+guid+'&slot='+this.getProperty('slot')+'&host='+host_guid+'&view='+host_view);
+						
+						// Local copy to use within this namespace
+						var srcelm = drag_element;						
+												
+						// Make the item shaded
+						drag_element.setStyle('opacity',0.5);
+
+						// Notify GUID removal
+						gloryIO('?a=dragdrop&mode=remove&guid='+guid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
+							if (data.mode == 'DRAG') {
+								drag_callback(data.action, srcelm);
+							}					
+						});
 					
 					// If not, it means we were clicked
 					} else {
-						gloryIO('?a=quickbar.use&guid='+guid+'&slot='+this.getProperty('slot')+'&host='+host_guid+'&view='+host_view);						
+						// Notify GUID click
+						var host = this;
+						gloryIO('?a=dragdrop&mode=click&guid='+guid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
+							if (data.mode == 'DRAG') {
+								if (data.action == 'REPLACE') {
+									srcelm.setProperties({
+										'src': data.item.src,
+										'title': data.item.name,
+										'guid': data.item.guid
+									});
+									srcelm.setStyles({
+										'width': 38,
+										'height': 38,
+										'padding': 1,										
+									});
+									if (!isInternetExplorer) {
+										srcelm.setAttribute('class', 'drag_able '+data.item.guid);
+									} else {
+										srcelm.setAttribute('className', 'drag_able '+data.item.guid);
+									}									
+								} else {
+									drag_callback(data.action, srcelm);
+								}
+							}					
+						});
 					}
-				})
-				.addEvent('mouseup', function() {	
-					var ccoord = $(this).getCoordinates();
-					if ((Math.abs(ccoord.left-startcoord.left)<=5) && (Math.abs(ccoord.top-startcoord.top)<=5)) {
-						gloryIO('?a=quickbar.use&guid='+guid+'&slot='+this.getProperty('slot')+'&host='+host_guid+'&view='+host_view);
-					}
+					
+					// We are not dragging anything right now
+					drag_element=null;
+
 				})
 				.inject(document.body);
 			startcoord = $(this).getCoordinates();
 	  
 			var drag = clone.makeDraggable({
-				droppables: $$('#quickbar_data div')
+				droppables: drag_hosts
 			}); // this returns the dragged element
-	 
+	 		
 			e.stop();
-			drag.start(e); // start the event manual
+			drag.start(e); // start the event manually
 		});
-	}
-}
-
-var qb_items=[];
-
-/**
-  * Spawn an item on the QBar
-  */
-function qb_spawn_item(slot, image, title, guid) {
-	try {
-		var e = $(document.createElement('div'));
-		$('quickbar_data').appendChild(e);
-		e.setProperties({
-			'slot': slot
-		});
-		qb_items.push(e);		
-		
-		if (!image) {
-			// Empty? Return..	
-		} else {
-			// Has image? Spawn it...
-			var i = $(document.createElement('img'));
-			i.setProperties({
-				'src': 'images/'+image,
-				'title': title
-			});
-			e.appendChild(i);
-			qb_makeqbutton(i,guid,slot);
-			qb_items.push(i);
-		}
-	} catch (e) {
-		window.alert('QB Spawn error: '	+e.message);
-	}
-}
-
-/**
-  * Remove all qbar items
-  */
-function qb_items_reset() {
-	$each(qb_items, function(e){
-		try {
-			e.remove();
-		} catch(e) {			
-		}
 	});
-	qb_items=[];
+	drag_ables=drag_ables_new;
 }
+
+var qb_hosts = [];
+var qb_items = [];
+var qb_itemdesc = [];
+
+function qb_items_build() {
+	var host = $('qbar_host');
+	for (var i=1; i<=21; i++) {
+		var e = new Element('div');
+		if (!isInternetExplorer) {
+			e.setAttribute('class', 'drag_host '+i+' 0');
+		} else {
+			e.setAttribute('className', 'drag_host '+i+' 0');
+		}
+		e.inject(host);
+		qb_hosts[i] = e;
+		qb_items[i]=false;
+		qb_itemdesc[i]=false;
+	}
+	drag_update();
+}
+
+function qb_items_reset() {
+	for (var i=1; i<=21; i++) {
+	  try {
+		if (qb_items[i]) {
+			qb_items[i].remove();
+		}
+	  } catch(e) {
+	  }
+	  qb_items[i]=false;
+	}
+}
+
+function qb_spawn_item(slot, image, name, guid, tip) {
+	if (slot<1) return;
+	var host = qb_hosts[slot];
+	var e = new Element('img', {
+		'src':image,
+		'title': name,
+		'width': 38,
+		'height': 38,
+		'padding': 1
+	});
+
+	if (!isInternetExplorer) {
+		e.setAttribute('class', 'drag_able '+guid);
+	} else {
+		e.setAttribute('className', 'drag_able '+guid);
+	}
+	
+	if ($defined(tip)) {
+		e.setProperty('tip',tip);
+	}
+	
+	// Store the new item
+	qb_items[slot]=e;	
+	e.inject(host);
+}
+
+
+$(window).addEvent('load', function() {
+	qb_items_build();
+	drag_update();
+});
 
 callback.register('message', function(msg) {
 	// ## Handle QBAR messages ##
@@ -233,14 +364,17 @@ callback.register('message', function(msg) {
 			qb_items_reset();
 			$each(msg[1], function(e,slot) {
 				if ($defined(e.image)) {
-					qb_spawn_item(slot, e.image, e.name, e.guid);
-				} else {
-					qb_spawn_item(slot);
+					qb_spawn_item(slot, e.image, e.name, e.guid, e.tip);
 				}
 			});
-			qb_init_droppables();
+			drag_update();
 		} catch (e) {
-			window.alert('QBInit error: '+e.message);	
+			window.alert('QBInit error: '+e);	
 		}
 	}
+});
+
+callback.register('iocomplete', function() {
+	// After each message, check and update droppabkes
+	drag_update();
 });

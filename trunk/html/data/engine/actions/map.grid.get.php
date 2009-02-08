@@ -213,6 +213,9 @@ $data = array(
 );
 callEvent('map.render', $data);
 
+// Set default background music
+relayMessage(MSG_INTERFACE, 'MUSIC', 'default');
+
 // Store the results
 $data['mode']='GRID';
 $act_result = array_merge($act_result, $data);

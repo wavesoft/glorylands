@@ -281,7 +281,7 @@ class db {
 	  * @param array $data		An one-dimensional array that contains the field names (as keys) and the field values to add
 	  * @return bool|resource	Returns false in case of error or the resultset of the executed query
 	  */
-	function replaceRow($table, $data, $replace=false) {
+	function replaceRow($table, $data) {
 		$vars = ""; $vals = "";
 		foreach ($data as $name => $value) {
 			if ($vars != "") $vars .= ", ";

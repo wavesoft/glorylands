@@ -95,6 +95,56 @@ function gl_guid_valid($guid) {
 }
 
 /**
+  * Find the GUID index
+  *  
+  * This function returns the GUID table's index field
+  *
+  * @param int $guid The input GUID number
+  * @return bool Returns the index number of false if error
+  */
+function gl_get_guid_index($guid) {
+	global $sql;
+	
+	$parts = gl_analyze_guid($guid);
+	if (!($parts['index']>0) && ($parts['group']!=false)) return false;
+	
+	return $sql->query_and_get_value('SELECT `index` FROM `'.$parts['group'].'_instance` WHERE `guid` = '.$guid);
+}
+
+/**
+  * Move one or more items using grouping algorithm
+  *  
+  * This function changes an item's parent. If
+  *
+  * @param int $guid The GUID to change parent.
+  * @param int $guid The parent GUID to change into.
+  * @param int $count The ammount of the elements to move.  
+  * @return bool Returns true if successfull or false on error
+  */
+function gl_guid_change_parent($guid, $parent, $count=1, $extra_vars=false) {
+	global $sql;
+	
+	// Validate the input
+	if (!$extra_vars) $extra_vars=array();
+	
+	// Get guid information
+	$parts = gl_analyze_guid($guid);
+	if (!($parts['index']>0) && ($parts['group']!=false)) return false; /* Valid guid */
+	
+	// Get starting index and template information
+	$start = $parts['index'];
+	$sql->query('SELECT * FROM `'.$parts['group'].'_instance` WHERE `guid` = '.$guid);
+	$info = $sql->fetch_array(MYSQL_ASSOC);
+	
+	// Start moving items
+	$ans=$sql->query('SELECT `guid` FROM `'.$parts['group'].'_instance` WHERE `template` = '.$info['template'].' AND `index` >= '.$start.' LIMIT 0,'.$count);
+	while ($row = $sql->fetch_array_fromresults($ans)) {
+		gl_update_guid_vars($row[0], array_merge($extra_vars, array('parent'=>$parent)));
+	}
+	
+	return true;
+}
+/**
   * Generate a GUID based on information provided
   *
   * @param int $index 		The value of the `index` field of the generated GUID
@@ -232,7 +282,7 @@ define('STACK_AUTO',2);
   * can specify a custom group
   *
   * @param int $parent 		The parent GUID whose children are to be obdained
-  * @param string $group	An optional parameter that specifies the instance group to check for children
+  * @param string $group	An optional parameter that specifies the instance group the children belongs into
   * @param boolean $stack	An optional parameter that specifies if the stacking mode of the objecs (see STACK_* constants)
   * @return int 			Returns the number of children
   */  
@@ -573,16 +623,17 @@ function gl_decode_variable($var,$type,$schema,$default = '',$guid) {
   *
   * @param string $type		The GUID category from which to obdain the translation information (*_vardesc table)
   * @param array $vars		The variables to convert (usually obdained from the gl_get_guid_vars()
+  * @param int $level		The verbosity level to use. This displays the entries starting at level $level and higher
   * @return array 			A two-dimensional array that contains the parameter name and a visual value
   */
-function gl_translate_vars($type, $vars, $guid = 0) {
+function gl_translate_vars($type, $vars, $level = 0) {
 	global $sql;
 	
 	// Initialize result
 	$result = array();
 	
 	// Load template information
-	$objects = $sql->query("SELECT * FROM `".$type."_vardesc`");
+	$objects = $sql->query("SELECT * FROM `".$type."_vardesc` WHERE `level` >= ".$level);
 	if (!$objects) fatalError($sql->getError());
 	if ($sql->emptyResults) return false;
 
