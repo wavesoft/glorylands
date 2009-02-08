@@ -60,6 +60,8 @@ foreach ($item_guids as $guid => $count) {
 	}
 }
 
+// Change to merchand background music
+relayMessage(MSG_INTERFACE, 'MUSIC', 'merchant');
 
 $act_result=array(
 

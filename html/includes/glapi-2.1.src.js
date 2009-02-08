@@ -711,12 +711,15 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 					// Process unknown messages to later-included scripts
 					callback.call('ioreply',obj);
 				}
-				
+
 				// If we have exchange messages, handle them now
 				if ($defined(obj.messages)) {
 					handleMessages(obj.messages);
 				}
 				
+				// Notify message operation completion
+				callback.call('iocomplete',false);
+
 				// Callback the function we are supposed to call
 				if (oncomplete_callback) oncomplete_callback(obj);	
 			},
@@ -1775,7 +1778,7 @@ function wgrid_design(data,hard_dispose) {
 /* ==================================================================================================================================== */
 
 var hoverInfo={text:'',x:0,y:0,sz:{x:0,y:0}};
-function hoverShow(text,x,y) {
+function hoverShow(text,x,y,align) {
 	var layer = $('hoverLayer');
 	if (text) {
 		if (hoverInfo.text!=text) {
@@ -1786,7 +1789,26 @@ function hoverShow(text,x,y) {
 		}
 		if (hoverInfo.x!=x || hoverInfo.y!=y) {
 			hoverInfo.x=x; hoverInfo.y=y;
-			layer.setStyles({'left':x-(hoverInfo.sz.x/2), 'top':y-hoverInfo.sz.y-12, 'z-index': lastZ});	
+			
+			// Calculate the offsets
+			var left = x-(hoverInfo.sz.x/2);
+			var top = y-hoverInfo.sz.y-12;
+			
+			// Calculate the vertical position
+			if (top < 0) {
+				top += hoverInfo.sz.y+12;
+			}
+			
+			// Render in different ways as specified
+			if (!align || (align == 'center')) {
+				left=x-(hoverInfo.sz.x/2);
+			} else if(align == 'left') {
+				left=x;
+			} else if(align == 'right') {
+				left=x-hoverInfo.sz.x;
+			}
+			
+			layer.setStyles({'left':left, 'top':top, 'z-index': lastZ});	
 		}
 	} else {
 		if (hoverInfo.text!='') {

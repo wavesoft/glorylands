@@ -52,7 +52,7 @@ function hb_update_user_session($guid, $group, $vars) {
 		$_SESSION[PLAYER][DATA] = gl_get_guid_vars($guid);
 		return true;
 	}
-		
+	
 	// Perform Dynamic Updates
 	gl_dynupdate_update($guid);
 	gl_dynupdate_update(gl_get_guid_parent($guid));
@@ -60,9 +60,32 @@ function hb_update_user_session($guid, $group, $vars) {
 
 }
 
+// Hooks 'system.guid.update' and updates the old
+// parent if an item is switching parent
+function hb_dynupdate_parent($guid, $group, $vars) {
+
+	// Check if we are changing parent
+	if (isset($vars['parent'])) {	
+	
+	
+		// Get item's current parent
+		$parent = gl_get_guid_parent($guid);
+		
+		// Perform Dynamic Updates
+		if ($vars['parent'] != $parent) {
+			gl_dynupdate_update($parent);
+			
+			// NOTICE: The update signal will be sent after the switching
+			//         operation is completed
+		}
+	}	
+	
+	return true;
+
+}
+
 // Hooks 'system.guid.deleted' and updates all the related material
 function hb_guid_deleted($guid) {
-
 
 	// Perform Dynamic Updates
 	gl_dynupdate_update($guid);

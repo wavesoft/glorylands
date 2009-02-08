@@ -28,6 +28,19 @@ table.backload {
 	padding: 5px;
 }
 
+.clear {
+	clear: both;
+}
+
+.spanaligned {
+
+}
+
+.spanaligned span {
+	float: left;
+}
+
+
 /* =====[ Border 1 : General ]============================== */
 .br1_lt {
 	background-image:url(../../images/UI/border_lt.gif);
@@ -333,6 +346,33 @@ div.dd_blackie {
 }
 
 /* =====[ Inventory ]================================= */
+
+div.bag_slotted {
+	float: left;
+	background-color:#000000;
+}
+
+div.bag_slotted div {
+	position: relative;
+	width: 41px;
+	height: 41px;
+	background-image: url(../../images/UI/qbar-emptyslot.jpg);
+	background-position: center;
+	background-repeat: no-repeat;
+	text-align: center;
+	vertical-align: middle;
+	padding: 2px;
+	float: left;	
+	cursor: pointer;
+}
+
+div.bag_slotted b {
+	position: absolute;
+	right: 5px;
+	bottom: 4px;
+	color: #00FF00;
+	background-image: url(images/UI/backblack.png);
+}
 
 div.bag_container {
 	width: 230px;

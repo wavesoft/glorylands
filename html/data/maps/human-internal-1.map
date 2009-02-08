@@ -1,1 +1,1 @@
-{"width":"19","height":"14","title":"human-internal-1","id":44,"images":[],"objects":[],"background":{"fill":"z-castle-int-1-115.png","name":"human-internal-1","width":640,"height":480,"xsize":1,"ysize":1}}
+{"width":"19","height":"14","title":"human-internal-1","id":44,"images":["internal-wall-clock.png"],"objects":[{"x":12,"y":2,"image":0,"cx":0,"cy":2,"dynamic":true,"action":"time","name":"Wall Clock"}],"background":{"fill":"z-castle-int-1-115.png","name":"human-internal-1","width":213,"height":240,"xsize":4,"ysize":2}}

@@ -12,7 +12,7 @@
 	<td align="left" valign="top">
 	<table width="100%">
 	<tr>
-		<td width="{$_my.icon_width}" height="-1" align="center" valign="middle" class="frame128"><img onload="qb_makedraggable(this,{$_my.guid},false,{$_my.guid},'info.guid');" src="images/{$_my.icon}"/></td>
+		<td width="{$_my.icon_width}" height="-1" align="center" valign="middle" class="frame128"><img src="images/{$_my.icon}"/></td>
 		<td rowspan="2" valign="top">
 		<h1>{$_my.name}</h1>
 		<p>{$_my.desc}</p>

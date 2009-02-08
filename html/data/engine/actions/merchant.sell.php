@@ -54,6 +54,9 @@ function add_objects_of($guid) {
 
 add_objects_of($_SESSION[PLAYER][GUID]);
 
+// Change to merchand background music
+relayMessage(MSG_INTERFACE, 'MUSIC', 'merchant');
+
 $act_result=array(
 
 	# Theese variables will reach JSON untouched
