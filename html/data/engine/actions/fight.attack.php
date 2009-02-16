@@ -17,5 +17,5 @@ function attack_hit($x,$y,$walk_trace) {
 range_calculate($_SESSION[PLAYER][DATA]['x'], $_SESSION[PLAYER][DATA]['y'], 2, 'attack_hit');
 
 // Display attack grid
-relayMessage(MSG_INTERFACE, 'ACTIONGRID', array('base'=>'?a=fight.attack', 'grid'=>$result));
+relayMessage(MSG_INTERFACE, 'ACTIONGRID', array('base'=>'?a=fight.main', 'grid'=>$result));
 ?>

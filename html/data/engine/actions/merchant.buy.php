@@ -66,9 +66,12 @@ relayMessage(MSG_INTERFACE, 'MUSIC', 'merchant');
 $act_result=array(
 
 	# Theese variables will reach JSON untouched
-	'mode'=>'DEDICATED',
+	'mode'=>'MAIN',
+	'title' => 'Buy goods',
 	'width'=>800,
 	'height'=>500, 
+	'head_image' => 'UI/navbtn_back.gif',
+	'head_link' => '?a=map.grid.get',
 	'rollback'=>true,
 	/* 'text' Will be added automatically before post-procession */
 	

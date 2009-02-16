@@ -21,9 +21,9 @@
 			 <tr><td colspan="2" align="center" valign="bottom" height="24" class="book_menu">
 				 <br />
 				 <ul>
-					<li><a href="javascript:;" onclick="ddwin_change('?a=merchant.buy&guid={$_my.guid}')"><img border="0" src="images/UI/btn_buy.gif" /></a></li>
-					<li><a href="javascript:;" onclick="ddwin_change('?a=merchant.sell&guid={$_my.guid}')"><img border="0" src="images/UI/btn_sell.gif" /></a></li>
-					<li><a href="javascript:;" onclick="ddwin_dispose()"><img border="0" src="images/UI/return.gif" /></a></li>
+					<li><a href="javascript:;" onclick="gloryIO('?a=merchant.buy&guid={$_my.guid}')"><img border="0" src="images/UI/btn_buy.gif" /></a></li>
+					<li><a href="javascript:;" onclick="gloryIO('?a=merchant.sell&guid={$_my.guid}')"><img border="0" src="images/UI/btn_sell.gif" /></a></li>
+					<li><a href="javascript:;" onclick="gloryIO('?a=map.grid.get')"><img border="0" src="images/UI/return.gif" /></a></li>
 				</ul>
 			</td></tr>
 			</table>
