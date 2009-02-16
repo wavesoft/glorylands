@@ -1,0 +1,10 @@
+==[Started]==============
+Request:
+Array
+(
+    [a] => syntax
+    [json] => null
+    [PHPSESSID] => dcd1e1e522d8a43a70a5999d1b538cec
+)
+End.
+

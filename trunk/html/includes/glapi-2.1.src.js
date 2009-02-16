@@ -23,9 +23,12 @@ var CBChain = new Class({
 		if (!$defined(this.chain[chain_name])) { this.chain[chain_name]=[]; };
 		this.chain[chain_name].push(callback);
 	},
-	call: function(chain_name,parm) {
+	call: function(chain_name,p1,p2,p3,p4,p5) {
 		if ($defined(this.chain[chain_name])) {
-			this.chain[chain_name].each(function(e){ e(parm); });
+			try {
+				this.chain[chain_name].each(function(e){ e(p1,p2,p3,p4,p5); });
+			} catch(e) {
+			}
 		}
 	}
 });
@@ -257,6 +260,10 @@ var ex_buffer_data = ""; /* Any extra data required on Grid Area */
 function initDisplayBuffer() {
 	// Store any data previous initialized in design-time on buffer host
 	ex_buffer_data = $('databuffer').innerHTML;	
+}
+
+function clearDisplayBuffer() {
+	$('databuffer').setHTML('');
 }
 
 function displayBuffer(buffer, hLink, hImg, hText) {
@@ -597,8 +604,11 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 					piemenu_dispose();
 					disposeActionPane();
 					
-					// Display data buffer
-					displayBuffer(obj.text, head_link, head_image, title);
+					// Hide grid and show the new window
+					map_curtain(true).chain(function() {
+						displayBuffer(obj.text, head_link, head_image, title);
+						map_curtain(false);
+					});
 					
 				// ## Placeholder for information mode ##
 				} else if (mode=='INFO') {
@@ -718,7 +728,17 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 				}
 				
 				// Notify message operation completion
-				callback.call('iocomplete',false);
+				try {
+					var rexp = /a=(.*)&/i;
+					var parts = rexp.exec(url+'&');					
+					if (!$chk(parts)) {
+						callback.call('iocomplete',false, obj);
+					} else {
+						callback.call('iocomplete',parts[1], obj);
+					}
+				} catch (e) {
+					window.alert('RegEx Error: '+e);
+				}
 
 				// Callback the function we are supposed to call
 				if (oncomplete_callback) oncomplete_callback(obj);	
@@ -921,6 +941,7 @@ function map_reset() {
 function map_loadbase(mapname) {	
 	// Hide the data buffer (if exists)
 	// and show map
+	clearDisplayBuffer();
 	$('databuffer').setStyle('visibility','hidden');
 	$('datapane').setStyle('visibility','visible');	
 
@@ -1934,6 +1955,8 @@ function renderActionRange(chunk) {
 	// Dispose hover
 	hoverShow();
 
+	// TODO: Probably convert to DOM?
+
 	try {
 	var x=0; var y=0;	
 	var HTML = '<table cellspacing="0" cellpadding="0">';
@@ -2433,7 +2456,7 @@ $(document).addEvent('contextmenu', function(e){
 	// Dispose any probably open popups
 	piemenu_dispose();	//## Pie Menu
 	wgrid_hide();		//## Walking grid
-	e.stop();
+	//e.stop();
 });
 
 // Initialize mouse handler on window

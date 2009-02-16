@@ -58,9 +58,6 @@ function range_calculate($x, $y, $distance, $callback, $callback_always) {
 			}
 			
 		} catch (Exception $e){
-			$f=fopen("c:\\error.log","a");
-			fwrite($f,$e."\n\r");
-			fclose($f);
 		}
 	}
 	

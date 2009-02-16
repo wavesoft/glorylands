@@ -28,5 +28,10 @@ if (isset($_REQUEST['guid'])) {
 	if (!gl_guid_valid($_REQUEST['guid'])) return false;
 }
 
+// Check if we have an active fight
+if (isset($_SESSION['fight'])) {
+
+}
+
 return true;
 ?>

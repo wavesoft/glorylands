@@ -1,0 +1,226 @@
+/* CSS Document */
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+/* ===[ Root node information ]============================= */
+ul.node {
+	float:left;
+	width:100%;
+	padding:0;
+	list-style-type:none;
+}
+
+ul.node li {
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	float: left;
+	margin: 1px;
+	padding-left: 2px;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-bottom: 2px;
+	cursor: pointer;
+}
+
+.addnode {
+	border: solid 1px #6699FF;
+	background-image: url(images/add.png);
+	background-repeat: no-repeat;
+	background-position: 1px 2px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	margin: 1px;
+	padding-left: 15px !important;
+	display: inline;
+	cursor: pointer;
+	opacity: 0.2;
+	color: #6699FF;
+}
+.addnode:hover {
+	background-color: #ADD2E7;
+	opacity: 1;
+	color: #FFFFFF;
+}
+
+.prefix {
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	margin: 1px;
+	display: inline;
+	color: #CC6600;
+	font-style: italic;
+	width: 100%;
+	float: left;
+}
+
+ul.node input {
+	border: solid 1px #336699;
+	font-size: 12px;
+	padding-top 1px;
+}
+
+/* ===[ Element Information ]============================= */
+
+.const {
+	background-color: #D2FDAC;
+	background-position: 1px 2px;
+}
+.const:hover {
+	background-color: #D5FFD5;
+}
+
+.boolean {
+	background-color: #A8FFFF !important;
+	color: #007575;
+	font-weight: bold;
+	font-style:italic;
+}
+.boolean:hover {
+	background-color: #CEFFFF !important;
+}
+
+.string {
+	color: #009900;
+	font-style:italic;
+}
+
+.number {
+	color: #009900;
+	font-style:italic;
+	font-weight: bold;
+}
+
+.var {
+	background-color: #00CC00;
+	color: #FFFFFF;
+	background-image: url(images/var.png);
+	background-repeat: no-repeat;
+	padding-left: 18px !important;
+	background-position: 1px 2px;
+}
+.var:hover {
+	background-color: #00CC66;
+}
+
+.object {
+	background-color: #6699FF;
+	color: #FFFFFF;
+	background-image: url(images/object.png);
+	background-repeat: no-repeat;
+	padding-left: 18px !important;
+	background-position: 1px 2px;
+}
+.object:hover {
+	background-color: #ADD2E7;
+}
+
+.function {
+	background-color: #FF9900;
+	color: #FFFFFF;
+}
+.function:hover {
+	background-color: #FFCC33;
+}
+
+.system {
+	background-image: url(images/system.png);
+	background-repeat: no-repeat;
+	padding-left: 18px !important;
+	background-position: 1px 2px;
+}
+
+.assign {
+	background-color: #FEE6CB;
+	border: solid 1px #FF9966;
+}
+.assign:hover {
+	background-color: #FFF2FF;
+}
+
+.op {
+	background-color: #666666;
+	color: #FFFFFF;
+}
+.op:hover {
+	background-color: #999999;
+}
+
+.unknown {
+	border: solid 1px #F7F7F7;
+}
+.unknown:hover {
+	background-color: #CCCCCC;
+}
+
+.bordered {
+	border: solid 1px #E4E4E4;
+}
+
+
+/* ===[ Compatible Menu ]==================================== */
+
+.compatible_dropdown {
+	border: solid 1px #A4C6F9;
+	background-color: #FFFFFF;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	position: absolute;
+	z-index: 10000;
+}
+
+.compatible_dropdown a {
+	display: block;
+	width: 100%;
+	padding: 2px;
+	color: #333333;
+	text-decoration: none;
+}
+.compatible_dropdown a:hover {
+	background-color: #A4C6F9;
+	color: #FFFFFF;
+}
+
+.compatible_dropdown .op {
+	color: #333333;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.compatible_dropdown .function {
+	background-image: url(images/system.png);
+	background-repeat: no-repeat;
+	padding-left: 18px !important;
+	background-position: 1px 2px;
+	display: block;
+	width: 100%;
+	padding: 2px;
+	color: #333333;
+	text-decoration: none;
+}
+
+.compatible_dropdown .var {
+	background-image: url(images/var.png);
+	background-repeat: no-repeat;
+	padding-left: 18px !important;
+	background-position: 1px 2px;
+	display: block;
+	width: 100%;
+	padding: 2px;
+	color: #333333;
+	text-decoration: none;
+}
+
+.compatible_dropdown .object {
+	background-image: url(images/object.png);
+	background-repeat: no-repeat;
+	padding-left: 18px !important;
+	background-position: 1px 2px;
+	display: block;
+	width: 100%;
+	padding: 2px;
+	color: #333333;
+	text-decoration: none;
+}

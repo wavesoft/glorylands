@@ -247,10 +247,15 @@ class db {
 	/**
 	  * Returns detailed information for the last error occured
 	  *
+	  * @param bool $formatted	(optional) TRUE If you want the result to be a pre-formatted HTML response
 	  * @return string	An HTML-Formatted error description
 	  */
-	function getError() {
-		return "<font face=Arial size=1 color=red>MySQL error while " . $this->errPosition . " : <font color=blue>" . mysql_error() . "</font></font>";
+	function getError($formatted=true) {
+		if ($formatted) {
+			return "<font face=Arial size=1 color=red>MySQL error while " . $this->errPosition . " : <font color=blue>" . mysql_error() . "</font></font>";
+		} else {
+			return mysql_error();
+		}
 	}
 
 	/**
@@ -323,7 +328,7 @@ class db {
 	  * @return bool|string		Returns false in case of error or the first row's first field value
 	  */
 	function query_and_get_value($query) {
-	    $this->errPosition = "performing get value query '<strong>{$query}</strong>'";
+	    $this->errPosition = "performing get value query '<strong>".htmlspecialchars($query)."</strong>'";
 		$result = mysql_query($query, $this->conID);
 		$this->totQueries++;
 		if (!$result) {

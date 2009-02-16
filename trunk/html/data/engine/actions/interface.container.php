@@ -32,8 +32,18 @@ function free_slot($array) {
 	return ($max+1);
 }
 
-$maxslots = 0;
+// Get the object variabls
+$object_vars = gl_get_guid_vars($root_guid);
+
+// Calculate the maximum number of slots
+if (isset($object_vars['slots'])) {
+	$object_slots = $object_vars['slots'];
+} else {
+	$object_slots = 100; // Defaults to 100
+}
+
 $guids = gl_get_guid_children($root_guid, 'item', STACK_AUTO);
+$maxslots = 0; // Slots used
 foreach ($guids as $guid => $count) {
 	$vars = gl_get_guid_vars($guid);
 	$desc = gl_translate_vars('item', $vars, 3);
@@ -58,10 +68,15 @@ foreach ($guids as $guid => $count) {
 	$slot=$vars['slot'];
 	if ($slot=='') {
 		$slot=sizeof($objects)+1;	
+	} elseif ($slot > $object_slots) {
+		// Does this item has a slot ID out of current slot space?
+		// Reset it
+		$slot = free_slot($objects);
+		
 	} else {
 		// Check if the slot defined is already occupied
 		if (isset($objects[$slot])) {
-			// Find a free slot
+			// Find a free slot if it is
 			$slot = free_slot($objects);
 		}
 	}
@@ -70,9 +85,6 @@ foreach ($guids as $guid => $count) {
 	// Stack the object
 	$objects[$slot] = $data;
 }
-
-// Get the object variabls
-$object_vars = gl_get_guid_vars($root_guid);
 
 // Check and prepare slots
 if (!isset($object_vars['slots'])) {
