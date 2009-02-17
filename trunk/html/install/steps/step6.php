@@ -1,3 +1,6 @@
+<?php
+session_destroy();
+?>
 <h1>Installation is now completed</h1>
 <p>You can now start using the game!</p>
 <p>Log into the game from the <a href="..">Main Page</a> using the username <strong>admin</strong> and password <strong>admin</strong>, or create a new user account!</p>

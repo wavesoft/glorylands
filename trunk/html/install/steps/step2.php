@@ -18,7 +18,7 @@ $root_url = str_replace('\\','/', $root_url);
 	<table>
 		<tr>
 			<td width="120">Installation folder: </td>
-			<td><input class="text" name="config[BASE]" type="text" value="<?php _echo($_SESSION['config']['GAME']['BASE'], $root_path); ?>" size="50" /><br /><small><em>For windows installations, use / instead of \</em></small></td>
+			<td><input class="text" name="config[BASE]" type="text" value="<?php _echo($_SESSION['config']['GAME']['BASE'], $root_path); ?>" size="50" /></td>
 		</tr>
 		<tr>
 			<td>Game URL:</td>
