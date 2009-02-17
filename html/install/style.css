@@ -113,13 +113,13 @@ table.main {
 	border-bottom-color: #999999;
 }
 
-input.text {
+.text {
 	border: solid 1px #666666;
 	padding: 2px;
 	margin: 2px;
 }
 
-input.text:focus {
+.text:focus {
 	border: solid 3px #666699;
 	padding: 2px;
 	margin: 0px;

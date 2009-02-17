@@ -14,7 +14,7 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 				<?php 
 					$ver = phpversion(); 
 					$parts = explode('.', $ver);
-					if (((int)$parts[0] >= 5) && ((int)$parts[0] >= 2) && ((int)$parts[0] >= 0)) {
+					if (((int)$parts[0] >= 5) && ((int)$parts[1] >= 2) && ((int)$parts[2] >= 0)) {
 						echo "<span class=\"ok\">$ver</span>";
 					} else {
 						echo "<span class=\"error\">&lt; 5.2.0</span>";

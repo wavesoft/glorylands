@@ -5,6 +5,7 @@
   *
   * <pre>
   * ----------------------- Revision History ---------------------------
+  * v.2.6	- Updated to mysql_real_escape_string()
   * v.2.5	- Added replaceRow function to extend addRow
   * v.2.4	- Added query_and_get_value function to query and get a value
   * v.2.3	- Added Script Run function
@@ -273,7 +274,7 @@ class db {
 			if ($vals != "") $vals .= ", ";
 			
 			$vars .= "`{$name}`";
-			$vals .= "'".mysql_escape_string($value)."'";
+			$vals .= "'".mysql_real_escape_string($value)."'";
 		}
 		
 		return $this->query("INSERT INTO `{$table}` ({$vars}) VALUES ({$vals})");
@@ -293,7 +294,7 @@ class db {
 			if ($vals != "") $vals .= ", ";
 			
 			$vars .= "`{$name}`";
-			$vals .= "'".mysql_escape_string($value)."'";
+			$vals .= "'".mysql_real_escape_string($value)."'";
 		}
 		
 		return $this->query("REPLACE INTO `{$table}` ({$vars}) VALUES ({$vals})");
@@ -356,7 +357,7 @@ class db {
 		$q = "";
 		foreach ($data as $name => $value) {
 			if ($q != "") $q .= ", ";
-			$q .= "`{$name}` = '".mysql_escape_string($value)."'";
+			$q .= "`{$name}` = '".mysql_real_escape_string($value)."'";
 		}
 		return $this->query("UPDATE `{$table}` SET {$q} WHERE {$where}");
 	}

@@ -18,11 +18,11 @@ $root_url = str_replace('\\','/', $root_url);
 	<table>
 		<tr>
 			<td width="120">Installation folder: </td>
-			<td><input class="text" name="config[BASE]" type="text" value="<?php _echo($_SESSION['config']['GAME']['BASE'], $root_path); ?>" size="50" /></td>
+			<td><input class="text" name="config[BASE]" type="text" value="<?php _echo($_SESSION['config']['GAME']['BASE'], $root_path); ?>" size="50" /><br /><small><em>For windows installations, use / instead of \</em></small></td>
 		</tr>
 		<tr>
-			<td>Game URL: </td>
-			<td><input class="text" name="config[REF_URL]" type="text" value="<?php _echo($_SESSION['config']['GAME']['REF_URL'], $root_url); ?>" size="50" /></td>
+			<td>Game URL:</td>
+			<td><input class="text" name="config[REF_URL]" type="text" value="<?php _echo($_SESSION['config']['GAME']['REF_URL'], $root_url); ?>" size="50" /><br /><small><em>You can also use relative URLs (ex. /game instead of http://yourdomain/game)</em></small></td>
 		</tr>
 	</table>
 </p>
@@ -34,12 +34,10 @@ $root_url = str_replace('\\','/', $root_url);
 			<td><input class="text" name="config[TITLE]" type="text" value="<?php _echo($_SESSION['config']['GAME']['TITLE'],'Glory Lands'); ?>" size="50" /></td>
 		</tr>
 		<tr>
-			<td>HTML Encoding: </td>
-			<td><input class="text" name="config[CHARSET]" type="text" value="<?php _echo($_SESSION['config']['GAME']['CHARSET'],'iso-8859-7'); ?>" size="20" /></td>
-		</tr>
-		<tr>
 			<td>Default Language: </td>
-			<td><input class="text" name="config[LANG]" type="text" value="<?php _echo($_SESSION['config']['GAME']['LANG'],'en'); ?>" size="20" /></td>
+			<td><select class="text" name="config[LANG]" >
+				<option value="en">English</option>
+			</select></td>
 		</tr>
 	</table>
 </p>

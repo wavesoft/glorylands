@@ -24,7 +24,7 @@ function sidebar_data_feed() {
 
 	// Display some general information about the player
 	$icon = $_SESSION[PLAYER][DATA]['icon'];
-	$head = "<h3>".ucfirst($_SESSION[PLAYER][DATA]['name'])."</h3>\n<p>".$_SESSION[PLAYER][DATA]['description']."</p>";
+	$head = "<h3>".$_SESSION[PLAYER][DATA]['name']."</h3>\n<p>".$_SESSION[PLAYER][DATA]['description']."</p>";
 
 	// Check for active hooks
 	$body = "<table width=\"100%\"><tr><td valign=\"top\" width=\"120\">Statistics:<br />\n<table class=\"sidebar_infotbl\">

@@ -10,6 +10,8 @@ if (!is_dir(stripslashes($_REQUEST['config']['BASE']))) {
 if (!isset($_SESSION['config'])) $_SESSION['config'] = array();
 $_SESSION['config']['GAME'] = array();
 foreach ($_REQUEST['config'] as $var => $value) {
-	$_SESSION['config']['GAME'][$var] = stripslashes($value);
+	$value = stripslashes($value);
+	if ($var == 'BASE') $value=str_replace("\\","/",$value);
+	$_SESSION['config']['GAME'][$var] = $value;
 }
 ?>

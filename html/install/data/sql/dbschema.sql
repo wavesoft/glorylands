@@ -14,20 +14,20 @@ SET FOREIGN_KEY_CHECKS=0;
 CREATE TABLE `char_instance` (
   `index` int(11) NOT NULL auto_increment,
   `guid` int(11) default NULL,
-  `data` text collate latin1_general_ci,
+  `data` text collate utf8_unicode_ci,
   `parent` int(11) default '0',
   `template` int(11) default NULL,
   `account` int(11) default NULL,
-  `name` varchar(40) collate latin1_general_ci default NULL,
+  `name` varchar(40) collate utf8_unicode_ci default NULL,
   `x` int(11) default NULL,
   `y` int(11) default NULL,
   `map` int(11) default NULL,
   `level` int(11) default NULL,
   `inventory_bag` int(11) default NULL,
-  `model` varchar(40) collate latin1_general_ci default NULL,
+  `model` varchar(40) collate utf8_unicode_ci default NULL,
   `online` tinyint(1) default NULL,
   `visible` tinyint(1) default NULL,
-  `state` enum('NORMAL','GHOST','INVISIBLE') collate latin1_general_ci default NULL,
+  `state` enum('NORMAL','GHOST','INVISIBLE') collate utf8_unicode_ci default NULL,
   `HP` int(11) default NULL,
   `MP` int(11) default NULL,
   `STR` int(11) default NULL,
@@ -45,11 +45,11 @@ CREATE TABLE `char_instance` (
 -- ----------------------------
 CREATE TABLE `char_template` (
   `template` int(11) NOT NULL auto_increment COMMENT 'The template ID',
-  `schema` longtext collate latin1_general_ci COMMENT 'Schema data copied to data field on object creation',
-  `race` varchar(30) collate latin1_general_ci default NULL,
-  `icon` varchar(40) collate latin1_general_ci default NULL,
-  `flags` set('ADMIN') collate latin1_general_ci default NULL,
-  `description` varchar(250) collate latin1_general_ci default NULL,
+  `schema` longtext collate utf8_unicode_ci COMMENT 'Schema data copied to data field on object creation',
+  `race` varchar(30) collate utf8_unicode_ci default NULL,
+  `icon` varchar(40) collate utf8_unicode_ci default NULL,
+  `flags` set('ADMIN') collate utf8_unicode_ci default NULL,
+  `description` varchar(250) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -58,13 +58,13 @@ CREATE TABLE `char_template` (
 -- Table structure for char_vardesc
 -- ----------------------------
 CREATE TABLE `char_vardesc` (
-  `variable` varchar(60) collate latin1_general_ci NOT NULL,
-  `name` varchar(120) collate latin1_general_ci default NULL,
+  `variable` varchar(60) collate utf8_unicode_ci NOT NULL,
+  `name` varchar(120) collate utf8_unicode_ci default NULL,
   `level` int(1) default NULL,
   `showmissing` tinyint(1) default NULL,
-  `default` varchar(120) collate latin1_general_ci default NULL,
-  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
-  `translation` mediumtext collate latin1_general_ci,
+  `default` varchar(120) collate utf8_unicode_ci default NULL,
+  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate utf8_unicode_ci default NULL,
+  `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -74,11 +74,11 @@ CREATE TABLE `char_vardesc` (
 -- ----------------------------
 CREATE TABLE `data_maps` (
   `index` int(11) NOT NULL auto_increment,
-  `name` varchar(120) collate latin1_general_ci default NULL,
-  `desc` mediumtext collate latin1_general_ci,
-  `history` longtext collate latin1_general_ci,
-  `background` varchar(80) collate latin1_general_ci default NULL,
-  `filename` varchar(80) collate latin1_general_ci default NULL,
+  `name` varchar(120) collate utf8_unicode_ci default NULL,
+  `desc` mediumtext collate utf8_unicode_ci,
+  `history` longtext collate utf8_unicode_ci,
+  `background` varchar(80) collate utf8_unicode_ci default NULL,
+  `filename` varchar(80) collate utf8_unicode_ci default NULL,
   `z-base` int(11) default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
@@ -95,7 +95,7 @@ CREATE TABLE `data_maps_teleports` (
   `to_x` int(11) default NULL,
   `to_y` int(11) default NULL,
   `to_map` int(11) default NULL,
-  `message` varchar(120) collate latin1_general_ci default NULL,
+  `message` varchar(120) collate utf8_unicode_ci default NULL,
   `locks` int(11) default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -106,8 +106,8 @@ CREATE TABLE `data_maps_teleports` (
 CREATE TABLE `data_mix_defaults` (
   `index` int(11) NOT NULL auto_increment,
   `linkguid` int(11) default NULL,
-  `type` enum('MODIFIER','TIMEOUT','CLASS','GROUP','DAMAGE','TRIGGER','SCRIPT') collate latin1_general_ci default NULL,
-  `typeparm` varchar(20) collate latin1_general_ci default NULL,
+  `type` enum('MODIFIER','TIMEOUT','CLASS','GROUP','DAMAGE','TRIGGER','SCRIPT') collate utf8_unicode_ci default NULL,
+  `typeparm` varchar(20) collate utf8_unicode_ci default NULL,
   `offset` int(11) default NULL,
   `gravity` int(11) default NULL,
   `dropchance` int(4) default NULL,
@@ -122,10 +122,10 @@ CREATE TABLE `data_mix_defaults` (
 CREATE TABLE `data_mix_iconrules` (
   `index` int(11) NOT NULL auto_increment,
   `icon` int(11) default NULL,
-  `type` varchar(20) collate latin1_general_ci default NULL,
-  `subtype` varchar(20) collate latin1_general_ci default NULL,
+  `type` varchar(20) collate utf8_unicode_ci default NULL,
+  `subtype` varchar(20) collate utf8_unicode_ci default NULL,
   `offset` int(11) default NULL,
-  `check` enum('EXISTS','GREATER','LESS','EQUAL') collate latin1_general_ci default NULL,
+  `check` enum('EXISTS','GREATER','LESS','EQUAL') collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -135,8 +135,8 @@ CREATE TABLE `data_mix_iconrules` (
 -- ----------------------------
 CREATE TABLE `data_mix_icons` (
   `index` int(11) NOT NULL auto_increment,
-  `icon` varchar(50) collate latin1_general_ci default NULL,
-  `suggestname` varchar(120) collate latin1_general_ci default NULL,
+  `icon` varchar(50) collate utf8_unicode_ci default NULL,
+  `suggestname` varchar(120) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -149,7 +149,7 @@ CREATE TABLE `data_mix_mixgroups` (
   `group` int(11) default NULL COMMENT 'Source Group',
   `mixgroup` int(11) default NULL COMMENT 'Mixing Group',
   `skillguid` int(11) default NULL COMMENT 'Required Skill GUID',
-  `deftype` varchar(20) collate latin1_general_ci default NULL COMMENT 'The Default result type if both objects are dropped',
+  `deftype` varchar(20) collate utf8_unicode_ci default NULL COMMENT 'The Default result type if both objects are dropped',
   `defgroup` int(11) default NULL,
   `droprate` int(11) default '0',
   `skill_min` int(11) default NULL,
@@ -168,7 +168,7 @@ CREATE TABLE `data_mix_mixgroups` (
 CREATE TABLE `data_regquiz_answers` (
   `index` int(11) NOT NULL auto_increment,
   `question` int(11) default NULL,
-  `answer` varchar(250) collate latin1_general_ci default NULL,
+  `answer` varchar(250) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -179,8 +179,8 @@ CREATE TABLE `data_regquiz_answers` (
 CREATE TABLE `data_regquiz_data` (
   `index` int(11) NOT NULL auto_increment,
   `answer` int(11) default NULL,
-  `v_modifier` varchar(120) collate latin1_general_ci default NULL,
-  `v_value` varchar(120) collate latin1_general_ci default NULL,
+  `v_modifier` varchar(120) collate utf8_unicode_ci default NULL,
+  `v_value` varchar(120) collate utf8_unicode_ci default NULL,
   `i_guid` int(11) default NULL,
   `i_parent` int(11) default NULL,
   `contributor` int(11) NOT NULL default '0',
@@ -192,8 +192,8 @@ CREATE TABLE `data_regquiz_data` (
 -- ----------------------------
 CREATE TABLE `data_regquiz_questions` (
   `index` int(11) NOT NULL auto_increment,
-  `question` mediumtext collate latin1_general_ci,
-  `title` varchar(250) collate latin1_general_ci default NULL,
+  `question` mediumtext collate utf8_unicode_ci,
+  `title` varchar(250) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -203,13 +203,13 @@ CREATE TABLE `data_regquiz_questions` (
 -- ----------------------------
 CREATE TABLE `data_religions` (
   `index` int(11) NOT NULL auto_increment,
-  `name` varchar(250) collate latin1_general_ci default NULL,
-  `description` mediumtext collate latin1_general_ci,
-  `believes` longtext collate latin1_general_ci,
-  `gods` mediumtext collate latin1_general_ci,
+  `name` varchar(250) collate utf8_unicode_ci default NULL,
+  `description` mediumtext collate utf8_unicode_ci,
+  `believes` longtext collate utf8_unicode_ci,
+  `gods` mediumtext collate utf8_unicode_ci,
   `maintemple_guid` int(11) default NULL,
   `founder_guid` int(11) default NULL,
-  `image` varchar(120) collate latin1_general_ci default NULL,
+  `image` varchar(120) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -225,7 +225,7 @@ CREATE TABLE `data_spawn` (
   `maxitems` int(11) default '1',
   `spawncount` int(11) default '1',
   `successrate` int(1) default '100',
-  `variables` text collate latin1_general_ci,
+  `variables` text collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -245,11 +245,11 @@ CREATE TABLE `data_spawn_times` (
 -- ----------------------------
 CREATE TABLE `data_tips` (
   `index` int(11) NOT NULL auto_increment,
-  `trigger_action` varchar(60) collate latin1_general_ci default NULL,
-  `trigger_request` mediumtext collate latin1_general_ci,
-  `importance` enum('HIGH','NORMAL','LOW') collate latin1_general_ci default NULL,
-  `title` varchar(120) collate latin1_general_ci default NULL,
-  `tip` longtext collate latin1_general_ci,
+  `trigger_action` varchar(60) collate utf8_unicode_ci default NULL,
+  `trigger_request` mediumtext collate utf8_unicode_ci,
+  `importance` enum('HIGH','NORMAL','LOW') collate utf8_unicode_ci default NULL,
+  `title` varchar(120) collate utf8_unicode_ci default NULL,
+  `tip` longtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -260,18 +260,18 @@ CREATE TABLE `data_tips` (
 CREATE TABLE `gameobject_instance` (
   `index` int(11) NOT NULL auto_increment,
   `guid` int(11) default NULL,
-  `data` text collate latin1_general_ci,
+  `data` text collate utf8_unicode_ci,
   `template` int(11) default NULL,
   `parent` int(11) default '0',
-  `name` varchar(120) collate latin1_general_ci default NULL,
+  `name` varchar(120) collate utf8_unicode_ci default NULL,
   `x` int(11) default NULL,
   `y` int(11) default NULL,
   `z` int(11) default NULL,
   `map` int(11) default NULL,
   `level` int(11) default NULL,
   `visible` tinyint(1) default NULL,
-  `model` varchar(40) collate latin1_general_ci default NULL,
-  `mixhash` varchar(40) collate latin1_general_ci default NULL,
+  `model` varchar(40) collate utf8_unicode_ci default NULL,
+  `mixhash` varchar(40) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -281,12 +281,12 @@ CREATE TABLE `gameobject_instance` (
 -- ----------------------------
 CREATE TABLE `gameobject_template` (
   `template` int(11) NOT NULL auto_increment COMMENT 'The template ID',
-  `schema` longtext collate latin1_general_ci COMMENT 'Schema data copied to data field on object creation',
-  `templatename` varchar(250) collate latin1_general_ci default NULL COMMENT 'Unit name',
-  `subname` varchar(250) collate latin1_general_ci default NULL COMMENT 'Unit subname',
-  `icon` varchar(250) collate latin1_general_ci default NULL COMMENT 'Unit Icon',
-  `description` mediumtext collate latin1_general_ci COMMENT 'Unit Description',
-  `flags` set('OPENABLE','TRIGGER') collate latin1_general_ci default NULL,
+  `schema` longtext collate utf8_unicode_ci COMMENT 'Schema data copied to data field on object creation',
+  `templatename` varchar(250) collate utf8_unicode_ci default NULL COMMENT 'Unit name',
+  `subname` varchar(250) collate utf8_unicode_ci default NULL COMMENT 'Unit subname',
+  `icon` varchar(250) collate utf8_unicode_ci default NULL COMMENT 'Unit Icon',
+  `description` mediumtext collate utf8_unicode_ci COMMENT 'Unit Description',
+  `flags` set('OPENABLE','TRIGGER') collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -295,13 +295,13 @@ CREATE TABLE `gameobject_template` (
 -- Table structure for gameobject_vardesc
 -- ----------------------------
 CREATE TABLE `gameobject_vardesc` (
-  `variable` varchar(60) collate latin1_general_ci NOT NULL,
-  `name` varchar(120) collate latin1_general_ci default NULL,
+  `variable` varchar(60) collate utf8_unicode_ci NOT NULL,
+  `name` varchar(120) collate utf8_unicode_ci default NULL,
   `level` int(1) default NULL,
   `showmissing` tinyint(1) default NULL,
-  `default` varchar(120) collate latin1_general_ci default NULL,
-  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
-  `translation` mediumtext collate latin1_general_ci,
+  `default` varchar(120) collate utf8_unicode_ci default NULL,
+  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate utf8_unicode_ci default NULL,
+  `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -311,8 +311,8 @@ CREATE TABLE `gameobject_vardesc` (
 -- ----------------------------
 CREATE TABLE `interface_module_assign` (
   `index` int(11) NOT NULL auto_increment,
-  `action` varchar(40) collate latin1_general_ci default NULL,
-  `module` varchar(10) collate latin1_general_ci default NULL,
+  `action` varchar(40) collate utf8_unicode_ci default NULL,
+  `module` varchar(10) collate utf8_unicode_ci default NULL,
   `position` int(11) default NULL,
   `weight` int(11) default NULL,
   PRIMARY KEY  (`index`)
@@ -323,9 +323,9 @@ CREATE TABLE `interface_module_assign` (
 -- ----------------------------
 CREATE TABLE `interface_module_resources` (
   `index` int(11) NOT NULL auto_increment,
-  `module` varchar(10) collate latin1_general_ci default NULL,
-  `mode` enum('CSS','JS','HEADER','FOOTER') collate latin1_general_ci default NULL,
-  `filename` varchar(120) collate latin1_general_ci default NULL,
+  `module` varchar(10) collate utf8_unicode_ci default NULL,
+  `mode` enum('CSS','JS','HEADER','FOOTER') collate utf8_unicode_ci default NULL,
+  `filename` varchar(120) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -333,10 +333,10 @@ CREATE TABLE `interface_module_resources` (
 -- Table structure for interface_modules
 -- ----------------------------
 CREATE TABLE `interface_modules` (
-  `index` varchar(10) collate latin1_general_ci NOT NULL,
-  `name` varchar(30) collate latin1_general_ci default NULL,
-  `description` text collate latin1_general_ci,
-  `filename` varchar(120) collate latin1_general_ci default NULL,
+  `index` varchar(10) collate utf8_unicode_ci NOT NULL,
+  `name` varchar(30) collate utf8_unicode_ci default NULL,
+  `description` text collate utf8_unicode_ci,
+  `filename` varchar(120) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -347,7 +347,7 @@ CREATE TABLE `interface_openwin` (
   `index` int(11) NOT NULL auto_increment,
   `guid` int(11) NOT NULL default '0' COMMENT 'The GUID the window is associated with',
   `player` int(11) default '0',
-  `updateurl` varchar(250) collate latin1_general_ci default NULL COMMENT 'The reply message to update the content',
+  `updateurl` varchar(250) collate utf8_unicode_ci default NULL COMMENT 'The reply message to update the content',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Contains the player''s open pop-up windows.Used for DynUpdate';
 
@@ -357,14 +357,14 @@ CREATE TABLE `interface_openwin` (
 CREATE TABLE `item_instance` (
   `index` int(11) NOT NULL auto_increment,
   `guid` int(11) default NULL,
-  `data` text collate latin1_general_ci,
+  `data` text collate utf8_unicode_ci,
   `template` int(11) default NULL,
   `parent` int(11) default NULL,
-  `item_type` varchar(20) collate latin1_general_ci default NULL,
+  `item_type` varchar(20) collate utf8_unicode_ci default NULL,
   `item_template` int(11) default NULL,
   `item_count` int(11) default NULL,
-  `item_variables` longtext collate latin1_general_ci,
-  `mixhash` varchar(40) collate latin1_general_ci default NULL,
+  `item_variables` longtext collate utf8_unicode_ci,
+  `mixhash` varchar(40) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Contains all the initialization instances that must be done';
@@ -374,12 +374,12 @@ CREATE TABLE `item_instance` (
 -- ----------------------------
 CREATE TABLE `item_template` (
   `template` int(11) NOT NULL auto_increment,
-  `schema` mediumtext collate latin1_general_ci,
-  `name` varchar(250) collate latin1_general_ci default NULL,
-  `description` mediumtext collate latin1_general_ci,
-  `class` enum('CONSUMABLE','CONTAINER','WEAPON','ARMOR','REAGENT','PROJECTILE','TRADEGOOD','RECIPE','QUIVER','QUEST','KEY','MISC','BOOK') collate latin1_general_ci default NULL,
-  `subclass` enum('GENERIC','BAG','SOULBAG','HERBBAG','ENCHBAG','GEMBAG','MININGBAG','ONEHAND-AXE','TWOHAND-AXE','BOW','GUN','ONEHAND-MACE','TWOHAND-MACE','POLEARMS','ONEHAND-SWORD','TWOHAND-SWORD','STAFF','OHEHAND-EXOTIC','TWOHAND-EXOTIC','FIST','DAGGER','THROWN','SPEAR','CROSSBOW','WAND','FISHINGPOLE','CLOTH','LEATHER','MAIL','PLATE','SHIELD','LIBRAM','IDOL','TOTEM','ARROW','BULLET','THROWN','TRADEGOODS','PARTS','EXPLOSIVE','DEVICE','GEM','BOOK','LEATHERWORKING','TAILORING','ENGINEERING','BLACKSMITHING','COOKING','ALCHEMY','FIRSTAID','ENCHANTING','FISHING','JEWELCRAFTING','AMMOPOUCH','KEY','LOCKPICK','JUNK','MISC') collate latin1_general_ci default NULL,
-  `icon` varchar(250) collate latin1_general_ci default NULL,
+  `schema` mediumtext collate utf8_unicode_ci,
+  `name` varchar(250) collate utf8_unicode_ci default NULL,
+  `description` mediumtext collate utf8_unicode_ci,
+  `class` enum('CONSUMABLE','CONTAINER','WEAPON','ARMOR','REAGENT','PROJECTILE','TRADEGOOD','RECIPE','QUIVER','QUEST','KEY','MISC','BOOK') collate utf8_unicode_ci default NULL,
+  `subclass` enum('GENERIC','BAG','SOULBAG','HERBBAG','ENCHBAG','GEMBAG','MININGBAG','ONEHAND-AXE','TWOHAND-AXE','BOW','GUN','ONEHAND-MACE','TWOHAND-MACE','POLEARMS','ONEHAND-SWORD','TWOHAND-SWORD','STAFF','OHEHAND-EXOTIC','TWOHAND-EXOTIC','FIST','DAGGER','THROWN','SPEAR','CROSSBOW','WAND','FISHINGPOLE','CLOTH','LEATHER','MAIL','PLATE','SHIELD','LIBRAM','IDOL','TOTEM','ARROW','BULLET','THROWN','TRADEGOODS','PARTS','EXPLOSIVE','DEVICE','GEM','BOOK','LEATHERWORKING','TAILORING','ENGINEERING','BLACKSMITHING','COOKING','ALCHEMY','FIRSTAID','ENCHANTING','FISHING','JEWELCRAFTING','AMMOPOUCH','KEY','LOCKPICK','JUNK','MISC') collate utf8_unicode_ci default NULL,
+  `icon` varchar(250) collate utf8_unicode_ci default NULL,
   `quality` int(11) default NULL,
   `item_level` int(11) default NULL,
   `require_level` int(11) default NULL,
@@ -394,13 +394,13 @@ CREATE TABLE `item_template` (
 -- Table structure for item_vardesc
 -- ----------------------------
 CREATE TABLE `item_vardesc` (
-  `variable` varchar(60) collate latin1_general_ci NOT NULL,
-  `name` varchar(120) collate latin1_general_ci default NULL,
+  `variable` varchar(60) collate utf8_unicode_ci NOT NULL,
+  `name` varchar(120) collate utf8_unicode_ci default NULL,
   `level` int(1) default NULL,
   `showmissing` tinyint(1) default NULL,
-  `default` varchar(120) collate latin1_general_ci default NULL,
-  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
-  `translation` mediumtext collate latin1_general_ci,
+  `default` varchar(120) collate utf8_unicode_ci default NULL,
+  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate utf8_unicode_ci default NULL,
+  `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -410,10 +410,10 @@ CREATE TABLE `item_vardesc` (
 -- ----------------------------
 CREATE TABLE `locks_global` (
   `index` int(11) NOT NULL auto_increment,
-  `type` varchar(5) collate latin1_general_ci default NULL,
+  `type` varchar(5) collate utf8_unicode_ci default NULL,
   `template` int(11) default NULL,
   `timeout` int(11) default NULL,
-  `description` varchar(250) collate latin1_general_ci default NULL,
+  `description` varchar(250) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -424,7 +424,7 @@ CREATE TABLE `locks_private` (
   `index` int(11) NOT NULL auto_increment,
   `guid` int(11) default NULL,
   `timeout` int(11) default NULL,
-  `description` varchar(250) collate latin1_general_ci default NULL,
+  `description` varchar(250) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -434,7 +434,7 @@ CREATE TABLE `locks_private` (
 CREATE TABLE `mod_chat_channel_registrations` (
   `index` int(11) NOT NULL auto_increment,
   `user` int(11) default NULL,
-  `channel` varchar(30) collate latin1_general_ci default NULL,
+  `channel` varchar(30) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -455,15 +455,15 @@ CREATE TABLE `mod_quickbar_slots` (
 CREATE TABLE `npc_instance` (
   `index` int(11) NOT NULL auto_increment,
   `guid` int(11) default NULL,
-  `data` text collate latin1_general_ci,
+  `data` text collate utf8_unicode_ci,
   `template` int(11) default NULL,
   `x` int(11) default NULL,
   `y` int(11) default NULL,
   `map` int(11) default NULL,
   `level` int(11) default NULL,
-  `model` varchar(40) collate latin1_general_ci default NULL,
+  `model` varchar(40) collate utf8_unicode_ci default NULL,
   `visible` tinyint(1) default NULL,
-  `state` enum('NORMAL','GHOST','INVISIBLE') collate latin1_general_ci default NULL,
+  `state` enum('NORMAL','GHOST','INVISIBLE') collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -473,14 +473,14 @@ CREATE TABLE `npc_instance` (
 -- ----------------------------
 CREATE TABLE `npc_template` (
   `template` int(11) NOT NULL auto_increment,
-  `schema` mediumtext collate latin1_general_ci,
-  `name` varchar(250) collate latin1_general_ci default NULL,
-  `race` varchar(60) collate latin1_general_ci default NULL,
-  `class` varchar(60) collate latin1_general_ci default NULL,
-  `icon` varchar(120) collate latin1_general_ci default NULL,
-  `flags` set('CHAT','QUEST','VENDOR','BANKER','TAXI','TABARD','TRAINER','BATTLEFIELD','HEALER','AUCTIONEER','GUARD','STABLEMASTER','INNKEEPER','ARMORER') collate latin1_general_ci default NULL,
-  `type` enum('BEAST','DRAGON','DAEMON','ELEMENTAL','GIANT','UNDEAD','HUMANOID','CRITTER','TOTEM') collate latin1_general_ci default NULL,
-  `description` text collate latin1_general_ci,
+  `schema` mediumtext collate utf8_unicode_ci,
+  `name` varchar(250) collate utf8_unicode_ci default NULL,
+  `race` varchar(60) collate utf8_unicode_ci default NULL,
+  `class` varchar(60) collate utf8_unicode_ci default NULL,
+  `icon` varchar(120) collate utf8_unicode_ci default NULL,
+  `flags` set('CHAT','QUEST','VENDOR','BANKER','TAXI','TABARD','TRAINER','BATTLEFIELD','HEALER','AUCTIONEER','GUARD','STABLEMASTER','INNKEEPER','ARMORER') collate utf8_unicode_ci default NULL,
+  `type` enum('BEAST','DRAGON','DAEMON','ELEMENTAL','GIANT','UNDEAD','HUMANOID','CRITTER','TOTEM') collate utf8_unicode_ci default NULL,
+  `description` text collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -489,13 +489,13 @@ CREATE TABLE `npc_template` (
 -- Table structure for npc_vardesc
 -- ----------------------------
 CREATE TABLE `npc_vardesc` (
-  `variable` varchar(60) collate latin1_general_ci NOT NULL,
-  `name` varchar(120) collate latin1_general_ci default NULL,
+  `variable` varchar(60) collate utf8_unicode_ci NOT NULL,
+  `name` varchar(120) collate utf8_unicode_ci default NULL,
   `level` int(1) default NULL,
   `showmissing` tinyint(1) default NULL,
-  `default` varchar(120) collate latin1_general_ci default NULL,
-  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
-  `translation` mediumtext collate latin1_general_ci,
+  `default` varchar(120) collate utf8_unicode_ci default NULL,
+  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate utf8_unicode_ci default NULL,
+  `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -505,10 +505,10 @@ CREATE TABLE `npc_vardesc` (
 -- ----------------------------
 CREATE TABLE `system_dictionaries` (
   `index` int(11) NOT NULL auto_increment,
-  `group` varchar(30) collate latin1_general_ci default NULL,
-  `name` varchar(120) collate latin1_general_ci default NULL,
+  `group` varchar(30) collate utf8_unicode_ci default NULL,
+  `name` varchar(120) collate utf8_unicode_ci default NULL,
   `value` int(120) default NULL,
-  `mode` enum('FIXED','DYNAMIC') collate latin1_general_ci default NULL,
+  `mode` enum('FIXED','DYNAMIC') collate utf8_unicode_ci default NULL,
   `package` int(11) default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -518,11 +518,11 @@ CREATE TABLE `system_dictionaries` (
 -- ----------------------------
 CREATE TABLE `system_files` (
   `index` int(11) NOT NULL auto_increment,
-  `type` varchar(40) collate latin1_general_ci default NULL,
+  `type` varchar(40) collate utf8_unicode_ci default NULL,
   `package` int(11) default NULL,
-  `filename` varchar(255) collate latin1_general_ci default NULL,
+  `filename` varchar(255) collate utf8_unicode_ci default NULL,
   `version` int(11) default NULL,
-  `hash` varchar(32) collate latin1_general_ci default NULL,
+  `hash` varchar(32) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -531,10 +531,10 @@ CREATE TABLE `system_files` (
 -- ----------------------------
 CREATE TABLE `system_hooks` (
   `index` int(11) NOT NULL auto_increment,
-  `hook` varchar(128) collate latin1_general_ci default NULL,
-  `filename` varchar(128) collate latin1_general_ci default NULL,
-  `function` varchar(128) collate latin1_general_ci default NULL,
-  `active` enum('YES','NO') collate latin1_general_ci default 'YES',
+  `hook` varchar(128) collate utf8_unicode_ci default NULL,
+  `filename` varchar(128) collate utf8_unicode_ci default NULL,
+  `function` varchar(128) collate utf8_unicode_ci default NULL,
+  `active` enum('YES','NO') collate utf8_unicode_ci default 'YES',
   `package` int(11) default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -547,8 +547,8 @@ CREATE TABLE `system_messages` (
   `time` timestamp NULL default NULL on update CURRENT_TIMESTAMP,
   `type` int(8) default NULL,
   `user` int(11) default NULL,
-  `data` text collate latin1_general_ci,
-  `onceid` varchar(20) collate latin1_general_ci default NULL,
+  `data` text collate utf8_unicode_ci,
+  `onceid` varchar(20) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -557,17 +557,17 @@ CREATE TABLE `system_messages` (
 -- ----------------------------
 CREATE TABLE `system_packages` (
   `index` int(11) NOT NULL auto_increment,
-  `guid` varchar(32) collate latin1_general_ci default NULL,
-  `type` varchar(30) collate latin1_general_ci default 'MIXED',
+  `guid` varchar(32) collate utf8_unicode_ci default NULL,
+  `type` varchar(30) collate utf8_unicode_ci default 'MIXED',
   `version` int(11) default NULL,
-  `name` varchar(120) collate latin1_general_ci default NULL,
-  `description` mediumtext collate latin1_general_ci,
-  `author` varchar(200) collate latin1_general_ci default NULL,
-  `copyright` varchar(200) collate latin1_general_ci default NULL,
-  `website` varchar(200) collate latin1_general_ci default NULL,
+  `name` varchar(120) collate utf8_unicode_ci default NULL,
+  `description` mediumtext collate utf8_unicode_ci,
+  `author` varchar(200) collate utf8_unicode_ci default NULL,
+  `copyright` varchar(200) collate utf8_unicode_ci default NULL,
+  `website` varchar(200) collate utf8_unicode_ci default NULL,
   `installdate` int(11) default NULL,
-  `require` mediumtext collate latin1_general_ci,
-  `status` enum('ACTIVE','INACTIVE','INCOMPLETED','BUGGY','UNINSTALLINIG') collate latin1_general_ci default NULL,
+  `require` mediumtext collate utf8_unicode_ci,
+  `status` enum('ACTIVE','INACTIVE','INCOMPLETED','BUGGY','UNINSTALLINIG') collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -577,9 +577,9 @@ CREATE TABLE `system_packages` (
 CREATE TABLE `system_packages_install` (
   `index` int(11) NOT NULL auto_increment,
   `package` int(11) default NULL,
-  `imode` enum('SCRIPT','SQL') collate latin1_general_ci default NULL,
-  `use` enum('INSTALL','ENABLE') collate latin1_general_ci default 'INSTALL',
-  `data` varchar(120) collate latin1_general_ci default NULL,
+  `imode` enum('SCRIPT','SQL') collate utf8_unicode_ci default NULL,
+  `use` enum('INSTALL','ENABLE') collate utf8_unicode_ci default 'INSTALL',
+  `data` varchar(120) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -589,9 +589,9 @@ CREATE TABLE `system_packages_install` (
 CREATE TABLE `system_packages_uninstall` (
   `index` int(11) NOT NULL auto_increment,
   `package` int(11) default NULL,
-  `umode` varchar(120) collate latin1_general_ci default NULL,
-  `use` enum('UNINSTALL','DISABLE') collate latin1_general_ci default 'UNINSTALL',
-  `data` text collate latin1_general_ci,
+  `umode` varchar(120) collate utf8_unicode_ci default NULL,
+  `use` enum('UNINSTALL','DISABLE') collate utf8_unicode_ci default 'UNINSTALL',
+  `data` text collate utf8_unicode_ci,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -602,9 +602,9 @@ CREATE TABLE `system_scheduler` (
   `index` int(11) NOT NULL auto_increment,
   `timestamp` int(11) default NULL,
   `user` int(11) default NULL,
-  `eventid` varchar(120) collate latin1_general_ci default NULL,
-  `description` varchar(250) collate latin1_general_ci default NULL,
-  `data` text collate latin1_general_ci,
+  `eventid` varchar(120) collate utf8_unicode_ci default NULL,
+  `description` varchar(250) collate utf8_unicode_ci default NULL,
+  `data` text collate utf8_unicode_ci,
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -614,7 +614,7 @@ CREATE TABLE `system_scheduler` (
 CREATE TABLE `unit_instance` (
   `index` int(11) NOT NULL auto_increment,
   `guid` int(11) default NULL,
-  `data` text collate latin1_general_ci,
+  `data` text collate utf8_unicode_ci,
   `template` int(11) default NULL,
   `x` int(11) default NULL,
   `y` int(11) default NULL,
@@ -629,11 +629,11 @@ CREATE TABLE `unit_instance` (
 -- ----------------------------
 CREATE TABLE `unit_template` (
   `template` int(11) NOT NULL auto_increment COMMENT 'The template ID',
-  `schema` longtext collate latin1_general_ci COMMENT 'Schema data copied to data field on object creation',
-  `name` varchar(250) collate latin1_general_ci default NULL COMMENT 'Unit name',
-  `subname` varchar(250) collate latin1_general_ci default NULL COMMENT 'Unit subname',
-  `icon` varchar(250) collate latin1_general_ci default NULL COMMENT 'Unit Icon',
-  `description` mediumtext collate latin1_general_ci COMMENT 'Unit Description',
+  `schema` longtext collate utf8_unicode_ci COMMENT 'Schema data copied to data field on object creation',
+  `name` varchar(250) collate utf8_unicode_ci default NULL COMMENT 'Unit name',
+  `subname` varchar(250) collate utf8_unicode_ci default NULL COMMENT 'Unit subname',
+  `icon` varchar(250) collate utf8_unicode_ci default NULL COMMENT 'Unit Icon',
+  `description` mediumtext collate utf8_unicode_ci COMMENT 'Unit Description',
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -642,13 +642,13 @@ CREATE TABLE `unit_template` (
 -- Table structure for unit_vardesc
 -- ----------------------------
 CREATE TABLE `unit_vardesc` (
-  `variable` varchar(60) collate latin1_general_ci NOT NULL,
-  `name` varchar(120) collate latin1_general_ci default NULL,
+  `variable` varchar(60) collate utf8_unicode_ci NOT NULL,
+  `name` varchar(120) collate utf8_unicode_ci default NULL,
   `level` int(1) default NULL,
   `showmissing` tinyint(1) default NULL,
-  `default` varchar(120) collate latin1_general_ci default NULL,
-  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate latin1_general_ci default NULL,
-  `translation` mediumtext collate latin1_general_ci,
+  `default` varchar(120) collate utf8_unicode_ci default NULL,
+  `mode` enum('RAW','ALIAS','SCRIPT','GUID','MONEY','QUERY','IMAGE') collate utf8_unicode_ci default NULL,
+  `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
@@ -658,14 +658,14 @@ CREATE TABLE `unit_vardesc` (
 -- ----------------------------
 CREATE TABLE `users_accounts` (
   `index` int(11) NOT NULL auto_increment,
-  `name` varchar(30) collate latin1_general_ci default NULL,
-  `password` varchar(32) collate latin1_general_ci default NULL,
-  `email` varchar(80) collate latin1_general_ci default NULL,
-  `lastip` varchar(15) collate latin1_general_ci default NULL,
+  `name` varchar(30) collate utf8_unicode_ci default NULL,
+  `password` varchar(32) collate utf8_unicode_ci default NULL,
+  `email` varchar(80) collate utf8_unicode_ci default NULL,
+  `lastip` varchar(15) collate utf8_unicode_ci default NULL,
   `lastlogin` timestamp NULL default NULL,
   `lastaction` int(11) default NULL,
   `online` tinyint(1) default NULL,
-  `level` enum('BANNED','USER','EDITOR','MODERATOR','ADMIN') collate latin1_general_ci default 'USER',
+  `level` enum('BANNED','USER','EDITOR','MODERATOR','ADMIN') collate utf8_unicode_ci default 'USER',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 

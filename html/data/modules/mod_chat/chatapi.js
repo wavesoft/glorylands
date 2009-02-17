@@ -143,5 +143,5 @@ callback.register('message', function(msg) {
 });
 
 function chat_send(text) {
-	gloryIO('?a=chat.send&text='+escape(text), false, true);
+	gloryIO('?a=chat.send&text='+text, false, true);
 }
