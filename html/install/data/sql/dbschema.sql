@@ -710,7 +710,7 @@ INSERT INTO `gameobject_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'S
 INSERT INTO `interface_module_assign` VALUES ('1', 'interface.main', 'CHATWIN', '2', '10');
 INSERT INTO `interface_module_assign` VALUES ('2', 'interface.main', 'SIDEBAR', '0', '1');
 INSERT INTO `interface_module_assign` VALUES ('3', 'interface.main', 'QUICKBAR', '4', '10');
-INSERT INTO `interface_module_assign` VALUES ('3', 'interface.main', 'AUDIO', '5', '10');
+INSERT INTO `interface_module_assign` VALUES ('4', 'interface.main', 'AUDIO', '5', '10');
 INSERT INTO `interface_module_resources` VALUES ('1', 'CHATWIN', 'JS', '{DATA.MODULE}/mod_chat/chatapi.js');
 INSERT INTO `interface_module_resources` VALUES ('2', 'CHATWIN', 'CSS', '{DATA.MODULE}/mod_chat/styles/style.css');
 INSERT INTO `interface_module_resources` VALUES ('3', 'SIDEBAR', 'JS', '{DATA.MODULE}/mod_sidebar/sidebar-feed.js');
