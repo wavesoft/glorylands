@@ -5,7 +5,6 @@ if (isset($_REQUEST['package'])) {
 	echo "<h2>Installing packages...</h2><div class=\"separator\">Installation Console</div><pre>";
 
 	chdir("../admin/packetman");	
-	define('NOZIP',true);
 	include "../../config/config.php"; 
 	include "../../engine/includes/base.php"; 
 	include "scripts/packetman.php"; 

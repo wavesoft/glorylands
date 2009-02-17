@@ -1,4 +1,5 @@
 <?php
+define('NOZIP',true);
 function _echo($v, $default) {
 	if (!$v) {
 		echo $default;
