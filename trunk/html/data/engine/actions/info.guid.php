@@ -45,7 +45,7 @@ $act_result = array(
 	'guid' => $_REQUEST['guid'],
 	
 	'_my' => array(
-		'name' => strtoupper($vars['name'][0]).strtolower(substr($vars['name'],1)),
+		'name' => gl_ucfirst($vars['name']),
 		'desc' => $vars['description'],
 		'info' => $transvar,
 		'icon' => $icon,

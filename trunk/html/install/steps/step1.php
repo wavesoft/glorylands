@@ -79,6 +79,21 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 			</td>
 		</tr>
 		<tr>
+			<th>Extension - MBstring </th>
+			<td>
+				<?php 
+					$ok = extension_loaded('mbstring'); 
+					if ($ok) {
+						echo "<span class=\"ok\">Exists</span>";
+					} else {
+						echo "<span class=\"error\">Missing</span>";
+						$issues[]='Multibyte String extension is mission. This extension provies UNICODE support for the game. It must be installed in order to continue.';
+						$has_error = true;
+					}
+				?>
+			</td>
+		</tr>
+		<tr>
 			<th>Extension - BZip2</th>
 			<td>
 				<?php 
@@ -87,7 +102,7 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 						echo "<span class=\"ok\">Exists</span>";
 					} else {
 						echo "<span class=\"warn\">Missing</span>";
-						$issues[]='BZip2 extension is missing. This extension must be installed if you want to use .bz2 compressed game package archives.';
+						$issues[]='BZip2 extension is missing. This extension should be installed if you want to use .bz2 compressed game package archives. However you can continue the installation of the game.';
 					}
 				?>
 			</td>

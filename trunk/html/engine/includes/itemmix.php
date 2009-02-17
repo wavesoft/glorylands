@@ -478,7 +478,7 @@ function gl_mix_visualize($data, $short = false, $list = false) {
 	
 	foreach ($data['data'] as $parm) {
 		if ($parm['typ'] == 'CLASS') {
-			$info = ucfirst(strtolower($parm['mod']));
+			$info = gl_ucfirst(mb_strtolower($parm['mod']));
 		} elseif ($parm['typ'] == 'MODIFIER') {
 			$modifiers[$parm['mod']]['mod'] = $parm['mod'];
 			$modifiers[$parm['mod']]['ofs'] = $parm['ofs'];
