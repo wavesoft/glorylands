@@ -34,6 +34,7 @@ include_once DIROF('SYSTEM.INCLUDE')."debugsystem.php";
 ### Connect to DB
 global $sql;
 $sql = new db($_CONFIG[DB][DATABASE], $_CONFIG[DB][HOST], $_CONFIG[DB][USER], $_CONFIG[DB][PASSWORD], true);
+$sql->query("SET CHARSET 'utf8'");
 
 ### Initialize session
 include_once DIROF('SYSTEM.INCLUDE')."session.php";

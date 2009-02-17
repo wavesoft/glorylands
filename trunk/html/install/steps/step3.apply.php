@@ -65,7 +65,7 @@ mysql_free_result($query);
 if (isset($_REQUEST['newdb'])) {
 	if ($rows == 0) {
 		// Database does not exist
-		$query = mysql_query("CREATE DATABASE  `".$_REQUEST['config']['DATABASE']."` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
+		$query = mysql_query("CREATE DATABASE  `".$_REQUEST['config']['DATABASE']."` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
 		if (!$query) {
 			echo '<div class="error">Cannot create new database! Make sure the MySQL user has CREATE priviledges! MySQL Error: '.mysql_error().'</div>';
 			$step=3;

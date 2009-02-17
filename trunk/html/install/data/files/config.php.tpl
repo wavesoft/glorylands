@@ -31,7 +31,7 @@ $_CONFIG[DB][PASSWORD] 		= "{#DB_PASSWORD#}";
 ### Global game information
 $_CONFIG[GAME][LANG] 		= "{#GAME_LANG#}";
 $_CONFIG[GAME][TITLE] 		= "{#GAME_TITLE#}";
-$_CONFIG[GAME][CHARSET] 	= "{#GAME_CHARSET#}";
+$_CONFIG[GAME][CHARSET] 	= "utf-8";
 $_CONFIG[GAME][THEME] 		= "default";
 $_CONFIG[GAME][BASE] 		= "{#GAME_BASE#}";
 $_CONFIG[GAME][REF_URL] 	= "{#GAME_REF_URL#}";

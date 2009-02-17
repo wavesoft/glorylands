@@ -862,8 +862,6 @@ function package_install($src_dir, $dst_dir, $pinfo) {
 	}
 	xml_parse_into_struct($p,file_get_contents($src_dir."/package.xml"),$vals,$index);
 	xml_parser_free($p);
-
-
 	
 	// Make sure local cache exists
 	if (!is_dir($dst_dir)) {
