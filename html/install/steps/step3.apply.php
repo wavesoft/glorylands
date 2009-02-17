@@ -26,12 +26,24 @@ if ($_REQUEST['config']['PASSWORD']!=$_REQUEST['config']['PASSWORD_CONFIRM']) {
 	$step=3;
 	return;
 }
+if ($_REQUEST['setupsql']['PASSWORD']!=$_REQUEST['setupsql']['PASSWORD_CONFIRM']) {
+	echo '<div class="error">MySQL Suer-User passwords do not match!</div>';
+	$step=3;
+	return;
+}
+
+// Detect the setup user database information
+$db_user = $_REQUEST['config']['USER'];
+$db_pwd = $_REQUEST['config']['PASSWORD'];
+if ($_REQUEST['setupsql']['PASSWORD']!='') $db_pwd=$_REQUEST['setupsql']['PASSWORD'];
+if ($_REQUEST['setupsql']['USER']!='') $db_user=$_REQUEST['setupsql']['USER'];
+$_SESSION['setupsql'] = $_REQUEST['setupsql'];
 
 // Rremove the confirmation parameter
 unset($_REQUEST['config']['PASSWORD_CONFIRM']);
 
 // Try to connect to SQL
-@$link = mysql_connect($_REQUEST['config']['HOST'], $_REQUEST['config']['USER'], $_REQUEST['config']['PASSWORD']);
+@$link = mysql_connect($_REQUEST['config']['HOST'], $db_user, $db_pwd);
 if (!$link) {
 	echo '<div class="error">Cannot connect to MySQL! Error: '.mysql_error().'</div>';
 	$step=3;
@@ -99,7 +111,7 @@ if (isset($_REQUEST['newdb'])) {
 		return;		
 	}
 }
-	
+
 // Save the configuration file
 $config_tpl = file_get_contents("data/files/config.php.tpl");
 foreach ($_SESSION['config'] as $group => $vargroup) {
@@ -110,5 +122,6 @@ foreach ($_SESSION['config'] as $group => $vargroup) {
 	}
 }
 file_put_contents($_SESSION['config']['GAME']['BASE'].'/config/config.php', $config_tpl);
+
 
 ?>

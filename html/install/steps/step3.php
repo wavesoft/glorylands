@@ -37,7 +37,7 @@ $root_url = 'http://'.$_SERVER['HTTP_HOST'].dirname(dirname($_SERVER['REQUEST_UR
 </p>
 <div class="separator">MySQL Super-User Iformation</div>
 <p>
-	The following fields holds the MySQL super-user information that will be used by the installer to set up the databases automatically. The super-user must have create/drop databases permissions on the server.<br />
+	The following fields holds the MySQL super-user information that will be used by the installer to set up the databases automatically. The super-user must have create/drop database permissions on the server.<br />
 	<em>(Leave those fields blank to use the same values as above)</em>
 	<table>
 		<tr>
@@ -54,7 +54,7 @@ $root_url = 'http://'.$_SERVER['HTTP_HOST'].dirname(dirname($_SERVER['REQUEST_UR
 		</tr>		
 	</table>
 </p>
-<div class="separator">Installation Information</div>
+<div class="separator">Database Information</div>
 <p>
 	<table>
 		<tr>
