@@ -30,10 +30,14 @@ include_once DIROF('SYSTEM.INCLUDE')."itemmix.php";
 include_once DIROF('SYSTEM.INCLUDE')."spawnsystem.php";
 include_once DIROF('SYSTEM.INCLUDE')."dynupdate.php";
 include_once DIROF('SYSTEM.INCLUDE')."debugsystem.php";
+include_once DIROF('SYSTEM.INCLUDE')."unicode.php";
 
 ### Connect to DB
 global $sql;
 $sql = new db($_CONFIG[DB][DATABASE], $_CONFIG[DB][HOST], $_CONFIG[DB][USER], $_CONFIG[DB][PASSWORD], true);
+
+### Initialize UNICODE UTF-8 support
+mb_internal_encoding('utf-8');
 $sql->query("SET CHARSET 'utf8'");
 
 ### Initialize session
