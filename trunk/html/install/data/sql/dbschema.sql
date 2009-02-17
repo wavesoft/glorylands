@@ -710,15 +710,18 @@ INSERT INTO `gameobject_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'S
 INSERT INTO `interface_module_assign` VALUES ('1', 'interface.main', 'CHATWIN', '2', '10');
 INSERT INTO `interface_module_assign` VALUES ('2', 'interface.main', 'SIDEBAR', '0', '1');
 INSERT INTO `interface_module_assign` VALUES ('3', 'interface.main', 'QUICKBAR', '4', '10');
+INSERT INTO `interface_module_assign` VALUES ('3', 'interface.main', 'AUDIO', '5', '10');
 INSERT INTO `interface_module_resources` VALUES ('1', 'CHATWIN', 'JS', '{DATA.MODULE}/mod_chat/chatapi.js');
 INSERT INTO `interface_module_resources` VALUES ('2', 'CHATWIN', 'CSS', '{DATA.MODULE}/mod_chat/styles/style.css');
 INSERT INTO `interface_module_resources` VALUES ('3', 'SIDEBAR', 'JS', '{DATA.MODULE}/mod_sidebar/sidebar-feed.js');
 INSERT INTO `interface_module_resources` VALUES ('4', 'SIDEBAR', 'CSS', '{DATA.MODULE}/mod_sidebar/style.css');
 INSERT INTO `interface_module_resources` VALUES ('5', 'QUICKBAR', 'CSS', '{DATA.MODULE}/mod_quickbar/quickbar.css');
 INSERT INTO `interface_module_resources` VALUES ('6', 'QUICKBAR', 'JS', '{DATA.MODULE}/mod_quickbar/quickbar.js');
+INSERT INTO `interface_module_resources` VALUES ('7', 'AUDIO', 'JS', '{DATA.MODULE}/mod_audio/soundapi.js');
 INSERT INTO `interface_modules` VALUES ('CHATWIN', 'Chat Window', 'Cross-player chat window and system message receiver for any User Interface', 'chat');
 INSERT INTO `interface_modules` VALUES ('SIDEBAR', 'Side Bar', 'A sidebar that displays the user\'s current statistics', 'sidebar');
 INSERT INTO `interface_modules` VALUES ('QUICKBAR', 'Qucik Access Bar', 'A bar with 12 buttons with droppable/customizable ability that allows user to hold there items and actions', 'quickbar');
+INSERT INTO `interface_modules` VALUES ('AUDIO', 'Audio Provider', 'This module provides the sound to the game', 'audio');
 INSERT INTO `item_template` VALUES ('1', null, 'Light Sword', 'A quite light sword, mostly used by dwarfs', 'WEAPON', 'ONEHAND-SWORD', 'inventory/Kunai-128x128.png', '1', '2', '1', '0', '1', '5', '10');
 INSERT INTO `item_template` VALUES ('2', null, 'Woodsman Sword', 'A Wooden excercising sword', 'WEAPON', 'TWOHAND-SWORD', 'inventory/Kunai-128x128.png', '2', '20', '0', '0', '1', '10', '20');
 INSERT INTO `item_template` VALUES ('3', 'slots=10', 'Woolen Bag', 'A bag made of wool. This bag can carry up to 10 items', 'CONTAINER', 'GENERIC', 'inventory/box128.png', '1', '5', '0', '0', '1', '400', '500');
