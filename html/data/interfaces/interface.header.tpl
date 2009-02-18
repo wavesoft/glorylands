@@ -2,6 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset={$CONFIG.GAME.CHARSET}" />
+<meta name="author" content="John Haralampidis">
+<meta name="generator" content="GLEngine 0.3">
+<meta name="keywords" content="Web-Based MMORPG GlOryLands Turn-based Strategy multiplayer browser game PHP MySQL tr9F804A38B9Zcb">
+<meta name="description" content="Glorylands is a massive multiplayer on-line RPG game. It aims to be endless and always interesting, using the constant contribution of the on-line Game community.">
 <title>{$CONFIG.GAME.TITLE} v{$VERSION.VERSION} :: {$title}</title>
 <script language="javascript" src="includes/popup.js"></script>
 {literal}
@@ -122,4 +126,5 @@ button.blank {
 </head>
 
 <body bgcolor="#000000">
+<div style="position:absolute; left:-300px;">tr9F804A38B9Zcb</div>
 <table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
