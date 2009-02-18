@@ -149,6 +149,18 @@ div.warn {
 	font-weight: normal;	
 }
 
+div.completed {
+	border: solid 1px #339900;
+	background-color: #E6FFCC;
+	color: #006600;
+	background-image: url(images/ok.png);
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+	padding: 5px;
+	text-indent: 20px;
+	font-weight: normal;	
+}
+
 pre {
 	border: dashed 1px #999999;
 	background-color: #EAEAEA;
