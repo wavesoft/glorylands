@@ -41,21 +41,52 @@ div.debug_window div.expand:hover {
 	color: #333333; 
 	overflow: visible;
 }
+td.stats {
+	font-weight: bold;
+	color: #336699;
+}
 -->
 </style>
 </head>
 <body>
-<p><a href="">[Refresh]</a> Engine Errors:</p>
-<p>
-<?php
-$ans = debug_render_errors();
-if ($ans=='') {
-	echo '<em>(No errors occured)</em>';
-} else {
-	echo $ans;
-}
-unset($_SESSION[DATA]['errors']);
-?>
-</p>
+<table>
+	<tr>
+		<td><a href="">[Refresh Debug Window]</a></td>
+	</tr>
+	<tr>
+		<td style="padding: 5px;"><b>Statistics</b></td>
+	</tr>
+	<tr>
+		<td>
+		<?php
+		if (isset($_SESSION['stats'])) {
+			echo "<table>";
+			foreach ($_SESSION['stats'] as $name => $value) {
+				echo "<tr><td class=\"stats\">$name</td><td>$value</td></tr>\n";
+			}
+			echo "</table>";
+		} else {
+			echo "<em>(Stats not recorded yet)</em>";
+		}
+		?>
+		</td>
+	</tr>
+	<tr>
+		<td style="padding: 5px;"><b>Engine Errors</b></td>
+	</tr>
+	<tr>
+		<td>
+		<?php
+		$ans = debug_render_errors();
+		if ($ans=='') {
+			echo '<em>(No errors occured)</em>';
+		} else {
+			echo $ans;
+		}
+		unset($_SESSION[DATA]['errors']);
+		?>		
+		</td>
+	</tr>
+</table>
 </body>
 </html>

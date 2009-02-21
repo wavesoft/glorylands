@@ -3,7 +3,10 @@ global $_CONFIG;
 
 ## Constants
 define('DB','DB');
+define('MCACHE','MCACHE');
 define('HOST','HOST');
+define('PORT','PORT');
+define('ENABLE','ENABLE');
 define('PASSWORD','PASSWORD');
 define('DATABASE','DATABASE');
 define('USER','USER');
@@ -27,6 +30,11 @@ $_CONFIG[DB][HOST] 			= "{#DB_HOST#}";
 $_CONFIG[DB][DATABASE] 		= "{#DB_DATABASE#}";
 $_CONFIG[DB][USER] 			= "{#DB_USER#}";
 $_CONFIG[DB][PASSWORD] 		= "{#DB_PASSWORD#}";
+
+### Memory cache configuration
+$_CONFIG[MCACHE][ENABLE] 	= {#GAME_MC_ENABLE#};
+$_CONFIG[MCACHE][HOST] 		= "{#GAME_MC_HOST#}";
+$_CONFIG[MCACHE][PORT] 		= {#GAME_MC_PORT#};
 
 ### Global game information
 $_CONFIG[GAME][LANG] 		= "{#GAME_LANG#}";

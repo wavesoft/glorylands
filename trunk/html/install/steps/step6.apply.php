@@ -1,25 +1,26 @@
 <?php
 
-// Detect the setup user database information
-$db_gameuser = $_SESSION['config']['DB']['USER'];
-$db_host = $_SESSION['config']['DB']['HOST'];
-$db_user = $_SESSION['config']['DB']['USER'];
-$db_pwd = $_REQUEST['config']['DB']['PASSWORD'];
-$db_name = $_SESSION['config']['DB']['DATABASE'];
-if ($_SESSION['setupsql']['PASSWORD']!='') $db_pwd=$_SESSION['setupsql']['PASSWORD'];
-if ($_SESSION['setupsql']['USER']!='') $db_user=$_SESSION['setupsql']['USER'];
-
-// Try to connect to SQL
-@$link = mysql_connect($db_host, $db_user, $db_pwd);
-if (!$link) {
-	echo '<div class="error">Cannot connect to MySQL! Error: '.mysql_error().'</div>';
-	$step=6;
-	return;
-}
-
 // Should we change the user permissions?
 $html_ans = '';
 if (isset($_REQUEST['finalize']['sql'])) {
+
+	// Detect the setup user database information
+	$db_gameuser = $_SESSION['config']['DB']['USER'];
+	$db_host = $_SESSION['config']['DB']['HOST'];
+	$db_user = $_SESSION['config']['DB']['USER'];
+	$db_pwd = $_SESSION['config']['DB']['PASSWORD'];
+	$db_name = $_SESSION['config']['DB']['DATABASE'];
+	if ($_SESSION['setupsql']['PASSWORD']!='') $db_pwd=$_SESSION['setupsql']['PASSWORD'];
+	if ($_SESSION['setupsql']['USER']!='') $db_user=$_SESSION['setupsql']['USER'];
+	
+	// Try to connect to SQL
+	@$link = mysql_connect($db_host, $db_user, $db_pwd);
+	if (!$link) {
+		echo '<div class="error">Cannot connect to MySQL! Error: '.mysql_error().'</div>';
+		$step=6;
+		return;
+	}
+
 	$ans=mysql_query("REVOKE ALL PRIVILEGES ON `{$db_name}` . * FROM  '{$db_gameuser}'@'{$db_host}'");
 	$ans=mysql_query("REVOKE GRANT OPTION ON `{$db_name}` . * FROM  '{$db_gameuser}'@'{$db_host}'");
 	$ans=mysql_query("GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,CREATE TEMPORARY TABLES,CREATE VIEW,SHOW VIEW ON `{$db_name}` . * TO  '{$db_gameuser}'@'{$db_host}'");
