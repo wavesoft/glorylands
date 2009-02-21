@@ -23,6 +23,13 @@ define('CHARS','chars');
 define('TEMP','temp');
 define('DYNAMIC','dynamic');
 
+### Switch to MemCache, if available
+if ($_CONFIG[MCACHE][ENABLE]) {
+	$session_save_path = "tcp://".$_CONFIG[MCACHE][HOST].":".$_CONFIG[MCACHE][PORT]."?persistent=1&weight=2&timeout=2&retry_interval=10";
+	ini_set('session.save_handler', 'memcache');
+	ini_set('session.save_path', $session_save_path);
+}
+
 ### Start Session
 session_start();
 

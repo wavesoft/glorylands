@@ -11,13 +11,6 @@
 //   (C) Copyright 2007, John Haralampidis
 // ===========================================
 
-### Start counter
-function getmicrotime(){ 
-    list($usec, $sec) = explode(" ",microtime()); 
-    return ((float)$usec + (float)$sec); 
-} 
-$time_start = getmicrotime();
-
 ### Require some basic includes
 require_once($_CONFIG[GAME][BASE]."/engine/includes/base.php");
 
@@ -198,14 +191,25 @@ while ($operation != $last_operation) {
 		}
 		
 		### Display time resuts
-		$time_end = getmicrotime();
-		$time = $time_end - $time_start;
+		$time_end = microtime(true);
+		$time = $time_end - $script_time;
 		
 		### IF in debug mode, or timestamp is requested, display the page creation statistics
 		if ($outmode == 'debug' || isset($_REQUEST['timestamp'])) {
 			$ms = number_format($time*1000,1);
 			echo "<hr><font face=arial size=1>Processed in <i>$time</i> sec ($ms msec), {$sql->totQueries} Queries</font>";
 		}
+		
+		### Store some statistics used by the debug console
+		$_SESSION['stats'] = array(
+			'Parsed Files' => sizeof(get_included_files()),
+			'Memory Usage' => number_format(memory_get_usage()/1024,2).' Kb',
+			'Peak Memory Usage' => number_format(memory_get_peak_usage()/1024,2).' Kb',
+			'Script Time' => number_format($time, 4).' ms',
+			'MySQL Queries' => $sql->totQueries,
+			'MySQL Time' => number_format($sql->totTime, 4).' ms'
+		);
+		
 	}
 }
 

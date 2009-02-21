@@ -41,5 +41,29 @@ $root_url = str_replace('\\','/', $root_url);
 		</tr>
 	</table>
 </p>
+<div class="separator">Memory Caching (Beta)</div>
+<?php
+$memcache = extension_loaded('memcache');
+$dis='';
+if (!$memcache) {
+	$dis='disabled="disabled"';
+	echo "<p align=\"center\"><em>Memcache PHP extension is not installed/enabled</em></p>";
+}
+?>
+<p>
+	<table>
+		<tr>
+			<td colspan="2"><input <?=$dis?> type="checkbox" name="config[MC_ENABLE]" value="true" id="mc_en" /><label for="mc_en"> Enable distributed memory caching on MemCached server</label></td>
+		</tr>
+		<tr>
+			<td width="120">Server Host:</td>
+			<td><input <?=$dis?> class="text" name="config[MC_HOST]" type="text" value="<?php _echo($_SESSION['config']['GAME']['MC_HOST'],'localhost'); ?>" size="50" /></td>
+		</tr>
+		<tr>
+			<td>Service Port:</td>
+			<td><input <?=$dis?> class="text" name="config[MC_PORT]" type="text" value="<?php _echo($_SESSION['config']['GAME']['MC_PORT'],'11211'); ?>" size="50" /></td>
+		</tr>
+	</table>
+</p>
 <p><input type="submit" class="button" value="Next >>" /></p>
 </form>

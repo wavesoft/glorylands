@@ -9,32 +9,38 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 <p>
 	<table class="checks" width="400">
 		<tr>
-			<th width="120">PHP Version</th>
+			<th width="140">PHP Version</th>
 			<td>
 				<?php 
-					$ver = phpversion(); 
-					$parts = explode('.', $ver);
-					if (((int)$parts[0] >= 5) && ((int)$parts[1] >= 2) && ((int)$parts[2] >= 0)) {
+					$ver = phpversion();
+					$check = version_compare($ver, "5.2.1", ">=");
+					if ($check) {
 						echo "<span class=\"ok\">$ver</span>";
 					} else {
-						echo "<span class=\"error\">&lt; 5.2.0</span>";
-						$issues[]='PHP Version 5.2.0 or later is required';
+						echo "<span class=\"error\">&lt; 5.2.1</span>";
+						$issues[]='PHP Version 5.2.1 or later is required';
 						$has_error = true;
 					}
 				?>
 			</td>
 		</tr>
 		<tr>
-			<th>PHP Mode</th>
+			<th>SAPI Type</th>
 			<td>
 				<?php 
-					$ok = function_exists('apache_request_headers'); 
-					if ($ok) {
-						echo "<span class=\"ok\">Apache Module</span>";
-					} else {
-						echo "<span class=\"error\">Incompatible</span>";
-						$issues[]='It seems PHP is running in a mode different than Apache/IIS Module. Probably it is running as CGI Binary for security reasons. This mode is not supported. Please contact your hosting provider to fix this issue.';
+					$sapi_type = php_sapi_name();
+					if (substr($sapi_type, 0, 3) == 'cgi') {
+						echo "<span class=\"error\">{$sapi_type}</span>";
+						$issues[]='It seems PHP is running as CGI Binary, probably for security reasons. This mode is not supported. Please contact your hosting provider to fix this issue.';
 						$has_error = true;
+					} else {
+						echo "<span class=\"ok\">{$sapi_type}</span>";
+						$ok = function_exists('apache_request_headers'); 
+						if (!$ok) {
+							echo "<span class=\"error\"> (Erroreus)</span>";
+							$issues[]='PHP Is running as a module, but not all the functionality is provided! In detail, the function apache_request_headers() was not found declared.';
+							$has_error = true;
+						}
 					}
 				?>
 			</td>
@@ -97,7 +103,7 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 			<th>Extension - BZip2</th>
 			<td>
 				<?php 
-					$ok = extension_loaded('bzip2'); 
+					$ok = function_exists('bzdecompress');
 					if ($ok) {
 						echo "<span class=\"ok\">Exists</span>";
 					} else {
@@ -148,6 +154,20 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 						echo "<span class=\"error\">Missing</span>";
 						$issues[]='XML Parser Extension is missing. This extension must be installed in order to continue.';
 						$has_error = true;
+					}
+				?>
+			</td>
+		</tr>
+		<tr>
+			<th>Extension - Memcache</th>
+			<td>
+				<?php 
+					$ok = extension_loaded('memcache'); 
+					if ($ok) {
+						echo "<span class=\"ok\">Exists</span>";
+					} else {
+						echo "<span class=\"warn\">Missing</span>";
+						$issues[]='MemCache extension not found. Memory caching will be disabled.';
 					}
 				?>
 			</td>

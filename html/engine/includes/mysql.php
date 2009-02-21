@@ -77,6 +77,12 @@ class db {
 	var $totQueries;
 
 	/**
+	 * The total time spent on queries
+	 * @var float
+	 */
+	var $totTime;
+
+	/**
 	 * If we have global debug enabled, this function will store the
 	 * queries being executed
 	 * @var int
@@ -124,12 +130,14 @@ class db {
 	  */
 	function query($text) {
 	    $this->errPosition = "performing query '<strong>{$text}</strong>'";
+		$time=microtime(true);
 		$result = mysql_query($text, $this->conID);
 		$this->totQueries++;
 		if (!$result) {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>false,'error'=>$this->getError());
 			debug_error($this->getError(),ERR_WARNING);
 			$this->emptyResults = true;
+			$this->totTime+=(microtime(true)-$time);
 			return false;
 		}
 		$this->lastResult = $result; 
@@ -142,6 +150,7 @@ class db {
 			$this->emptyResults = ($this->affectedRows == 0);
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>$this->affectedRows);
 		}
+		$this->totTime+=(microtime(true)-$time);
 		return $result;
 	}	
 	
@@ -308,17 +317,20 @@ class db {
 	  */
 	function poll($query) {
 	    $this->errPosition = "performing polling query '<strong>{$query}</strong>'";
+		$time=microtime(true);
 		$result = mysql_query($query, $this->conID);
 		$this->totQueries++;
 		if (!$result) {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>false,'error'=>$this->getError());
 			debug_error($this->getError(),ERR_WARNING);
+			$this->totTime+=(microtime(true)-$time);
 			return false;
 		} else {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>mysql_num_rows($result));
 		}
 		$ans = (mysql_num_rows($result)!=0);
 		mysql_free_result($result);
+		$this->totTime+=(microtime(true)-$time);
 		return $ans;
 	}
 	
@@ -330,11 +342,13 @@ class db {
 	  */
 	function query_and_get_value($query) {
 	    $this->errPosition = "performing get value query '<strong>".htmlspecialchars($query)."</strong>'";
+		$time=microtime(true);
 		$result = mysql_query($query, $this->conID);
 		$this->totQueries++;
 		if (!$result) {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>false,'error'=>$this->getError());
 			debug_error($this->getError(),ERR_WARNING);
+			$this->totTime+=(microtime(true)-$time);
 			return false;
 		} else {
 			if (defined("GLOB_DEBUG")) $this->queryList[]=array('query'=>$text,'result'=>true,'rows'=>mysql_num_rows($result));
@@ -342,6 +356,7 @@ class db {
 		if (mysql_num_rows($result)==0) return "";
 		$row=mysql_fetch_array($result, MYSQL_NUM);
 		mysql_free_result($result);
+		$this->totTime+=(microtime(true)-$time);
 		return $row[0];
 	}
 

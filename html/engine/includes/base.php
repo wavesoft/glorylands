@@ -12,6 +12,8 @@
 // ===========================================
 
 ### Notify any included objects that they are included by script
+global $script_time;
+$script_time = microtime(true);
 define('IN_SCRIPT',true);
 error_reporting(E_ALL ^ E_NOTICE);
 
