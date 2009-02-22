@@ -8,6 +8,38 @@ function _echo($v, $default) {
 	}
 }
 
+function _selected($v, $eq, $default) {
+	if (!$v) {
+		if ($default) {
+			echo 'selected="selected"';
+		} else {
+			echo '';
+		}
+	} else {
+		if ($v == $eq) {
+			echo 'selected="selected"';
+		} else {
+			echo '';
+		}	
+	}
+}
+
+function _checked($v, $eq, $default) {
+	if (!$v) {
+		if ($default) {
+			echo 'checked="checked"';
+		} else {
+			echo '';
+		}
+	} else {
+		if ($v == $eq) {
+			echo 'checked="checked"';
+		} else {
+			echo '';
+		}	
+	}
+}
+
 session_start();
 $step = $_REQUEST['step'];
 if (!$step) $step=1;

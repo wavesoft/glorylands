@@ -1,13 +1,18 @@
 /*
-MySQL Data Transfer
-Source Host: localhost
-Source Database: gl_for_release
-Target Host: localhost
-Target Database: gl_for_release
-Date: 1/1/2009 4:04:32 μμ
+Complete GloryLands Database
+Revision: 115
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for db_version
+-- ----------------------------
+CREATE TABLE `db_version` (
+  `revision` int(11) default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+INSERT INTO `db_version` VALUES (115);
+
 -- ----------------------------
 -- Table structure for char_instance
 -- ----------------------------

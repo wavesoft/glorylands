@@ -42,19 +42,21 @@ $_SESSION['setupsql'] = $_REQUEST['setupsql'];
 // Rremove the confirmation parameter
 unset($_REQUEST['config']['PASSWORD_CONFIRM']);
 
+
+// Store the info in the session
+if (!isset($_SESSION['config'])) $_SESSION['config'] = array();
+$_SESSION['config']['DB'] = array();
+$_SESSION['dbmode'] = $_REQUEST['dbmode'];
+foreach ($_REQUEST['config'] as $var => $value) {
+	$_SESSION['config']['DB'][$var] = stripslashes($value);
+}
+
 // Try to connect to SQL
 @$link = mysql_connect($_REQUEST['config']['HOST'], $db_user, $db_pwd);
 if (!$link) {
 	echo '<div class="error">Cannot connect to MySQL! Error: '.mysql_error().'</div>';
 	$step=3;
 	return;
-}
-
-// Store the info in the session
-if (!isset($_SESSION['config'])) $_SESSION['config'] = array();
-$_SESSION['config']['DB'] = array();
-foreach ($_REQUEST['config'] as $var => $value) {
-	$_SESSION['config']['DB'][$var] = stripslashes($value);
 }
 
 // Get MySQL information
@@ -78,7 +80,7 @@ mysql_query("SET CHARSET 'utf8'");
 $query = mysql_query("SHOW DATABASES LIKE '".$_REQUEST['config']['DATABASE']."'");
 $rows = mysql_num_rows($query);
 mysql_free_result($query);
-if (isset($_REQUEST['newdb'])) {
+if ($_REQUEST['dbmode'] == 'new') {
 	if ($rows == 0) {
 		// Database does not exist
 		$query = mysql_query("CREATE DATABASE  `".$_REQUEST['config']['DATABASE']."` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
@@ -109,10 +111,30 @@ if (isset($_REQUEST['newdb'])) {
 		mysql_free_result($query);
 	}
 } else {
+
+	// Make sure the database exists
 	if ($rows == 0) {
 		echo '<div class="error">The database '.$_REQUEST['config']['DATABASE'].' was not found in the server!</div>';
 		$step=3;
 		return;		
+	}
+	
+	// If user has selected patch mode, detect the previous version
+	if ($_REQUEST['dbmode'] == 'patch') {
+			mysql_select_db($_REQUEST['config']['DATABASE']);
+			$ans=mysql_query("SELECT * FROM `db_version`");
+			// We have an error? Probably `db_version` is missing. If that's the case
+			// we are using version < 115. Apply the patches from rev. 115 and above
+			if (!$ans) {
+				$prev_ver=110;
+			} else {
+				$verinfo = mysql_fetch_row($ans);
+				mysql_free_result($ans);
+				$prev_ver = $verinfo[0];
+			}
+			
+			// Save the revision (Used by ste4.php)
+			$_SESSION['dbrev'] = $prev_ver;
 	}
 }
 
