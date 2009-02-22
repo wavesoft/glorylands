@@ -21,6 +21,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 include_once $_CONFIG[GAME][BASE]."/config/diralias.php";
 include_once $_CONFIG[GAME][BASE]."/ver.php";
 //include_once DIROF('DATA.ENGINE')."guid_dictionary.php";
+include_once DIROF('OUTPUT.FILE')."interfaces/libs/Smarty.class.php";
 include_once DIROF('DATA.ENGINE')."template_dictionary.php";
 include_once DIROF('SYSTEM.INCLUDE')."mysql.php";
 include_once DIROF('SYSTEM.INCLUDE')."errors.php";
