@@ -140,6 +140,8 @@ if ($_REQUEST['dbmode'] == 'new') {
 
 // Save the configuration file
 $config_tpl = file_get_contents("data/files/config.php.tpl");
+if (!isset($_SESSION['config']['GAME']['GAME_MC_HOST'])) $_SESSION['config']['GAME']['GAME_MC_HOST'] = 'localhost';
+if (!isset($_SESSION['config']['GAME']['GAME_MC_PORT'])) $_SESSION['config']['GAME']['GAME_MC_PORT'] = 11211;
 foreach ($_SESSION['config'] as $group => $vargroup) {
 	if  (is_array($vargroup)) {
 		foreach ($vargroup as $var => $value) {
