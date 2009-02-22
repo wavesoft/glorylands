@@ -6,6 +6,15 @@ if (is_file("../config/config.php")) {
 	include "../config/config.php";
 	$_SESSION['config'] = $_CONFIG;
 	$_SESSION['dbmode'] = 'patch';
+	if (isset($_CONFIG['MCACHE'])) {
+		$_SESSION['config']['GAME']['MC_ENABLE'] = (string) $_CONFIG[MCACHE][ENABLE];
+		$_SESSION['config']['GAME']['MC_HOST'] = $_CONFIG[MCACHE][HOST];
+		$_SESSION['config']['GAME']['MC_PORT'] = $_CONFIG[MCACHE][PORT];
+	} else {
+		$_SESSION['config']['GAME']['MC_ENABLE'] = 'false';
+		$_SESSION['config']['GAME']['MC_HOST'] = 'localhost';
+		$_SESSION['config']['GAME']['MC_PORT'] = 11211;
+	}
 }
 
 $has_error = false;
