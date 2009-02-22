@@ -25,7 +25,6 @@ if ($act_valid) {
 	$act_result = array_merge($act_result, $extra);
 
 	// Load Smarty engine (just to load the translation)
-	include DIROF('OUTPUT.FILE')."interfaces/libs/Smarty.class.php";
 	$smarty = new Smarty;
 	$smarty->template_dir = DIROF('DATA.INTERFACE',true);
 	$smarty->compile_dir = DIROF('OUTPUT.PROCESSOR')."interfaces/cache";
