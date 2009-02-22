@@ -1,0 +1,31 @@
+GAME_UNDER_CONSTRUCTION = "This game is under construction and the server is not open for the public yet!"
+SERVER_STATUS = "Server Status"
+LOGIN = "Login"
+WELCOME = "Welcome"
+USERNAME = "Username"
+PASSWORD = "Password"
+LOGIN_OK = "You are successfully loged into the game system. Please select one of your charachters below to start the game with:"
+PLAYER_INFO = "Player Info"
+LOADING_GRAPHICS = "Loading Graphics..."
+
+TOO_FAR_AWAY = "You are too far away! Get closer!"
+
+STATISTICS = "Statistics"
+
+COINS = "Coins"
+
+SHOP_BUY_WELCOME = "Welcome to my shop traveler! What do you want to buy?"
+SHOP_BUY_THANKS_1 = "Here is your"
+SHOP_BUY_THANKS_2 = ". Thank you!"
+SHOP_BUY_THANKS_PL_1 = "Here is your"
+SHOP_BUY_THANKS_PL_2 = "s. Thank you!"
+SHOP_BUY_EXPENSIVE = "Oops, it looks like this item is too expensive for you!"
+SHOP_BUY_EXPENSIVE_PL = "Oops, it looks like you don't have enough money for all of them!"
+SHOP_BUY_NOTHING = "Sorry, but I have nothing you can buy!"
+
+SHOP_SELL_WELCOME = "Welcome to my shop traveler! What do you want to sell to me?"
+SHOP_SELL_THANKS_1 = "Thank you for your"
+SHOP_SELL_THANKS_2 = ". Here are your "
+SHOP_SELL_THANKS_PL_1 = "Thank you for your"
+SHOP_SELL_THANKS_PL_2 = "s. Here are your "
+SHOP_SELL_NOTHING = "You have nothing that can be sold!"

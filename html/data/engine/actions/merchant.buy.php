@@ -10,12 +10,12 @@ if (!strstr($vars['flags'],'VENDOR')) {
 $distance = gl_distance($_SESSION[PLAYER][DATA]['x'],$_SESSION[PLAYER][DATA]['y'],$vars['x'],$vars['y']);
 if ($distance>3) { /* At least within 3 boxes */
 	$act_result=array('mode'=>'NONE');
-	relayMessage(MSG_INTERFACE,'MSGBOX','You are too far away! Get closer!');
+	relayMessage(MSG_INTERFACE,'MSGBOX','{#TOO_FAR_AWAY#}');
 	return;	
 }
 
 // Buy items
-$text = 'Welcome to my shop traveler! What do you want to buy?';
+$text = '{#SHOP_BUY_WELCOME#}';
 if (isset($_REQUEST['buy'])) {
 	$gitem = $_REQUEST['buy'];
 	if (isset($_REQUEST['count'])) {
@@ -25,9 +25,9 @@ if (isset($_REQUEST['buy'])) {
 			if ($_SESSION[PLAYER][DATA]['money'] >= $vars['buy_price']) {
 				gl_update_guid_vars($gitem, array('parent' => $_SESSION[PLAYER][GUID]));
 				gl_update_guid_vars($_SESSION[PLAYER][GUID], array('money' => ($_SESSION[PLAYER][DATA]['money']-$vars['buy_price'])));
-				$text = '<font color="#006600">Here are your '.$vars['name'].'s. Thank you!</font>';
+				$text = '<font color="#006600">{#SHOP_BUY_THANKS_PL_1#} '.$vars['name'].'{#SHOP_BUY_THANKS_PL_2#}</font>';
 			} else {
-				$text = '<font color="#660000">Oops, it looks like you don\'t have enough money for all of them!</font>';
+				$text = '<font color="#660000">{#SHOP_BUY_EXPENSIVE_PL#}</font>';
 				break;
 			}
 		}
@@ -36,12 +36,14 @@ if (isset($_REQUEST['buy'])) {
 		if ($_SESSION[PLAYER][DATA]['money'] >= $vars['buy_price']) {
 			gl_update_guid_vars($gitem, array('parent' => $_SESSION[PLAYER][GUID]));
 			gl_update_guid_vars($_SESSION[PLAYER][GUID], array('money' => ($_SESSION[PLAYER][DATA]['money']-$vars['buy_price'])));
-			$text = '<font color="#006600">Here is  your '.$vars['name'].'. Thank you!</font>';
+			$text = '<font color="#006600">{#SHOP_BUY_THANKS_1#}'.$vars['name'].'{#SHOP_BUY_THANKS_2#}</font>';
 		} else {
-			$text = '<font color="#660000">Oops, it looks like this item is too expensive for you!</font>';
+			$text = '<font color="#660000">{#SHOP_BUY_EXPENSIVE#}</font>';
 		}
 	}
 }
+
+debug_message("Text sent: $text");
 
 $item_guids = gl_get_guid_children($_REQUEST['guid'],'item',STACK_ALWAYS);
 $objects = array();

@@ -1,4 +1,5 @@
 <?php
+session_destroy();
 $has_error = false;
 $issues = array();
 $root_path = dirname(dirname(dirname(__FILE__)));

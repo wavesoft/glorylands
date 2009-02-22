@@ -16,7 +16,7 @@
 			<div class="frame128"><img src="images/inventory/Silver-Fern-128x128.png"/></div>
 			<table>
 			 <tr><td colspan="2" valign="top" height="80" align="left"><small>{$_my.welcome}</small></td></tr>
-			 <tr><td><b>Gold:</b></td><td>{$_my.gold} <img src="images/UI/gold.gif" align="absmiddle" /></td></tr>
+			 <tr><td><b>{#COINS#}:</b></td><td>{$_my.gold} <img src="images/UI/gold.gif" align="absmiddle" /></td></tr>
 			 <tr><td><b>Slots:</b></td><td>{$_my.slots}</td></tr>
 			 <tr><td colspan="2" align="center" valign="bottom" height="24" class="book_menu">
 				 <br />
@@ -55,7 +55,7 @@
 			</div>
 		</div>
 		{else}
-		I am sorry, I have nothing you can buy.
+		{#SHOP_BUY_NOTHING#}
 		{/if}
 		</td>
 	</tr>

@@ -9,12 +9,14 @@ include "../config/config.php";
 include "../engine/includes/base.php";
 global $sql;
 
+echo "Importing data into <b>".$_CONFIG[DB][DATABASE]."</b>\n\n";
+
 // Prepare and run the database qureies
 $queries = file_get_contents("data/sql/dbschema.sql");
-$queries = str_replace("\r","",$queries);
-$queries = preg_replace('%\\/\\*[\\w\\W]*\\*\\/%', "", $queries);
-$queries = preg_replace('/--.*\\n/', "", $queries);
-$queries = explode(";\n", $queries);
+$queries = mb_ereg_replace('/\\*[^\\*]*\\*/', "", $queries);
+$queries = mb_ereg_replace('-- [^\\r\\n]*\\r?\\n', "", $queries);
+$queries = mb_split(";\\r?\\n", $queries);
+
 $q_count = 0;
 $q_step = 0;
 $failures = array();

@@ -15,7 +15,7 @@ if ($distance>3) { /* At least within 3 boxes */
 }
 
 // Sell items
-$text = 'Welcome to my shop traveler! What do you want to sell to me?';
+$text = '{#SHOP_SELL_WELCOME#}';
 if (isset($_REQUEST['sell'])) {
 	$gitem = $_REQUEST['sell'];
 	if ($_REQUEST['count']) {
@@ -29,12 +29,12 @@ if (isset($_REQUEST['sell'])) {
 			gl_update_guid_vars($_SESSION[PLAYER][GUID], array('money' => ($_SESSION[PLAYER][DATA]['money']+$vars['sell_price'])));
 			$gold+=$vars['sell_price'];
 		}
-		$text = '<font color="#006600">Thank you for your '.$vars['name'].'s. Here are your '.$gold.' coins.</font>';
+		$text = '<font color="#006600">{#SHOP_SELL_THANKS_PL_1#} '.$vars['name'].'. {#SHOP_SELL_THANKS_PL_2#} '.$gold.' {#COINS#}.</font>';
 	} else {
 		$vars = gl_get_guid_vars($gitem);	
 		gl_update_guid_vars($gitem, array('parent' => $_REQUEST['guid']));
 		gl_update_guid_vars($_SESSION[PLAYER][GUID], array('money' => ($_SESSION[PLAYER][DATA]['money']+$vars['sell_price'])));
-		$text = '<font color="#006600">Thank you for your '.$vars['name'].'. Here are your '.$vars['sell_price'].' coins.</font>';
+		$text = '<font color="#006600">{#SHOP_SELL_THANKS_1#} '.$vars['name'].'. {#SHOP_SELL_THANKS_2#} '.$vars['sell_price'].' {#COINS#}.</font>';
 	}
 }
 

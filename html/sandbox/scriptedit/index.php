@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-7" />
 <title>Dynamic Editor</title>
-<script language="javascript" src="includes/codepress/codepress.js" type="text/javascript"></script>
+<script language="javascript" src="includes/edit_area/edit_area_full.js" type="text/javascript"></script>
 <script language="javascript" src="../../includes/mootools-release-1.11.js"></script>
 <script language="javascript">
 function $trace(obj) {
@@ -15,41 +15,26 @@ function $trace(obj) {
 	return ans;
 }
 
-$(window).addEvent('load', function(e){
-
-	//var myCpWindow = document.getElementById('myCpWindow');
-	window.alert(myCpWindow);
-	var editor = myCpWindow.editor.getDocument();
-	//window.alert(editor);
-	handler = function(e) {
-		var e = new Event(e);
-		var p = myCpWindow.contentWindow.getSelection();
-		var v = $(e.target).getPosition();
-		var cp = myCpWindow.editor.getRangeAndCaret();
-		var sz = $(e.target).getSize().size;
-		$('msg').setHTML('Position: '+$trace(v)+' carret/Range: '+$trace(cp)+ ' size: '+$trace(sz)+'<br /> Anchor: '+p.anchorOffset+' Focus: '+p.focusOffset+' Range: '+p.rangeCount+'<br />P:'+$trace(p));
-		$('pos').setStyles({
-			'top': sz.y,
-			'left': 42+(cp[1]*8)
-		});
-	};
+	// initialisation
+	editAreaLoader.init({
+		id: "code"	// id of the textarea to transform		
+		,start_highlight: true	// if start with highlight
+		,allow_resize: "both"
+		,allow_toggle: true
+		,replace_tab_by_spaces: 4
+		,language: "en"
+		,syntax: "php"	
+		,toolbar: "charmap, |, search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help"
+		,browsers: "known"
+		,plugins: "charmap"
+	});	
 	
-	if(editor.attachEvent) editor.attachEvent('onkeyup',handler);
-	else editor.addEventListener('keyup',handler,false);
-	if(editor.attachEvent) editor.attachEvent('onkeydown',handler);
-	else editor.addEventListener('keydown',handler,false);
-	if(editor.attachEvent) editor.attachEvent('onmouseup',handler);
-	else editor.addEventListener('mouseup',handler,false);
-
-
-});
 </script>
 </head>
 
 <body>
-<form action="" method="post" onsubmit="$('code').value=myCpWindow.getCode()">
-<input type="hidden" name="code" id="code" />
-<textarea cols="120" rows="20" class="codepress javascript linenumbers-on" id="myCpWindow">
+<form action="" method="post" onsubmit="">
+<textarea cols="120" rows="20" id="code" name="code">
 <?php echo stripslashes($_POST['code']); ?>
 </textarea> 
 <input type="submit" />
