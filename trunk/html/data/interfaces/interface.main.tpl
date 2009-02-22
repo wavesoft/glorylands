@@ -132,7 +132,7 @@ var mapOfsY = 8;
 {/literal}
 </head>
 <body>
-<table id="waiter_host"><tr><td valign="middle" align="center"><div id="waiter">Loading Graphics</div></td></tr></table>
+<table id="waiter_host"><tr><td valign="middle" align="center"><div id="waiter">{#LOADING_GRAPHICS#}</div></td></tr></table>
 <!-- Hover info -->
 <div id="hoverLayer" style="visibility: hidden;  z-index: 1998; background-image:url(images/UI/backblack.png);"></div>
 <div id="dropdownLayer" style="visibility: hidden; z-index: 1999;"></div>

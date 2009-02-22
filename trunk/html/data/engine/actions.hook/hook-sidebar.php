@@ -27,7 +27,7 @@ function sidebar_data_feed() {
 	$head = "<h3>".$_SESSION[PLAYER][DATA]['name']."</h3>\n<p>".$_SESSION[PLAYER][DATA]['description']."</p>";
 
 	// Check for active hooks
-	$body = "<table width=\"100%\"><tr><td valign=\"top\" width=\"120\">Statistics:<br />\n<table class=\"sidebar_infotbl\">
+	$body = "<table width=\"100%\"><tr><td valign=\"top\" width=\"120\">{#STATISTICS#}:<br />\n<table class=\"sidebar_infotbl\">
 <tr>
 	<td align=\"right\" width=\"30\"><b>STR</b></td>
 	<td>{$_SESSION[PLAYER][DATA]['STR']}</td>

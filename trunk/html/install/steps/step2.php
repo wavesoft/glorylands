@@ -37,6 +37,7 @@ $root_url = str_replace('\\','/', $root_url);
 			<td>Default Language: </td>
 			<td><select class="text" name="config[LANG]" >
 				<option value="en">English</option>
+				<option value="el">Ελληνικά</option>
 			</select></td>
 		</tr>
 	</table>

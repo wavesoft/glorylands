@@ -1,4 +1,5 @@
 
+var edit_icon='';
 var edit_attrib_id=0;
 var edit_attribs=[];
 var edit_elements=[];
@@ -393,7 +394,8 @@ function iedit_save(filename) {
 		'name': $('item_name').value,
 		'keywords': $('item_keyword').value,
 		'desc': $('item_desc').value,
-		'grid': json_compress_array(edit_attribs)
+		'grid': json_compress_array(edit_attribs),
+		'icon':edit_icon
 	});
 }
 
@@ -406,6 +408,8 @@ function iedit_load(filename) {
 			$('item_name').value = obj.name;
 			$('item_keyword').value = obj.keywords;
 			$('item_desc').value = obj.desc;
+			edit_icon=obj.icon;
+			$('ui_itemimage').src = '../../images/inventory/'+obj.icon;
 			
 			obj.grid=json_expand_array(obj.grid);
 			for (var i=0; i<obj.grid.length; i++) {
@@ -429,9 +433,11 @@ function iedit_reset(){
 	edit_attrib_id=0;
 	edit_attribs=[];
 	edit_elements=[];	
+	edit_icon='';
 	$('item_name').value = '';
 	$('item_keyword').value = '';
 	$('item_desc').value = '';
+	$('ui_itemimage').src='images/blank128.png';
 }
 
 function iedit_nbspize(txt) {
@@ -787,6 +793,11 @@ function iedit_apply_config(index, config) {
 	edit_elements[index][9].setHTML(edit_attribs[index]['dir']);
 }
 
+/**
+  * UI Management
+  *
+  */
+
 function attrib_new() {
 	iedit_spawn_attrib(true);
 }
@@ -813,21 +824,124 @@ function ui_load() {
 	iedit_load('test');
 }
 
-$(window).addEvent('load', function(e) {
-	var id = iedit_spawn_attrib();
-	iedit_apply_config(id, {
-		'typ': 'Physical State',
-		'mod': 'Sand / Dust',
-		'ofs': '',
-		'grv': '10',
-		'drp': '50 %',
-		'att': '10 %',
-		'dir': '0',
-		'var': '10 %',
-		'use': '50 %'
+function ui_realign() {
+	// Center some objects
+	var s=$('ui_browseimage').getSize().size;
+	var w=$(window).getSize().size;
+	$('ui_browseimage').setStyles({
+		'left': (w.x-s.x)/2,
+		'top': (w.y-s.y)/2
+	});	
+}
+
+// ### Image browser ###
+var page=0;
+var images=[];
+var last_filter='';
+
+function ui_browse_cancel() {
+	$('ui_browseimage').setStyles({
+		'display': 'none'
 	});
+	ui_browse_reset();
+}
+
+function ui_browse_open() {
+	$('ui_browseimage').setStyles({
+		'display': ''
+	});
+	page=0;
+	$('ui_text_search').value = '*';
+	$('ui_browser_page').setHTML('Page <b>'+page+'</b>');
+	ui_realign();
+	ui_browse_reset();
+	ui_browse_refresh('*',0);
+}
+
+function ui_browse_reset(waitani) {
+	for (var i=0; i<images.length; i++) {
+		images[i].remove();
+	}
+	images=[];
+	if (!waitani) {
+	} else {
+		var e=new Element('img', {
+			'src' : 'images/loading.gif'
+		});
+		e.inject($('ui_browseimage_content'));
+		images.push(e);		
+	}
+}
+
+function ui_browse_search(filter) {
+	ui_browse_reset(true);
+	page=0;
+	ui_browse_refresh('*'+filter+'*');
+}
+
+function ui_browse_next() {
+	ui_browse_reset(true);
+	page++;
+	$('ui_browser_page').setHTML('Page <b>'+page+'</b>');
+	ui_browse_refresh(last_filter);	
+}
+
+function ui_browse_prev() {
+	ui_browse_reset(true);
+	page--;
+	if (page<0) page=0;
+	$('ui_browser_page').setHTML('Page <b>'+page+'</b>');
+	ui_browse_refresh(last_filter);	
+}
+
+function ui_browse_refresh(filter) {
+	json_message('Updating list...');
+	if (filter == '') $filter='*';
+	var json = new Json.Remote('feed.php?a=images&f='+filter+'&p='+page, {
+		headers: {'X-Request': 'JSON'},
+		onComplete: function(obj) {
+			json_message('List arrived');
+			ui_browse_reset();
+			for (var i=0; i<obj.length; i++) {
+				var im = new Element('img', {
+					'src': '../../images/inventory/'+obj[i],
+					'border' :0
+				});
+				var a = new Element('a', {
+					'href': 'javascript:;',
+					'title': obj[i]
+				});
+				a.addEvent('click', function(e) {
+					edit_icon=this.getProperty('title');
+					$('ui_itemimage').src='../../images/inventory/'+edit_icon;
+					ui_browse_cancel();
+				});
+				im.inject(a);
+				a.inject($('ui_browseimage_content'));
+				images.push(im);
+				images.push(a);
+			}
+		},
+		onFailure: function(err) {
+			window.alert('failed'+err);
+		}
+	}).send();	
+	last_filter=filter;
+}
+
+/**
+  * Default browser actions
+  *
+  */
+
+$(window).addEvent('load', function(e) {
+	ui_realign();
+});
+
+$(window).addEvent('resize', function(e) {
+	ui_realign();
 });
 
 $(window).addEvent('beforeunload', function(e) {
-	return "The page you are editting is not saved!";
+	//return "The page you are editting is not saved!";
 });

@@ -23,9 +23,28 @@ if ($act_valid) {
 		'messages'=>jsonPopMessages(MSG_INTERFACE)
 	);
 	$act_result = array_merge($act_result, $extra);
+
+	// Load Smarty engine (just to load the translation)
+	include DIROF('OUTPUT.FILE')."interfaces/libs/Smarty.class.php";
+	$smarty = new Smarty;
+	$smarty->template_dir = DIROF('DATA.INTERFACE',true);
+	$smarty->compile_dir = DIROF('OUTPUT.PROCESSOR')."interfaces/cache";
+	$smarty->config_dir = DIROF('DATA.LANG');
+	$smarty->compile_check = false;
+	$smarty->debugging = false;
+	$smarty->config_load($_CONFIG[GAME][LANG].'.dat');
 	
+	// Translate variables
+	$tpl_output = json_encode($act_result);	
+	$tpl_output = preg_replace_callback('/{#([^#]*)#}/i', 
+		create_function(
+			'$matches',
+			'global $smarty; return $smarty->get_config_vars($matches[1]);'
+		), 
+		$tpl_output);
+		
 	// Send results
-	echo json_encode($act_result);
+	echo $tpl_output;
 	
 } else {
 

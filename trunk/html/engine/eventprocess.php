@@ -205,9 +205,9 @@ while ($operation != $last_operation) {
 			'Parsed Files' => sizeof(get_included_files()),
 			'Memory Usage' => number_format(memory_get_usage()/1024,2).' Kb',
 			'Peak Memory Usage' => number_format(memory_get_peak_usage()/1024,2).' Kb',
-			'Script Time' => number_format($time, 4).' ms',
+			'Script Time' => number_format($time*1000, 2).' ms',
 			'MySQL Queries' => $sql->totQueries,
-			'MySQL Time' => number_format($sql->totTime, 4).' ms'
+			'MySQL Time' => number_format($sql->totTime*1000, 2).' ms'
 		);
 		
 	}

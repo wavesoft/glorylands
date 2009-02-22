@@ -70,6 +70,10 @@ if (!$version) {
 	}
 }
 
+// Switch to unicode
+mb_internal_encoding('utf-8');
+mysql_query("SET CHARSET 'utf8'");
+
 // Check if the database already exists
 $query = mysql_query("SHOW DATABASES LIKE '".$_REQUEST['config']['DATABASE']."'");
 $rows = mysql_num_rows($query);

@@ -6,11 +6,11 @@
 	    <table width="100%"  border="0" cellspacing="0" cellpadding="0">
 	    <tr>
 			  <td width="17" height="44" background="images/UI/head_l.gif">&nbsp;</td>
-		  	  <td width="169" background="images/UI/head_rep.gif" class="sideTbl">Server Status </td>
+		  	  <td width="169" background="images/UI/head_rep.gif" class="sideTbl">{#SERVER_STATUS#}</td>
 			  <td width="18" background="images/UI/head_r.gif">&nbsp;</td>
 		  </tr>
 			<tr>
-			  <td align="center" colspan="3" class="bluebk"><p>This game is under construction and the server is not open for the public yet!</p>
+			  <td align="center" colspan="3" class="bluebk"><p>{#GAME_UNDER_CONSTRUCTION#}</p>
 			  <p><div style="background-image:url(images/UI/load_{$server_load_img}.gif); background-repeat:no-repeat; width:150px; height:15px; text-align: center; font-size:9px; color: #FFFFFF; font-weight: bold; padding-top:2px; border: none;">Server load: {$server_load_perc}%</div></p></td>
 			</tr>
 	  </table>	    
@@ -18,7 +18,7 @@
 		  <table width="100%"  border="0" cellspacing="0" cellpadding="0">
 			<tr>
 			  <td width="17" height="44" background="images/UI/head_l.gif">&nbsp;</td>
-			  <td width="169" background="images/UI/head_rep.gif" class="sideTbl">Login</td>
+			  <td width="169" background="images/UI/head_rep.gif" class="sideTbl">{#LOGIN#}</td>
 			  <td width="18" background="images/UI/head_r.gif">&nbsp;</td>
 			</tr>
 			<tr>
@@ -58,11 +58,11 @@
             </tr>
 {/if}	  
             <tr>
-              <td>Username  :</td>
+              <td>{#USERNAME#} :</td>
               <td><input name="name" type="text" class="login" size="10"></td>
             </tr>
             <tr>
-              <td>Password : </td>
+              <td>{#PASSWORD#} : </td>
               <td><input name="password" type="password" class="login" size="10"></td>
             </tr>
             <tr>
@@ -78,7 +78,7 @@
 		  <input type="hidden" name="action" value="logout">
           <table width="100%"  border="0" cellspacing="0" cellpadding="1">
             <tr>
-              <td align="center">Welcome <b>{$player.profile.name}</b>!</td>
+              <td align="center">{#WELCOME#} <b>{$player.profile.name}</b>!</td>
             </tr>
             <tr>
               <td align="center"><button class="logout" type="submit">&nbsp;</button> </td>
@@ -94,12 +94,12 @@
 	<table width="100%"  border="0" cellspacing="0" cellpadding="0">
 		<tr>
 		  <td width="17" height="44" background="images/UI/head_l.gif">&nbsp;</td>
-		  <td width="169" background="images/UI/head_rep.gif" class="sideTbl">Player Info</td>
+		  <td width="169" background="images/UI/head_rep.gif" class="sideTbl">{#PLAYER_INFO#}</td>
 		  <td width="18" background="images/UI/head_r.gif">&nbsp;</td>
 		</tr>
 		<tr>
 		  <td align="center" colspan="3" class="bluebk">
-		  	<p>You are successfully loged into the game system. Please select one of your charachters below to start the game with:</p>
+		  	<p>{#LOGIN_OK#}</p>
 {if $chars}
 			<p align="center">
 			<form action="?a=interface.entry" method="post">

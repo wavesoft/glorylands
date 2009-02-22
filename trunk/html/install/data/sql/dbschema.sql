@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: gl_for_release
 Target Host: localhost
 Target Database: gl_for_release
-Date: 1/1/2009 4:04:32 ��
+Date: 1/1/2009 4:04:32 μμ
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -39,6 +39,17 @@ CREATE TABLE `char_instance` (
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+
+-- ----------------------------
+-- Table structure for char_international
+-- ----------------------------
+CREATE TABLE `char_international` (
+  `template` int(11) NOT NULL default '0',
+  `lang` varchar(4) collate utf8_unicode_ci default 'en',
+  `variables` longtext collate utf8_unicode_ci,
+  PRIMARY KEY  (`template`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for char_template
@@ -277,6 +288,16 @@ CREATE TABLE `gameobject_instance` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
+-- Table structure for gameobject_international
+-- ----------------------------
+CREATE TABLE `gameobject_international` (
+  `template` int(11) NOT NULL default '0',
+  `lang` varchar(4) collate utf8_unicode_ci default 'en',
+  `variables` longtext collate utf8_unicode_ci,
+  PRIMARY KEY  (`template`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- ----------------------------
 -- Table structure for gameobject_template
 -- ----------------------------
 CREATE TABLE `gameobject_template` (
@@ -368,6 +389,16 @@ CREATE TABLE `item_instance` (
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Contains all the initialization instances that must be done';
+
+-- ----------------------------
+-- Table structure for item_international
+-- ----------------------------
+CREATE TABLE `item_international` (
+  `template` int(11) NOT NULL default '0',
+  `lang` varchar(4) collate utf8_unicode_ci default 'en',
+  `variables` longtext collate utf8_unicode_ci,
+  PRIMARY KEY  (`template`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for item_template
@@ -467,6 +498,16 @@ CREATE TABLE `npc_instance` (
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+-- ----------------------------
+-- Table structure for npc_international
+-- ----------------------------
+CREATE TABLE `npc_international` (
+  `template` int(11) NOT NULL default '0',
+  `lang` varchar(4) collate utf8_unicode_ci default 'en',
+  `variables` longtext collate utf8_unicode_ci,
+  PRIMARY KEY  (`template`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for npc_template
@@ -625,6 +666,16 @@ CREATE TABLE `unit_instance` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
+-- Table structure for unit_international
+-- ----------------------------
+CREATE TABLE `unit_international` (
+  `template` int(11) NOT NULL default '0',
+  `lang` varchar(4) collate utf8_unicode_ci default 'en',
+  `variables` longtext collate utf8_unicode_ci,
+  PRIMARY KEY  (`template`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- ----------------------------
 -- Table structure for unit_template
 -- ----------------------------
 CREATE TABLE `unit_template` (
@@ -678,7 +729,7 @@ INSERT INTO `char_vardesc` VALUES ('race', 'Race', '2', '0', '(Unknown)', 'RAW',
 INSERT INTO `char_vardesc` VALUES ('money', 'Money', '2', '1', '42', 'MONEY', null, '0');
 INSERT INTO `char_vardesc` VALUES ('itelligence', 'Itelligence', '2', '1', '10', 'SCRIPT', 'if ($var > 90) {\r\n	$color=\'red\';\r\n} elseif ($var > 50) {\r\n	$color=\'blue\';\r\n} elseif ($var > 30) {\r\n	$color=\'green\';\r\n} else {\r\n	$color=\'grey\';\r\n}\r\nreturn \"<font color=\\\"$color\\\">$var %</font>\";', '0');
 INSERT INTO `data_maps` VALUES ('1', 'Luskan Village', 'Luskan is a small village on the eastern side of mount Solomir. It is an old and very small village that is mostly consisted of old people and visitors.\r\nIt is said that the village was founded because of a sacred spring that was located nearby. That spring was said that had healing powers and could cure almost any diseace! Nevertheless, no one has ever head of it again for many, many years. Only the legend and some ancient ruins remains nowadays to remind the people the past days...', 'Luskan is a small village on the eastern side of mount Solomir. It is an old and very small village that is mostly consisted of old people and visitors.\r\nIt is said that the village was founded because of a sacred spring that was located nearby. That spring was said that had healing powers and could cure almost any diseace! Nevertheless, no one has ever head of it again for many, many years. Only the legend and some ancient ruins remains nowadays to remind the people the past days...', 'z-field-ext-1-2.png', 'luskan-vlg', '50', '0');
-INSERT INTO `data_religions` VALUES ('1', 'Deites', 'ÓõæçôÞóåéò', null, null, null, null, null, '0');
+INSERT INTO `data_religions` VALUES ('1', 'Deites', 'ΓΓ΅Γ¦Γ§Γ΄ΓΓ³ΓΓ©Γ²', null, null, null, null, null, '0');
 INSERT INTO `data_religions` VALUES ('2', 'Jaccob', '', null, null, null, null, null, '0');
 INSERT INTO `data_religions` VALUES ('3', 'Corellon Larethian', '', null, null, null, null, null, '0');
 INSERT INTO `data_religions` VALUES ('4', 'Ehlonna', '', null, null, null, null, null, '0');
@@ -777,3 +828,5 @@ INSERT INTO `unit_vardesc` VALUES ('citizens', 'Number of citizens', '1', '0', '
 INSERT INTO `unit_vardesc` VALUES ('soldiers', 'Number of soldiers', '1', '0', '0', 'RAW', null, '0');
 INSERT INTO `users_accounts` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '', null, null, null, null, 'ADMIN');
 INSERT INTO `users_accounts` VALUES ('2', 'player', '912af0dff974604f1321254ca8ff38b6', '', null, null, null, null, 'USER');
+INSERT INTO `item_international` VALUES ('1', 'el', 'a:2:{s:4:\"name\";s:67:\"Ελαφρύ Σπαθί\";s:11:\"description\";s:280:\"Ένα ελαφρύ σπαθί το οποίο συνήθως έχει η φυλή των Νάνων\";}');
+INSERT INTO `item_international` VALUES ('2', 'el', 'a:2:{s:4:\"name\";s:67:\"Ξύλινο Σπαθί\";s:11:\"description\";s:264:\"Ενα ξύλινο σπαθί που χρησιμοποιείται για εξάσκιση\";}');

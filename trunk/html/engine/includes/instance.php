@@ -676,7 +676,7 @@ function gl_translate_vars($type, $vars, $level = 0) {
   * @return array|bool		An array that contains the parameter names and a values or false in case of error
   */
 function gl_get_guid_vars($guid) {
-	global $sql;
+	global $sql, $_CONFIG;
 
 	// Analyze guid
 	$parts = gl_analyze_guid($guid);
@@ -694,7 +694,6 @@ function gl_get_guid_vars($guid) {
 	$template = $row['template'];
 	$data_vars = unserialize($row['data']);
 	unset($row['index']);
-	//unset($row['guid']);
 	unset($row['template']);
 	unset($row['data']);
 	$instance_vars = $row;
@@ -708,6 +707,19 @@ function gl_get_guid_vars($guid) {
 	unset($row['schema']);
 	$template_vars = $row;
 
+	// Convert template variables with the appropriate translation
+	$ans = $sql->query("SELECT * FROM `{$parts['group']}_international` WHERE `template` = {$template} AND `lang` = '".$_CONFIG[GAME][LANG]."'");
+	if (!$ans) { debug_error($sql->getError()); return false; }
+	if (!$sql->emptyResults) {
+		$row = $sql->fetch_array(MYSQL_ASSOC);
+		unset($row['template']);
+		unset($row['schema']);
+		$translated_vars = gl_unserialize($row['variables']);
+		foreach ($translated_vars as $var => $value) {
+			if (isset($template_vars[$var])) $template_vars[$var] = $value;
+		}
+	}
+	
 	// Return result
 	return array_merge($template_vars, $instance_vars, $data_vars);
 }	

@@ -16,9 +16,9 @@
 				<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
 				<div class="header">Image</div>
 				<div style="height: 128px; width: 128px; text-align: center;">
-					<img align="absmiddle" src="../../images/inventory/Clipping-Picture-128x128.png" />
+					<img id="ui_itemimage" align="absmiddle" src="images/blank128.png" />
 				</div>
-				<a href="#" class="browse_img"><img src="images/fileopen.png" border="0" /></a>
+				<a href="javascript:;" onclick="ui_browse_open()" class="browse_img"><img src="images/fileopen.png" border="0" /></a>
 			</div>
 		</td>
 		<td>
@@ -51,7 +51,7 @@
 					<a href="javascript:;" onclick="iedit_reset();" accesskey="n"><img src="images/filenew.png" border="0" /><br /><u>N</u>ew</a>
 					<a href="javascript:;" onclick="ui_save();" accesskey="s"><img src="images/filesave.png" border="0" /><br /><u>S</u>ave</a>
 					<a href="javascript:;" onclick="ui_load();" accesskey="o"><img src="images/fileopen.png" border="0" /><br /><u>O</u>pen</a>
-					<a href="javascript:;" onclick="ui_compile();" accesskey="c"><img src="images/packet.png" border="0" /><br /><u>C</u>ompile</a>
+					<a href="javascript:;" onclick="ui_publish();" accesskey="p"><img src="images/publish.png" border="0" /><br /><u>P</u>ublish</a>
 				</div>
 				<div style="clear: both"></div>
 				<div class="message" id="json_output">&nbsp;</div>
@@ -88,5 +88,23 @@
 		</td>
 	</tr>
 </table>
+<div class="border" style="position:absolute; background-color:#FFFFFF; display:none;" id="ui_browseimage">
+	<div class="lt"></div><div class="rt"></div><div class="lb"></div><div class="rb"></div>
+	<div class="t"></div><div class="b"></div><div class="l"></div><div class="r"></div>
+	<div class="header">Browse for image</div>
+	<div class="topmenu">
+		<input type="text" style="padding: 2px; border: solid 1px #999999; margin: 4px;" id="ui_text_search" value="" />
+		<a href="javascript:;" onclick="ui_browse_search($('ui_text_search').value);"><img src="images/search.png" border="0" align="absmiddle" /> <u>S</u>earch tags</a>
+		<a href="javascript:;" onclick="ui_browse_cancel();"><img src="images/button_cancel.png" border="0" align="absmiddle" /> <u>C</u>ancel</a>
+
+		<a style="float: right;" href="javascript:;" onclick="ui_browse_next();"><img src="images/next.png" border="0" align="absmiddle" /> <u>N</u>ext</a>
+		<a style="float: right;" href="javascript:;" onclick="ui_browse_prev();"><img src="images/previous.png" border="0" align="absmiddle" /> <u>P</u>revious</a>
+		<div style="float: right; padding-top: 8px; padding-right: 5px;" id="ui_browser_page">Page <b>0</b></div>
+	</div>
+	<div style="clear: both"></div>
+	<div id="ui_browseimage_content" class="objects_host" style="width: 750px; height: 500px;">
+		&nbsp;
+	</div>
+</div>
 </body>
 </html>
