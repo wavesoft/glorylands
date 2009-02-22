@@ -1,5 +1,13 @@
 <?php
-session_destroy();
+
+// Reset session and try to load the last config
+session_unset();
+if (is_file("../config/config.php")) {
+	include "../config/config.php";
+	$_SESSION['config'] = $_CONFIG;
+	$_SESSION['dbmode'] = 'patch';
+}
+
 $has_error = false;
 $issues = array();
 $root_path = dirname(dirname(dirname(__FILE__)));
@@ -179,10 +187,26 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 <p>
 	<table class="checks" width="400">
 		<tr>
+			<th width="270">Game Root</th>
+			<td>
+				<?php 						
+					if (is_writable($root_path)) {
+						echo "<span class=\"ok\">Writable</span>";
+					} else {
+						echo "<span class=\"error\">Not writable</span>";
+						$issues[]='Directory $root_path must be writable in order to continue this setup.';
+						$has_error = true;
+					}
+				?>
+			</td>
+		</tr>
+		<tr>
 			<th width="270">config/config.php</th>
 			<td>
 				<?php 						
-					if (is_writable($root_path.'/config/config.php')) {
+					if (!file_exists($root_path.'/config/config.php')) {
+						echo "<span class=\"ok\">Missing</span>";
+					} elseif (is_writable($root_path.'/config/config.php')) {
 						echo "<span class=\"ok\">Writable</span>";
 					} else {
 						echo "<span class=\"error\">Not writable</span>";
@@ -263,10 +287,10 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 			</td>
 		</tr>
 		<tr>
-			<th width="120">images/tiles</th>
+			<th width="120">engine</th>
 			<td>
 				<?php 						
-					if (is_writable($root_path.'/images/tiles')) {
+					if (is_writable($root_path.'/engine')) {
 						echo "<span class=\"ok\">Writable</span>";
 					} else {
 						echo "<span class=\"error\">Not writable</span>";

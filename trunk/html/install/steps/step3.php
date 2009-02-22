@@ -61,8 +61,16 @@ $root_url = 'http://'.$_SERVER['HTTP_HOST'].dirname(dirname($_SERVER['REQUEST_UR
 			<td width="120">Database name: </td>
 			<td><input class="text" name="config[DATABASE]" type="text" value="<?php _echo($_SESSION['config']['DB']['DATABASE'],'glorylands'); ?>" size="20" /></td>
 		</tr>
-	</table>
-	<input checked="checked" id="inst_db" name="newdb" value="yes" type="checkbox"> <label for="inst_db">Create new database, or flush the previous one, if it already exists</label>
+		<tr>		
+			<td colspan="2"><input <?php _checked($_SESSION['dbmode'],'exist',false); ?> id="no_db" name="dbmode" value="exist" type="radio"> <label for="no_db">The database already exists and is clean. Just import the content.</label></td>
+		</tr>
+		<tr>		
+			<td colspan="2"><input <?php _checked($_SESSION['dbmode'],'new',true); ?> id="inst_db" name="dbmode" value="new" type="radio"> <label for="inst_db">Create new database, or flush the previous one, if it already exists</label></td>
+		</tr>
+		<tr>		
+			<td colspan="2"><input <?php _checked($_SESSION['dbmode'],'patch',false); ?> id="patch_db" name="dbmode" value="patch" type="radio"> <label for="patch_db">Database already contains a previous version. Perform upgrade.</label></td>
+		</tr>
+	</table>	
 </p>
 <p><input type="submit" class="button" value="Next >>" /></p>
 </form>
