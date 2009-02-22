@@ -19,7 +19,6 @@ if (!file_exists(DIROF('DATA.INTERFACE')."{$act_interface}.tpl")) {
 }
 
 // Load and init Smarty Engine
-include DIROF('OUTPUT.FILE')."interfaces/libs/Smarty.class.php";
 $smarty = new Smarty;
 $smarty->template_dir = DIROF('DATA.INTERFACE',true);
 $smarty->compile_dir = DIROF('OUTPUT.PROCESSOR')."interfaces/cache";
