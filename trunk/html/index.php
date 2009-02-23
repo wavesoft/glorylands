@@ -17,6 +17,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// Check for configuration file
+if (!file_exists("config/config.php")) {
+	echo "<h2>GloryLands Web-Based MMORPG</h2>";
+	echo "<p>Configuration file is missing! This probably means that the game is not properly installed!<br />Please use the game installer located under the <b>/install</b> subdirectory to install the game.</p>";
+	echo "<p><small>Licenced under the GNU/GPL Licence. Author: John Haralampidis</small></p>";
+	die();
+}
+
 // Require configuration
 require_once "config/config.php";
 require_once "config/diralias.php";
