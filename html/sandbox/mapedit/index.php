@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-7" />
 <title>GloryLands Rendering System 2.0 :: Lightweight map Editor v0.2</title>
 <script language="javascript" src="../../includes/mootools-release-1.11.js"></script>
-<script language="javascript" src="editapi-1.0-src.js"></script>
+<script language="javascript" src="editapi-1.1-src.js"></script>
 <link rel="stylesheet" type="text/css" href="edit.css">
 </head>
 <body>
@@ -40,6 +40,7 @@
 			<a href="javascript:;" onclick="ui_save();" accesskey="s"><img src="images/filesave.png" border="0" /><br /><u>S</u>ave</a>
 			<a href="javascript:;" onclick="ui_load();" accesskey="o"><img src="images/fileopen.png" border="0" /><br /><u>O</u>pen</a>
 			<a href="javascript:;" onclick="ui_compile();" accesskey="c"><img src="images/packet.png" border="0" /><br /><u>C</u>ompile</a>
+			<a href="javascript:;" onclick="ui_undo();" accesskey="u"><img src="images/undo.png" border="0" /><br /><u>U</u>ndo</a>
 		</div>
 		<div class="message" id="json_output">&nbsp;</div>
 	</div>

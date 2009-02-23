@@ -423,6 +423,7 @@ var ui_lastfile='';
 
 function ui_new() {
 	if (window.confirm('Do you really want to erase this map? This action is not undoeable!')) {
+		scroller_setpos(0,0);
 		paint_reset();
 		paint_setbackground('');
 		object_resetgrid();
@@ -875,6 +876,11 @@ function object_store(img) {
 	objects_cache.push(i);
 	objects_cache.push(a);
 }
+
+/**
+  * Undo system
+  *
+  */
 
 /**
   * Objects system
