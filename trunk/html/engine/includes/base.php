@@ -34,6 +34,7 @@ include_once DIROF('SYSTEM.INCLUDE')."spawnsystem.php";
 include_once DIROF('SYSTEM.INCLUDE')."dynupdate.php";
 include_once DIROF('SYSTEM.INCLUDE')."debugsystem.php";
 include_once DIROF('SYSTEM.INCLUDE')."unicode.php";
+include_once DIROF('SYSTEM.INCLUDE')."cache.php";
 
 ### Connect to DB
 global $sql;
