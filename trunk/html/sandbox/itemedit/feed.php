@@ -2,6 +2,7 @@
 
 include "../../config/config.php";
 include "../../engine/includes/base.php";
+//include "includes/itemmix.php";
 
 $a = '';
 if (isset($_REQUEST['a'])) $a=$_REQUEST['a'];
@@ -69,6 +70,22 @@ if ($a == 'save') {
 		echo json_encode($files);
 	}
 
+} elseif ($a == 'publish') {
+	
+	$data = json_decode(stripslashes($_REQUEST['json']),true);
+	
+	$result = array();	
+	foreach ($data['grid'] as $action) {
+		$type = $action['typ'];
+		unset($action['typ']);
+		
+		if (!isset($result[$type])) $result[$type]=array();
+		$result[$type][] = $action;
+	}
+	
+	file_put_contents('filedata.txt', var_export($result,true));
+	
+	echo "{}";	
 }
 
 ?>
