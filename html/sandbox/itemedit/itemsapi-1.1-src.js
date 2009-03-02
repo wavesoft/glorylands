@@ -39,7 +39,18 @@ var edit_attrib_grid= [
 		],
 		ofs: false
 	},
-	{	name: 'Equipability',
+	{	name: 'Usability',
+		id: 'use',
+		mods: [
+			['Clickable (Can be clicked)', 'click'],
+			['Weapon (Can be used as weapon)', 'weapon'],
+			['Shield (Can be used as shield)', 'shield'],
+			['Container (Contains sub-items)', 'shield'],
+			['None (Just stores variables)', 'none'],
+		],
+		ofs: false
+	},
+	{	name: 'Can be equipped',
 		id:	'equip',
 		mods: [
 			['Head', 'head'],
@@ -55,8 +66,8 @@ var edit_attrib_grid= [
 		],
 		ofs: false
 	},
-	{	name: 'Battle Damage',
-		id: 'battle',
+	{	name: 'Absorb/Cause Damage',
+		id: 'damage',
 		mods: [
 			['Air', 'air'],
 			['Fire', 'fire'],
@@ -75,12 +86,12 @@ var edit_attrib_grid= [
 		],
 		ofs: true
 	},
-	{	name: 'Variable Modifier',
+	{	name: 'Modifies Variable',
 		id: 'modify',
 		mods: true,
 		ofs: true
 	},
-	{	name: 'Effect Timeout',
+	{	name: 'Effect Expiry',
 		id: 'timeout',
 		mods: [
 			['All', '_ALL_'],
@@ -90,17 +101,22 @@ var edit_attrib_grid= [
 		],
 		ofs: true
 	},
-	{	name: 'Size',
+	{	name: 'Has size',
 		id: 'size',
 		mods: false,
 		ofs: true
 	},
-	{	name: 'Script call',
+	{	name: 'Calls script',
 		id: 'call',
+		mods: true,
+		ofs: true
+	},
+	{	name: 'Starts Quest',
+		id: 'quest',
 		mods: true,
 		ofs: false
 	},
-	{	name: 'Locked',
+	{	name: 'Requires Lock',
 		id: 'lock',
 		mods: [
 			['Container', 'container'],
@@ -111,7 +127,7 @@ var edit_attrib_grid= [
 		],
 		ofs: true
 	},
-	{	name: 'Attribute',
+	{	name: 'Extra Attribute',
 		id: 'attrib',
 		mods: [
 			['Slots', 'slots'],
@@ -214,6 +230,9 @@ function attrib_get_default_mod(type,preferred) {
 	// No mods? Return blank
 	if (mods == false) {
 		return '';
+	// Dynamic mods? Return preferred
+	} else if (mods == true) {
+		return preferred;
 	} else {
 		// If we have a preferred value, search
 		// for it
@@ -396,6 +415,26 @@ function iedit_save(filename) {
 		'desc': $('item_desc').value,
 		'grid': json_compress_array(edit_attribs),
 		'icon':edit_icon
+	});
+}
+
+function iedit_publish(filename, publish_data) {
+	json_message('Publishing...');
+	var json = new Json.Remote('feed.php?a=publish&f='+filename, {
+		headers: {'X-Request': 'JSON'},
+		onComplete: function(obj) {
+			json_message('Published!');
+		},
+		onFailure: function(err) {
+			window.alert('failed'+err);
+		}
+	}).send({
+		'name': $('item_name').value,
+		'keywords': $('item_keyword').value,
+		'desc': $('item_desc').value,
+		'grid': json_compress_array(edit_attribs),
+		'icon':edit_icon,
+		'pub': publish_data
 	});
 }
 
@@ -814,6 +853,10 @@ function attrib_delete() {
 			edit_attribs.splice(id,1);
 		}
 	});
+}
+
+function ui_publish() {
+	iedit_publish('test', {id: 1000});
 }
 
 function ui_save() {
