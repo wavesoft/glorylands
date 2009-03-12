@@ -43,6 +43,7 @@ $sql = new db($_CONFIG[DB][DATABASE], $_CONFIG[DB][HOST], $_CONFIG[DB][USER], $_
 ### Initialize UNICODE UTF-8 support
 mb_internal_encoding('utf-8');
 $sql->query("SET CHARSET 'utf8'");
+header("Content-Type: text/html; charset=UTF-8");
 
 ### Initialize session
 include_once DIROF('SYSTEM.INCLUDE')."session.php";
