@@ -274,22 +274,26 @@ function attrib_get_default_value(type, preferred) {
 var json_timer = null;
 var json_msgtimer = null;
 
-function json_clearmessage() {
+function json_clearmessage(timeout) {
+	if (!timeout) timeout=5000;
 	if (json_msgtimer) clearTimeout(json_msgtimer);
 	json_msgtimer = setTimeout(function() {
 		$('json_output').setHTML('&nbsp;');
 		$('json_output').setStyles({
 			'visibility': 'hidden'
 		});
-	},5000);
+	},timeout);
 }
   
-function json_message(msg) {
+function json_message(msg,timeout) {
 	$('json_output').setHTML(msg);
 	$('json_output').setStyles({
 		'visibility': 'visible'
 	});
-	json_clearmessage();
+	if (!timeout) {		
+	} else {
+		json_clearmessage();
+	}
 }
 
 function json_compress_array(dat) {
@@ -404,7 +408,7 @@ function iedit_save(filename) {
 	var json = new Json.Remote('feed.php?a=save&f='+filename, {
 		headers: {'X-Request': 'JSON'},
 		onComplete: function(obj) {
-			json_message('Saved!');
+			json_message('Saved!',1000);
 		},
 		onFailure: function(err) {
 			window.alert('failed'+err);
@@ -423,7 +427,7 @@ function iedit_publish(filename, publish_data) {
 	var json = new Json.Remote('feed.php?a=publish&f='+filename, {
 		headers: {'X-Request': 'JSON'},
 		onComplete: function(obj) {
-			json_message('Published!');
+			json_message('Published!',1000);
 		},
 		onFailure: function(err) {
 			window.alert('failed'+err);
@@ -455,7 +459,7 @@ function iedit_load(filename) {
 				var id = iedit_spawn_attrib();
 				iedit_apply_config(id, obj.grid[i]);				
 			}			
-			json_message('Loaded!');
+			json_message('Loaded!',1000);
 		},
 		onFailure: function(err) {
 			window.alert('failed'+err);
@@ -943,7 +947,7 @@ function ui_browse_refresh(filter) {
 	var json = new Json.Remote('feed.php?a=images&f='+filter+'&p='+page, {
 		headers: {'X-Request': 'JSON'},
 		onComplete: function(obj) {
-			json_message('List arrived');
+			json_message('List arrived',1000);
 			ui_browse_reset();
 			for (var i=0; i<obj.length; i++) {
 				var im = new Element('img', {

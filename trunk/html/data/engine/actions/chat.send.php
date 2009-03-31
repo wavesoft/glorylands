@@ -70,6 +70,13 @@ if (substr($text,0,1)=='/') {
 
 	if (!$ans || $sql->emptyResults) return;
 
+	// Append the player's text color
+	$color = '#666666';
+	if ($_SESSION[PLAYER][PROFILE]['level'] == 'ADMIN') $color='#FF0000';
+	if ($_SESSION[PLAYER][PROFILE]['level'] == 'MODERATOR') $color='#0099FF';	
+	if ($_SESSION[PLAYER][PROFILE]['level'] == 'EDITOR') $color='#00CC33';
+	$text = '<span style="color:'.$color.'">'.$text.'</span>';
+	
 	// Send chats 
 	while ($row = $sql->fetch_array_fromresults($ans,MYSQL_NUM)) {
 		postMessage(MSG_INTERFACE, $row[0] ,'CHAT',$text, $_SESSION[PLAYER][DATA]['name']);

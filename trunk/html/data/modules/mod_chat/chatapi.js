@@ -62,34 +62,6 @@ function find_overlay_info(objectname) {
 	return result;
 }
 
-
-function find_overlay_info_depreciated_and_will_be_deleted(objectname) {	
-	// Traverse into overlay grid to fild an object with the name defined
-	var elog=''; var found_obj=false;
-	$each(nav_grid, function(y_obj, x) {				
-		elog+='Row x:'+x+"\n";
-		if ($defined(y_obj)) $each(y_obj, function(zid, y) {							
-			if ($defined(zid)) {
-				var dic_entry = nav_grid['dic'][zid];
-				if ($defined(dic_entry)) {
-					if (dic_entry.d.name == objectname) {
-						if (!found_obj) {
-							// Get DataPane left offset
-							var dpX = $('datapane').getLeft();
-							var dpY = $('datapane').getTop();
-							
-							// Return the actual position
-							found_obj = {'x':(x-glob_x_base)*32+dpX+24, 'y':(y-glob_y_base-1)*32+dpY, 'guid': dic_entry.g};
-						}
-						return;
-					}
-				}
-			}
-		}); /* each */
-	}); /* each */
-	return found_obj;
-}
-
 var activeTimer = 0;
 function displayBubble(user, text) {
 	var hideBubble = false;
