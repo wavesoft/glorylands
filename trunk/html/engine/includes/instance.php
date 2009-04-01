@@ -503,6 +503,11 @@ function gl_instance_object($guid, $vars = false) {
 		$ans = $sql->query("UPDATE `{$parts['group']}_instance` SET `guid` = {$guid} WHERE `index` = {$row[0]}");
 		if (!$ans) { debug_error($sql->getError()); return false; }
 		
+		// If a parent object is changed, notify the update
+		if ($vars!=false) {
+			if (isset($vars['parent'])) gl_dynupdate_update($vars['parent']);
+		}
+
 		// Return GUID
 		return $guid;
 		
@@ -557,15 +562,15 @@ function gl_instance_object($guid, $vars = false) {
 		$guid = gl_make_guid($row[0], true, $parts['group']);
 		$ans = $sql->query("UPDATE `{$parts['group']}_instance` SET `guid` = {$guid} WHERE `index` = {$row[0]}");
 		if (!$ans) {debug_error($sql->getError()); return false; }
+
+		// If a parent object is changed, notify the update
+		if ($vars!=false) {
+			if (isset($vars['parent'])) gl_dynupdate_update($vars['parent']);
+		}
 		
 		// Return GUID
 		return $guid;
 		
-	}
-	
-	// If a parent object is changed, notify the update
-	if ($vars) {
-		if (isset($vars['parent'])) gl_dynupdate_update($vars['parent']);
 	}
 }
 
