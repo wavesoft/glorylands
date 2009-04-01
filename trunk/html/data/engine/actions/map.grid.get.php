@@ -179,6 +179,7 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	if ($row['guid']==$_SESSION[PLAYER][GUID]) {
 		$myobj['focus'] = true;
 		$myobj['player'] = true;
+		$myobj['directional'] = 1;
 	}
 	$objects[] = $myobj;
 }

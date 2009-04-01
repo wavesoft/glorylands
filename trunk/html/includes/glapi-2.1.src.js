@@ -1501,19 +1501,22 @@ function map_removeobject(uid, nofx) {
   * Path animation (updateobject Helper)
   *
   * This function moves a map object object on the
-  * continuous position given in the grid 
+  * continuous position given in the grid
+  *
+  * The directional variable can be 0,1 or 2 and it means:
+  *  0 - The object is not directional
+  *  1 - The object is 4-side directional (Front,Back,Left,Right)
+  *  2 - The object is 8-side directional
   *
   */
-function map_fx_pathmove(object, path) {
+function map_fx_pathmove(object, path, directional) {
 	var i=0;
 
-	var px_transition=new Fx.Styles(object, {duration: 200, unit: 'px', transition: Fx.Transitions.linear});
-	var walk_step = function() {
-		// Check if we have more steps to go
-		if (!$defined(path[i])) return;
+	var px_transition=new Fx.Styles(object, {duration: 500, unit: 'px', transition: Fx.Transitions.linear});
+	var walk_step_2 = function() {
 		var j=i;
 		i++;
-		
+
 		// Calculate new Z-Index
 		var dim = object.getSize().size;
 		var zindex = (path[j].y+Math.round(dim.y/32))*500+path[j].x;
@@ -1526,11 +1529,83 @@ function map_fx_pathmove(object, path) {
 		px_transition.start({
 			'left': path[j].x*32,
 			'top': path[j].y*32-dim.y+32
-		}).chain(walk_step);
+		}).chain(walk_step_1);
+
+	};
+	var walk_step_1 = function() {
+		// Check if we have more steps to go
+		if (!$defined(path[i])) return;
+		var j=i;
+
+		// If this object is directional, calculate it's direction
+		// and update the image
+		if (directional) {
+			// Calculate image prefix
+			var info = $(object).getStyles('left','top');
+			//window.alert('Going from '+info.left.replace('px','')+' to '+path[j].x*32+"\nAnd from "+info.top.replace('px','')+' to '+path[j].y*32);
+			var dir_x = path[j].x*32 - Number(info.left.replace('px',''));
+			var dir_y = path[j].y*32 - Number(info.top.replace('px',''));
+			var dir = 'b'; // Default
+			if (dir_x>0) {
+				if (dir_y>0) {
+					if (directional == 2) { dir = 'rb' } else { dir = 'r' };
+				} else if (dir_y<0) {
+					if (directional == 2) { dir = 'rt' } else { dir = 'r' };
+				} else {
+					dir = 'r';					
+				}
+			} else if (dir_x<0) {
+				if (dir_y>0) {
+					if (directional == 2) { dir = 'lb' } else { dir = 'l' };
+				} else if (dir_y<0) {
+					if (directional == 2) { dir = 'lt' } else { dir = 'l' };
+				} else {
+					dir = 'l';
+				}
+			} else {
+				if (dir_y>0) {
+					dir = 'b';
+				} else if (dir_y<0) {
+					dir = 't';					
+				}
+			}
+			
+			// Replace the image
+			//
+			// INFO: Directional image pattern:
+			//       <basename>.<direction>.<extension>
+			// 
+			//  For example:  fighter.b.gif (Bottom)
+			//                fighter.lt.gif (Left-top)
+			//			
+			var src = new String(object.src);
+			var parts = src.split('.');
+			parts[parts.length-2] = dir;
+			//window.alert('Switching to '+parts.join('.')+' using dir='+dir+' Because XDir='+dir_x+' and YDir='+dir_y);
+			
+			// Load the next image, and add a load hook before proceeding
+			object.addEvent('load', function(e) {
+				object.removeEvent('load');
+				walk_step_2();
+			});
+			object.src = parts.join('.');
+			if (object.complete) { // If it is already loaded, remove the waiting hook
+				object.removeEvent('load');
+				walk_step_2();				
+			}
+			
+		} else {
+			
+			// If we don't need to wait for next image to load
+			// (Since we do not use directional images), just jump
+			// on the second step
+			walk_step_2();
+		}
 		
 	}
 	
-	walk_step();
+	// Start walking
+	walk_step_1();
 }
 
 /**
@@ -1620,7 +1695,9 @@ function map_updateobject(uid,data) {
 				
 			case 'path':
 				if ($defined(data.fx_path)) {
-					map_fx_pathmove(old_data.object, data.fx_path);
+					var dir=0;
+					if ($defined(old_data.info.directional)) dir=old_data.info.directional;
+					map_fx_pathmove(old_data.object, data.fx_path, dir);
 					
 					// No need to keep the grid in memory any more
 					delete data.fx_path;
