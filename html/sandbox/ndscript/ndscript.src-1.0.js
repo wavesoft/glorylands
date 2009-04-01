@@ -79,7 +79,7 @@ function syntax_get_type(node) {
 		if (obj_id<0) return "unknown";
 		
 		id=syntax_object_info[obj_id].func.indexOf(node.name);
-		if (id>=0) return {'type': "function", 'subtype':syntax_object_info[obj_id].func_inf[id].return};
+		if (id>=0) return {'type': "function", 'subtype':syntax_object_info[obj_id].func_inf[id]['return']};
 		id=syntax_object_info[obj_id].cvar.indexOf(node.name);
 		if (id>=0) return {'type': "var", 'subtype':syntax_object_info[obj_id].cvar_inf[id].type};
 	} else if (node.name.substr(0,1)=='"') {
@@ -92,7 +92,7 @@ function syntax_get_type(node) {
 		return {'type': "const", 'subtype':"boolean"};
 	} else {
 		id=syntax_functions.indexOf(node.name);
-		if (id>=0) return {'type': "function", 'subtype':syntax_function_info[id].return};
+		if (id>=0) return {'type': "function", 'subtype':syntax_function_info[id]['return']};
 		id=syntax_vars.indexOf(node.name);
 		if (id>=0) return {'type': "var", 'subtype':syntax_var_info[id].type};
 		id=syntax_objects.indexOf(node.name);
