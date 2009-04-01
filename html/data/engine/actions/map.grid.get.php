@@ -172,14 +172,14 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		'dynamic' => true,
 		'fx_show' => 'fade',
 		'fx_move' => 'fade',
-		'fx_hide' => 'fade'
+		'fx_hide' => 'fade',
+		'directional' => 1
 	);
 	
 	// Focus on the player's object
 	if ($row['guid']==$_SESSION[PLAYER][GUID]) {
 		$myobj['focus'] = true;
 		$myobj['player'] = true;
-		$myobj['directional'] = 1;
 	}
 	$objects[] = $myobj;
 }
