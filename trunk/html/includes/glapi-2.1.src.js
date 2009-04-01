@@ -1512,6 +1512,7 @@ function map_removeobject(uid, nofx) {
 function map_fx_pathmove(object, path, directional) {
 	var i=0;
 
+	alert('Path length='+path.length);
 	var px_transition=new Fx.Styles(object, {duration: 500, unit: 'px', transition: Fx.Transitions.linear});
 	var walk_step_2 = function() {
 		var j=i;
@@ -1542,9 +1543,13 @@ function map_fx_pathmove(object, path, directional) {
 		if (directional) {
 			// Calculate image prefix
 			var info = $(object).getStyles('left','top');
+			var from_x = Math.round(Number(info.left.replace('px',''))/32);
+			var from_y = Math.round(Number(info.top.replace('px',''))/32);
+			var to_x = path[j].x;
+			var to_y = path[j].y;			
 			//window.alert('Going from '+info.left.replace('px','')+' to '+path[j].x*32+"\nAnd from "+info.top.replace('px','')+' to '+path[j].y*32);
-			var dir_x = path[j].x*32 - Number(info.left.replace('px',''));
-			var dir_y = path[j].y*32 - Number(info.top.replace('px',''));
+			var dir_x = to_x - from_x;
+			var dir_y = to_y - from_y;
 			var dir = 'b'; // Default
 			if (dir_x>0) {
 				if (dir_y>0) {
@@ -1585,12 +1590,12 @@ function map_fx_pathmove(object, path, directional) {
 			
 			// Load the next image, and add a load hook before proceeding
 			object.addEvent('load', function(e) {
-				object.removeEvent('load');
+				object.removeEvents('load');
 				walk_step_2();
 			});
 			object.src = parts.join('.');
 			if (object.complete) { // If it is already loaded, remove the waiting hook
-				object.removeEvent('load');
+				object.removeEvents('load');
 				walk_step_2();				
 			}
 			
