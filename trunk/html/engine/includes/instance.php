@@ -562,6 +562,11 @@ function gl_instance_object($guid, $vars = false) {
 		return $guid;
 		
 	}
+	
+	// If a parent object is changed, notify the update
+	if ($vars) {
+		if (isset($vars['parent'])) gl_dynupdate_update($vars['parent']);
+	}
 }
 
 /**
