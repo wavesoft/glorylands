@@ -171,7 +171,7 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		'id' => $row['guid'],
 		'dynamic' => true,
 		'fx_show' => 'fade',
-		'fx_move' => 'slide',
+		'fx_move' => 'fade',
 		'fx_hide' => 'fade'
 	);
 	
