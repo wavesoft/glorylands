@@ -778,6 +778,131 @@ var grid_display = {'rollback': false, 'head_link': false, 'head_image': false, 
 var rectinfo = {w:3,h:3,bx:1,by:2,url:'',clickdispose:false,silent:false};	
 
 /* ==================================================================================================================================== */
+/*                                             SECTION : Sprite animator
+/* ==================================================================================================================================== */
+
+var fx_sprites_animating=[];
+
+/**
+  * Sprite enterFrame Handling
+  *
+  * This function handles the next frame feeding
+  *
+  */
+function fx_sprite_frame(id) {
+	var info = fx_sprites_animating[id];
+	
+	// Calcuate frame
+	var frame = info.frame+1;
+	var max_frames = info.animation.length;
+	if (frame >= max_frames) frame=0;
+	info.frame=frame;
+	
+	var current_frame = info.animation[frame];
+	var ofs_x = current_frame[0]*info.sprite_w;
+	var ofs_y = current_frame[1]*info.sprite_h;	
+	info.object.setStyles({
+		'top': -ofs_y,
+		'left': -ofs_x
+	});
+}
+
+
+/**
+  * Prepare a sprite for animation
+  *
+  * This function prepares a sprite for animation
+  *
+  */
+function fx_sprite_prepare(object, x_sprites, y_sprites) {
+	var dim = $(object).getSize().size;
+	var pos = $(object).getPosition();
+	var div_mask = new Element('div');	
+	var info = {
+		'object': object,
+		'mask': div_mask ,
+		'width': dim.x,
+		'height': dim.y,
+		'sprite_w': (dim.x/x_sprites),
+		'sprite_h': (dim.y/y_sprites),
+		'animation': [],
+		'frame': 0,
+		'timer': 0
+	};
+	div_mask.setStyles({
+		'width': info.sprite_w,
+		'height': info.sprite_h,
+		'overflow': 'hidden',
+		'position': 'absolute',
+		'left': pos.x,
+		'top': pos.y
+	});
+	$(object).setStyles({
+		'position': 'absolute'		
+	});
+	div_mask.injectBefore(object);
+	$(object).injectInside(div_mask);
+	fx_sprites_animating.push(info);
+	return div_mask;
+}
+
+/**
+  * Return the ID of a sprite
+  *
+  * This function returns the ID of a sprite initialized with fx_sprite_prepare
+  *
+  */
+function fx_sprite_get_id(object) {
+	for (var i=0;i<fx_sprites_animating.length;i++) {
+		if (fx_sprites_animating[i].object == object) {
+			return i;
+		} else if (fx_sprites_animating[i].mask == object) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+/**
+  * Start sprite animation
+  *
+  * This function starts the sprite animation
+  *
+  */
+function fx_sprite_animate(object,frame_rate,animation) {
+	var i = fx_sprite_get_id(object);
+	if (i<0) return false;
+	var info = fx_sprites_animating[i];
+	info.animation = animation;
+	info.frame = 0;
+	if (info.timer!=0) clearInterval(info.timer);
+	info.timer = setInterval(fx_sprite_frame, (1000/frame_rate), i);
+	return true;
+}
+
+/**
+  * Start sprite animation
+  *
+  * This function starts the sprite animation
+  *
+  */
+function fx_sprite_stop(object, frame) {
+	var i = fx_sprite_get_id(object);
+	if (i<0) return false;
+	
+	var info = fx_sprites_animating[i];
+	clearInterval(info.timer);
+	if (!frame) frame = info.animation[0];
+	var ofs_x = frame[0]*info.sprite_w;
+	var ofs_y = frame[1]*info.sprite_h;	
+	info.object.setStyles({
+		'top': -ofs_y,
+		'left': -ofs_x
+	});	
+	return true;
+}
+
+/* ==================================================================================================================================== */
 /*                                             SECTION : Map rendering
 /* ==================================================================================================================================== */
 
@@ -1293,6 +1418,9 @@ function map_addobject(data) {
 	$('datapane').appendChild(im);	
 	var size = im.getSize().size;
 
+	// If the image is directionable, convert the image to sprite
+	if ($defined(data.directional)) im = fx_sprite_prepare(im, 3,4);
+
 	// Re-map x-y
 	var x=data.x*32-data.cx;
 	var y=data.y*32-data.cy-size.y;
@@ -1512,31 +1640,15 @@ function map_removeobject(uid, nofx) {
 function map_fx_pathmove(object, path, directional) {
 	var i=0;
 
-	alert('Path length='+path.length);
 	var px_transition=new Fx.Styles(object, {duration: 500, unit: 'px', transition: Fx.Transitions.linear});
-	var walk_step_2 = function() {
+	var walk_step = function() {
+		// Check if we have more steps to go
+		if (!$defined(path[i])) {
+			fx_sprite_stop(object);			
+			return;
+		}
 		var j=i;
 		i++;
-
-		// Calculate new Z-Index
-		var dim = object.getSize().size;
-		var zindex = (path[j].y+Math.round(dim.y/32))*500+path[j].x;
-		if (zindex<0) zindex=1;
-		
-		// Update z index
-		object.setStyle('z-index',zindex);
-		
-		// Move object
-		px_transition.start({
-			'left': path[j].x*32,
-			'top': path[j].y*32-dim.y+32
-		}).chain(walk_step_1);
-
-	};
-	var walk_step_1 = function() {
-		// Check if we have more steps to go
-		if (!$defined(path[i])) return;
-		var j=i;
 
 		// If this object is directional, calculate it's direction
 		// and update the image
@@ -1550,67 +1662,69 @@ function map_fx_pathmove(object, path, directional) {
 			//window.alert('Going from '+info.left.replace('px','')+' to '+path[j].x*32+"\nAnd from "+info.top.replace('px','')+' to '+path[j].y*32);
 			var dir_x = to_x - from_x;
 			var dir_y = to_y - from_y;
-			var dir = 'b'; // Default
+			var dir = [[0,0],[1,0],[2,0],[1,0]]; // Default
 			if (dir_x>0) {
 				if (dir_y>0) {
-					if (directional == 2) { dir = 'rb' } else { dir = 'r' };
+					if (directional == 2) { 
+						//dir = 'rb' 
+					} else { 
+						dir = [[0,1],[1,1],[2,1],[1,1]];
+					};
 				} else if (dir_y<0) {
-					if (directional == 2) { dir = 'rt' } else { dir = 'r' };
+					if (directional == 2) { 
+						//dir = 'rt' 
+					} else { 
+						dir = [[0,1],[1,1],[2,1],[1,1]];
+					};
 				} else {
-					dir = 'r';					
+					dir = [[0,1],[1,1],[2,1],[1,1]];
 				}
 			} else if (dir_x<0) {
 				if (dir_y>0) {
-					if (directional == 2) { dir = 'lb' } else { dir = 'l' };
+					if (directional == 2) { 
+						//dir = 'lb' 
+					} else { 
+						dir = [[0,3],[1,3],[2,3],[1,3]];
+					};
 				} else if (dir_y<0) {
-					if (directional == 2) { dir = 'lt' } else { dir = 'l' };
+					if (directional == 2) { 
+						//dir = 'lt' 
+					} else { 
+						dir = [[0,3],[1,3],[2,3],[1,3]];
+					};
 				} else {
-					dir = 'l';
+					dir = [[0,3],[1,3],[2,3],[1,3]];
 				}
 			} else {
 				if (dir_y>0) {
-					dir = 'b';
+					dir = [[0,2],[1,2],[2,2],[1,2]];
 				} else if (dir_y<0) {
-					dir = 't';					
+					dir = [[0,0],[1,0],[2,0],[1,0]];
 				}
 			}
 			
-			// Replace the image
-			//
-			// INFO: Directional image pattern:
-			//       <basename>.<direction>.<extension>
-			// 
-			//  For example:  fighter.b.gif (Bottom)
-			//                fighter.lt.gif (Left-top)
-			//			
-			var src = new String(object.src);
-			var parts = src.split('.');
-			parts[parts.length-2] = dir;
-			//window.alert('Switching to '+parts.join('.')+' using dir='+dir+' Because XDir='+dir_x+' and YDir='+dir_y);
-			
-			// Load the next image, and add a load hook before proceeding
-			object.addEvent('load', function(e) {
-				object.removeEvents('load');
-				walk_step_2();
-			});
-			object.src = parts.join('.');
-			if (object.complete) { // If it is already loaded, remove the waiting hook
-				object.removeEvents('load');
-				walk_step_2();				
-			}
-			
-		} else {
-			
-			// If we don't need to wait for next image to load
-			// (Since we do not use directional images), just jump
-			// on the second step
-			walk_step_2();
+			// Animate the object
+			fx_sprite_animate(object, 8, dir);
 		}
+		
+		// Calculate new Z-Index
+		var dim = object.getSize().size;
+		var zindex = (path[j].y+Math.round(dim.y/32))*500+path[j].x;
+		if (zindex<0) zindex=1;
+		
+		// Update z index
+		object.setStyle('z-index',zindex);
+		
+		// Move object
+		px_transition.start({
+			'left': path[j].x*32,
+			'top': path[j].y*32-dim.y+32
+		}).chain(walk_step);
 		
 	}
 	
 	// Start walking
-	walk_step_1();
+	walk_step();
 }
 
 /**
