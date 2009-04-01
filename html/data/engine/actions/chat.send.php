@@ -1,6 +1,6 @@
 <?php
 
-$text=$_REQUEST['text'];
+$text=stripslashes($_REQUEST['text']);
 
 callEvent('chat.send', $text);
 if (substr($text,0,1)=='/') {
