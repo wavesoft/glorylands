@@ -65,6 +65,8 @@ function renderRange(&$data) {
 	
 	// Store the result in the range field of the player's map object
 	foreach ($data['objects'] as $id => $obj) {
+	
+		// Set current path on the users
 		if ($data['objects'][$id]['guid'] == $_SESSION[PLAYER][GUID]) {
 		
 			// Store the range grid
@@ -75,8 +77,25 @@ function renderRange(&$data) {
 				$data['objects'][$id]['fx_move'] = 'path';
 				$data['objects'][$id]['fx_path'] = $steps;
 			}
+		} else {
+		
+			// If the other object contains a walk grid, send it now
+			$vars = gl_get_guid_vars($obj['guid']);
+			if (isset($vars['path'])) {
+				// Make sure the last step is not the object's current position
+				// If it is, it means this animation is already played												
+				$data['objects'][$id]['fx_move'] = 'path';
+				$data['objects'][$id]['fx_path'] = $vars['path'];				
+			}
+		
 		}
 	}
+	
+	// Store the last path on database
+	// (Used to broadcast it on the rest of the map users)
+	gl_update_guid_vars($_SESSION[PLAYER][GUID], array(
+		'path' => $steps
+	));
 	
 	return true;
 }

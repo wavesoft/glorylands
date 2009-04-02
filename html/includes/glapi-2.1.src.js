@@ -14,6 +14,29 @@ function $trace(obj) {
 	return ans;
 }
 
+var debug_obj = false;
+function $debug(text) {
+	if (!debug_obj) {
+		debug_obj = new Element('pre');
+		debug_obj.inject($(document.body));
+		debug_obj.setStyles({
+			'position':'absolute',
+			'left':10,
+			'top':20,
+			'width': 300,
+			'height':100,
+			'font-size':10,
+			'overflow': 'auto',
+			'z-index': 100000000,
+			'color': '#333333'
+		});
+	}
+	debug_obj.innerHTML+=text+"\n";
+	debug_obj.scrollTop = debug_obj.scrollHeight;	// FF
+	setTimeout(function() { debug_obj.scrollTop = debug_obj.scrollHeight; }, 10); // IE
+}
+
+
 // Hook chains for later-included scripts
 var CBChain = new Class({
     initialize: function(){
@@ -1411,22 +1434,22 @@ function map_addobject(data) {
 	
 	// Callback to alter/edit object data
 	callback.call('object_put', data);
-		
+	
 	// Create and insert image
 	var im = $(document.createElement('img'));
 	im.src = data.image;
 	$('datapane').appendChild(im);	
-	var size = im.getSize().size;
 
 	// If the image is directionable, convert the image to sprite
-	if ($defined(data.directional)) im = fx_sprite_prepare(im, 3,4);
+	if ($defined(data.sprite)) im = fx_sprite_prepare(im, data.sprite[0],data.sprite[1]);
+	var size = im.getSize().size;
 
 	// Re-map x-y
 	var x=data.x*32-data.cx;
 	var y=data.y*32-data.cy-size.y;
 
 	// Calculate new Z-Index
-	var zindex = data.y*500+x;
+	var zindex = (data.y-1)*500+x;
 	if (zindex<0) zindex=1;
 
 	// Apply image styles
@@ -1637,14 +1660,48 @@ function map_removeobject(uid, nofx) {
   *  2 - The object is 8-side directional
   *
   */
-function map_fx_pathmove(object, path, directional) {
+var map_fx_pathmove_stack = [];
+function map_fx_pathmove(object, path, directional, id) {
+	// This function is used to prohibit multiple requests for
+	// animation on the same object.
+	// This function just chains the concurrent requests and handles
+	// it, only when the previouse ones are completed
+	if ($defined(map_fx_pathmove_stack[id])) {
+		//$debug('[path] ('+id+') Appending to stack...');
+		map_fx_pathmove_stack[id].push(
+			function() {map_fx_pathmove_thread(object,path,directional,id); }
+		);
+	} else {
+		//$debug('[path] ('+id+') Creating stack...');
+		map_fx_pathmove_stack[id] = [
+			function() {map_fx_pathmove_thread(object,path,directional,id); }
+		];
+		map_fx_pathmove_next(id);
+	}
+}
+function map_fx_pathmove_next(id) {
+	//$debug('[path] ('+id+') Next called!');
+	if ($defined(map_fx_pathmove_stack[id])) {
+		if (map_fx_pathmove_stack[id].length == 0) {
+			//$debug('[path] ('+id+') No more. Erasing...!');
+			delete map_fx_pathmove_stack[id];
+		} else {
+			//$debug('[path] ('+id+') We have '+map_fx_pathmove_stack[id].length+' to do');
+			var f = map_fx_pathmove_stack[id].shift();
+			f();
+		}
+	}
+}
+function map_fx_pathmove_thread(object, path, directional, id) {
 	var i=0;
+	var last_stand_dir = [0,0];
 
 	var px_transition=new Fx.Styles(object, {duration: 500, unit: 'px', transition: Fx.Transitions.linear});
 	var walk_step = function() {
 		// Check if we have more steps to go
 		if (!$defined(path[i])) {
-			fx_sprite_stop(object);			
+			fx_sprite_stop(object,last_stand_dir);	
+			map_fx_pathmove_next(id);
 			return;
 		}
 		var j=i;
@@ -1662,44 +1719,54 @@ function map_fx_pathmove(object, path, directional) {
 			//window.alert('Going from '+info.left.replace('px','')+' to '+path[j].x*32+"\nAnd from "+info.top.replace('px','')+' to '+path[j].y*32);
 			var dir_x = to_x - from_x;
 			var dir_y = to_y - from_y;
-			var dir = [[0,0],[1,0],[2,0],[1,0]]; // Default
+			var dir = [[1,2],[2,2],[3,2],[4,2],[5,2]]; // Default
+			last_stand_dir = [0,2];
+			
 			if (dir_x>0) {
 				if (dir_y>0) {
 					if (directional == 2) { 
 						//dir = 'rb' 
 					} else { 
-						dir = [[0,1],[1,1],[2,1],[1,1]];
+						dir = [[1,3],[2,3],[3,3],[4,3],[5,3]];
+						last_stand_dir = [0,3];
 					};
 				} else if (dir_y<0) {
 					if (directional == 2) { 
 						//dir = 'rt' 
 					} else { 
-						dir = [[0,1],[1,1],[2,1],[1,1]];
+						dir = [[1,3],[2,3],[3,3],[4,3],[5,3]];
+						last_stand_dir = [0,3];
 					};
 				} else {
-					dir = [[0,1],[1,1],[2,1],[1,1]];
+					dir = [[1,3],[2,3],[3,3],[4,3],[5,3]];
+					last_stand_dir = [0,3];
 				}
 			} else if (dir_x<0) {
 				if (dir_y>0) {
 					if (directional == 2) { 
 						//dir = 'lb' 
 					} else { 
-						dir = [[0,3],[1,3],[2,3],[1,3]];
+						dir = [[1,1],[2,1],[3,1],[4,1],[5,1]];
+						last_stand_dir = [0,1];
 					};
 				} else if (dir_y<0) {
 					if (directional == 2) { 
 						//dir = 'lt' 
 					} else { 
-						dir = [[0,3],[1,3],[2,3],[1,3]];
+						dir = [[1,1],[2,1],[3,1],[4,1],[5,1]];
+						last_stand_dir = [0,1];
 					};
 				} else {
-					dir = [[0,3],[1,3],[2,3],[1,3]];
+					dir = [[1,1],[2,1],[3,1],[4,1],[5,1]];
+					last_stand_dir = [0,1];
 				}
 			} else {
 				if (dir_y>0) {
-					dir = [[0,2],[1,2],[2,2],[1,2]];
+					dir = [[1,0],[2,0],[3,0],[4,0],[5,0]];
+					last_stand_dir = [0,0];
 				} else if (dir_y<0) {
-					dir = [[0,0],[1,0],[2,0],[1,0]];
+					dir = [[1,2],[2,2],[3,2],[4,2],[5,2]];
+					last_stand_dir = [0,2];
 				}
 			}
 			
@@ -1721,6 +1788,18 @@ function map_fx_pathmove(object, path, directional) {
 			'top': path[j].y*32-dim.y+32
 		}).chain(walk_step);
 		
+	}
+
+	// Wheck if we are repeating the same path
+	// (Checking if the last position is the current position)
+	var info = $(object).getStyles('left','top');
+	var dim = $(object).getSize().size;
+	var from_x = Math.round(Number(info.left.replace('px',''))/32);
+	var from_y = Math.round(Number(info.top.replace('px',''))/32);
+	var to_x = path[path.length-1].x;
+	var to_y = path[path.length-1].y-1;
+	if ((from_x == to_x) && (from_y == to_y)) {
+		return;
 	}
 	
 	// Start walking
@@ -1758,7 +1837,7 @@ function map_updateobject(uid,data) {
 	var y=data.y*32-data.cy-size.y;
 
 	// Calculate new Z-Index
-	var zindex = data.y*500+x;
+	var zindex = (data.y-1)*500+x;
 	if (zindex<0) zindex=1;
 
 	// Update cache
@@ -1816,7 +1895,7 @@ function map_updateobject(uid,data) {
 				if ($defined(data.fx_path)) {
 					var dir=0;
 					if ($defined(old_data.info.directional)) dir=old_data.info.directional;
-					map_fx_pathmove(old_data.object, data.fx_path, dir);
+					map_fx_pathmove(old_data.object, data.fx_path, dir, old_data.info.id);
 					
 					// No need to keep the grid in memory any more
 					delete data.fx_path;

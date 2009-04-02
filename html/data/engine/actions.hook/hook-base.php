@@ -37,7 +37,8 @@ function hb_dynamic_grid_alter($ignore_guid, $x, $y, $map) {
 	// Post message to all the affiliated users
 	while ($row = $sql->fetch_array_fromresults($ans, MYSQL_NUM)) {
 		if ($row[0]!=$ignore_guid) {
-			// Tell the client to update the grid
+			// Tell the client to update the grid, using
+			// the <only-once> flag.
 			postMessage_once(MSG_INTERFACE, $row[0], 'UPDATEGRID', 'UPDATEGRID');
 		}
 	}
