@@ -160,20 +160,28 @@ $ans=$sql->query("SELECT
 ");
 while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	$myobj = array(
+		// Map information
 		'guid' => $row['guid'],
 		'x' => $row['x'],
-		'y' => $row['y']+1,
+		'y' => $row['y']+1,				
 		'image' => 'elements/'.$row['model'],
+		
+		// Popup/Detailed information
 		'name' => $row['name'],
 		'icon' => $row['icon'],
 		'flags' => $row['flags'],
 		'subname' => '<img src="images/'.$row['icon'].'" />',
-		'id' => $row['guid'],
+		
+		// Dynamics information
 		'dynamic' => true,
+		'id' => $row['guid'],
 		'fx_show' => 'fade',
-		'fx_move' => 'fade',
+		'fx_move' => 'slide',
 		'fx_hide' => 'fade',
-		'directional' => 1
+		
+		// Sprite information
+		'directional' => 1,
+		'sprite' => array(6,4)
 	);
 	
 	// Focus on the player's object

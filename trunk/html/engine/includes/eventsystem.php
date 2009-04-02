@@ -92,7 +92,7 @@ function postMessage_once($type, $user_guid, $once_id) {
 }
 
 // Return and erase all messages stacked up by now
-function popMessages($type) {
+function popMessages($type, $message=false) {
 	global $sql;
 
 	// First, dump messages from session (higher priority)
@@ -100,17 +100,39 @@ function popMessages($type) {
 	if (isset($_SESSION['RELAYQ'][$type])) {
 		$result = $_SESSION['RELAYQ'][$type];
 		unset($_SESSION['RELAYQ'][$type]);
-	}
+	}		
 	
 	// Then, dump messages from SQL
 	$user_guid = $_SESSION[PLAYER][GUID];
-	$ans=$sql->query("SELECT `data` FROM `system_messages` WHERE `type` = $type AND `user` = $user_guid ORDER BY `index` ASC");
+	$erase_stack = array();
+	$ans=$sql->query("SELECT `index`, `data` FROM `system_messages` WHERE `type` = $type AND `user` = $user_guid ORDER BY `index` ASC");
 	if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 	if (!$sql->emptyResults) {
 		while ($row = $sql->fetch_array(MYSQL_NUM)) {
-			$result[] = unserialize($row[0]);		
+			$data = unserialize($row[1]);
+
+			// If we don't have to pop an expicit message, just stack them all
+			if ($message===false) {
+				$result[] = $data;
+				
+			// On the other hand, we must check the message
+			} else {
+				if ($data[0] == $message) {
+					// Store it,
+					$result[] = $data;
+					// and explicitly erase it
+					$erase_stack[] = $row[0];
+				}
+			}
 		}
-		$ans=$sql->query("DELETE FROM `system_messages` WHERE `type` = $type AND `user` = $user_guid");
+		
+		// If we don't have to pop an expicit message, remove them all
+		if ($message===false) {
+			$ans=$sql->query("DELETE FROM `system_messages` WHERE `type` = $type AND `user` = $user_guid");
+		// If we do, erase only selected
+		} else {
+			$ans=$sql->query("DELETE FROM `system_messages` WHERE `index` in (".implode(",",$erase_stack).")");		
+		}
 		if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 	}
 	
@@ -119,7 +141,7 @@ function popMessages($type) {
 }
 
 // Return but keep all messages stacked up by now
-function peekMessages($type) {
+function peekMessages($type, $message=false) {
 	global $sql;
 
 	// First, dump messages from session (higher priority)
@@ -134,7 +156,19 @@ function peekMessages($type) {
 	if (!$ans) debug_error($sql->getError(),ERR_CRITICAL);
 	if (!$sql->emptyResults) {
 		while ($row = $sql->fetch_array(MYSQL_NUM)) {
-			$result[] = unserialize($row[0]);		
+			$data = unserialize($row[0]);
+									
+			// If we don't have to pop an expicit message, just stack them all
+			if ($message===false) {
+				$result[] = $data;
+				
+			// On the other hand, we must check the message
+			} else {
+				if ($data[0] == $message) {
+					// Store it
+					$result[] = $data;
+				}
+			}
 		}
 	}
 	
