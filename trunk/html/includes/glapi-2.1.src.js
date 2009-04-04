@@ -1661,22 +1661,22 @@ function map_removeobject(uid, nofx) {
   *
   */
 var map_fx_pathmove_stack = [];
-function map_fx_pathmove(object, path, directional, id) {
+function map_fx_pathmove(object, path) {
 	// This function is used to prohibit multiple requests for
 	// animation on the same object.
 	// This function just chains the concurrent requests and handles
 	// it, only when the previouse ones are completed
-	if ($defined(map_fx_pathmove_stack[id])) {
-		//$debug('[path] ('+id+') Appending to stack...');
-		map_fx_pathmove_stack[id].push(
-			function() {map_fx_pathmove_thread(object,path,directional,id); }
+	if ($defined(map_fx_pathmove_stack[object.info.id])) {
+		//$debug('[path] ('+object.info.id+') Appending to stack...');
+		map_fx_pathmove_stack[object.info.id].push(
+			function() {map_fx_pathmove_thread(object,path); }
 		);
 	} else {
-		//$debug('[path] ('+id+') Creating stack...');
-		map_fx_pathmove_stack[id] = [
-			function() {map_fx_pathmove_thread(object,path,directional,id); }
+		//$debug('[path] ('+object.info.id+') Creating stack...');
+		map_fx_pathmove_stack[object.info.id] = [
+			function() {map_fx_pathmove_thread(object,path); }
 		];
-		map_fx_pathmove_next(id);
+		map_fx_pathmove_next(object.info.id);
 	}
 }
 function map_fx_pathmove_next(id) {
@@ -1692,9 +1692,18 @@ function map_fx_pathmove_next(id) {
 		}
 	}
 }
-function map_fx_pathmove_thread(object, path, directional, id) {
+function map_fx_pathmove_build_spritepath(object_info, facing_side) {
+	if (direction_mode == 1) return [[0,row],[1,row],[2,row],[3,row]];
+	if (direction_mode == 2) return [[1,row],[2,row],[3,row],[4,row],[5,row]];
+}
+function map_fx_pathmove_thread(object_info, path) {
 	var i=0;
+	var spath;
 	var last_stand_dir = [0,0];
+	var id = object_info.info.id;
+	var object = object_info.object;
+	var directional = 0;
+	if ($defined(object_info.info.directional)) directional=object_info.info.directional;
 
 	var px_transition=new Fx.Styles(object, {duration: 500, unit: 'px', transition: Fx.Transitions.linear});
 	var walk_step = function() {
@@ -1724,13 +1733,15 @@ function map_fx_pathmove_thread(object, path, directional, id) {
 			
 			if (dir_x>0) {
 				if (dir_y>0) {
+					// Right-Bottom
 					if (directional == 2) { 
 						//dir = 'rb' 
-					} else { 
+					} else {
 						dir = [[1,3],[2,3],[3,3],[4,3],[5,3]];
 						last_stand_dir = [0,3];
 					};
 				} else if (dir_y<0) {
+					// Right-Top
 					if (directional == 2) { 
 						//dir = 'rt' 
 					} else { 
@@ -1738,11 +1749,13 @@ function map_fx_pathmove_thread(object, path, directional, id) {
 						last_stand_dir = [0,3];
 					};
 				} else {
+					// Right
 					dir = [[1,3],[2,3],[3,3],[4,3],[5,3]];
 					last_stand_dir = [0,3];
 				}
 			} else if (dir_x<0) {
 				if (dir_y>0) {
+					// Left-Bottom
 					if (directional == 2) { 
 						//dir = 'lb' 
 					} else { 
@@ -1750,6 +1763,7 @@ function map_fx_pathmove_thread(object, path, directional, id) {
 						last_stand_dir = [0,1];
 					};
 				} else if (dir_y<0) {
+					// Left-Top
 					if (directional == 2) { 
 						//dir = 'lt' 
 					} else { 
@@ -1757,16 +1771,21 @@ function map_fx_pathmove_thread(object, path, directional, id) {
 						last_stand_dir = [0,1];
 					};
 				} else {
+					// Left
 					dir = [[1,1],[2,1],[3,1],[4,1],[5,1]];
 					last_stand_dir = [0,1];
 				}
 			} else {
 				if (dir_y>0) {
+					// Up
 					dir = [[1,0],[2,0],[3,0],[4,0],[5,0]];
 					last_stand_dir = [0,0];
 				} else if (dir_y<0) {
+					// Down
 					dir = [[1,2],[2,2],[3,2],[4,2],[5,2]];
 					last_stand_dir = [0,2];
+				} else {
+					// Same place as before :P
 				}
 			}
 			
@@ -1893,9 +1912,7 @@ function map_updateobject(uid,data) {
 				
 			case 'path':
 				if ($defined(data.fx_path)) {
-					var dir=0;
-					if ($defined(old_data.info.directional)) dir=old_data.info.directional;
-					map_fx_pathmove(old_data.object, data.fx_path, dir, old_data.info.id);
+					map_fx_pathmove(old_data, data.fx_path, dir, old_data.info.id);
 					
 					// No need to keep the grid in memory any more
 					delete data.fx_path;
