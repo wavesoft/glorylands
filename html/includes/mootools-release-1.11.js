@@ -5726,6 +5726,7 @@ var Asset = new Abstract({
 			});
 		});
 		if (image.width && image.height) element.fireEvent('load', element, 1);
+		if (image.complete) element.fireEvent('load', element, 1);
 		return element.setProperties(properties);
 	},
 
