@@ -180,8 +180,14 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		'fx_hide' => 'fade',
 		
 		// Sprite information
-		'directional' => 1,
-		'sprite' => array(6,4)
+		'directional' => 1,		
+		'sprite' => array(6,4),
+		'speed' => 5
+		/*
+		'sprite' => array(4,4),
+		'sprite_direction_grid' => array('d'=>0,'l'=>1,'r'=>2,'u'=>3),
+		'sprite_direction_ani' => array('walk'=>array(0,1,2,3),'stand'=>0)
+		*/
 	);
 	
 	// Focus on the player's object

@@ -21,8 +21,8 @@ function $debug(text) {
 		debug_obj.inject($(document.body));
 		debug_obj.setStyles({
 			'position':'absolute',
-			'left':10,
-			'top':20,
+			'right':10,
+			'bottom':20,
 			'width': 300,
 			'height':100,
 			'font-size':10,
@@ -143,7 +143,59 @@ function showStatus(text,timeout) {
 //  header and content
 // =====================================================
 var winCache = [];
+var winStack = [];
 var lastZ=250002;
+
+function rect_collide(r1, r2) {
+	if ((r1.l >= r2.l) && (r1.l <= r2.r) && (r1.t >= r2.t) && (r1.t <= r2.b)) {
+		return true;
+	}
+	if ((r2.l >= r1.l) && (r2.l <= r1.r) && (r2.t >= r1.t) && (r2.t <= r1.b)) {
+		return true;
+	}
+	return false
+}
+
+function draggable_win_align(win) {
+	// If this window collides with another, move it in a position that it doesn't
+	var collides = false;
+	var w_pos = win.getPosition();
+	var w_siz = win.getSize().size;
+	var w_rect = {
+		l: w_pos.x,
+		t: w_pos.y,
+		r: w_pos.x+w_siz.x,
+		b: w_pos.y+w_siz.y
+	};
+	var limits = $(document.body).getSize().size;
+	$debug('[Align] Rect: '+$trace(w_rect));
+	$debug('[Align] Limits: '+$trace(limits));	
+	var i;
+	winStack.each(function(win) {
+		$debug('[Align] Checking :'+win);			
+		try{
+			var pos = win.getPosition();
+			var siz = win.getSize().size;
+			var rect = {
+				l: pos.x,
+				t: pos.y,
+				r: pos.x+siz.x,
+				b: pos.y+siz.y
+			};
+			if (rect_collide(rect, w_rect)) {
+				collides = {x: pos.x+16, y: pos.y+16};				
+				break;
+			}
+		} catch(e) {
+		}
+	});
+	if (collides != false) {
+		win.setStyle('top', collides.y);	
+		win.setStyle('left', collides.x);	
+		//draggable_win_align(win);
+	}
+}
+
 function createWindow(header, content, x, y, w, h, guid) {
 	
 	// If window is not already visible, create a new
@@ -210,12 +262,13 @@ function createWindow(header, content, x, y, w, h, guid) {
 			// Notify server that the window is closed
 			gloryIO('?a=window.closed&guid='+guid,false,true);
 
+			// Cleanup window variables
+			delete winCache[header];
+			winStack.remove(eBody);
+
 			// Remove body element
 			eBody.remove();
 
-			// Cleanup window variables
-			winCache[header] = false;
-						
 			e.stop();
 		});
 	
@@ -239,12 +292,16 @@ function createWindow(header, content, x, y, w, h, guid) {
 		// Create object
 		eBody.setStyles({'z-index': lastZ++});
 		document.body.appendChild(eBody);
-	
+
+		// Align the window
+		draggable_win_align(eBody);
+
 		// Bind to dragger
 		var d = new Drag.Move(eBody, {handle: eHead});
-		
+				
 		// Save usefull variables
 		winCache[header] = [eBody, eContent, slider];
+		winStack.push(eBody);
 		
 		// Return content object
 		return eBody;
@@ -1291,12 +1348,15 @@ function map_preloaded_update(data) {
 	var lt_timer = null;
 	var lt_finalized = false;
 	
-	$each(data, function(e,k) {						 
+	$each(data, function(e,k) {
 		// Accelerate operation by keeping the names of the objects
 		// that are already loaded
 		if (map_preloaded_stack.indexOf(e.image)<0) {
 			images.push(e.image);
 			map_preloaded_stack.push(e.image);
+			$debug('Loading: '+e.image);
+		} else {
+			$debug('Already loaded: '+e.image);			
 		}
 	});	
 	
@@ -1662,6 +1722,7 @@ function map_removeobject(uid, nofx) {
   */
 var map_fx_pathmove_stack = [];
 function map_fx_pathmove(object, path) {
+	$trace('Moving path');
 	// This function is used to prohibit multiple requests for
 	// animation on the same object.
 	// This function just chains the concurrent requests and handles
@@ -1680,6 +1741,7 @@ function map_fx_pathmove(object, path) {
 	}
 }
 function map_fx_pathmove_next(id) {
+	$trace('Moving next');
 	//$debug('[path] ('+id+') Next called!');
 	if ($defined(map_fx_pathmove_stack[id])) {
 		if (map_fx_pathmove_stack[id].length == 0) {
@@ -1693,19 +1755,75 @@ function map_fx_pathmove_next(id) {
 	}
 }
 function map_fx_pathmove_build_spritepath(object_info, facing_side) {
-	if (direction_mode == 1) return [[0,row],[1,row],[2,row],[3,row]];
-	if (direction_mode == 2) return [[1,row],[2,row],[3,row],[4,row],[5,row]];
+	// Default direction grid
+	// This one maps side-ID to row number
+	var dirgrid = {
+		'rd': 3,
+		'ru': 3,
+		'r': 3,
+		'ld': 1,
+		'lu': 1,
+		'l': 1,
+		'u': 2,
+		'd': 0
+	};
+	// Default animation columns
+	var ani = {
+		'walk': [1,2,3,4],
+		'stay': 0
+	};
+	
+	// Check if the object contains custom coordinates
+	if ($defined(object_info.info.sprite_direction_grid)) dirgrid=object_info.info.sprite_direction_grid;
+	if ($defined(object_info.info.sprite_direction_ani)) ani=object_info.info.sprite_direction_ani;
+	$debug('Using dirgrid: '+$trace(dirgrid));
+	$debug('And ani: '+$trace(ani));
+	
+	// Detect the row ID, based on the facing side
+	var row=0;
+	if (!$defined(dirgrid[facing_side])) {
+		if (facing_side.length == 2) {
+			// For example: If not found 'rb' => Check for 'r' only
+			if ($defined(dirgrid[facing_side[0]])) {
+				row = dirgrid[facing_side[0]];
+			}
+		}
+	} else {
+		row = dirgrid[facing_side];
+	}
+
+	// Create the frames based on the information above
+	var frames=[];
+	for (var i=0; i<ani.walk.length; i++) {
+		frames.push([ani.walk[i], row]);
+	}
+	$debug('Built frames: '+$trace(frames));
+	
+	// Find the standing frame
+	var stand=[ani.stay, row];
+	
+	// Return the animation frames and the standing frame
+	return [frames, stand];
 }
 function map_fx_pathmove_thread(object_info, path) {
+	$trace('Moving thread');
 	var i=0;
 	var spath;
 	var last_stand_dir = [0,0];
 	var id = object_info.info.id;
 	var object = object_info.object;
+	var last_ani_dir = '';
+	var ani_dir = '';
 	var directional = 0;
 	if ($defined(object_info.info.directional)) directional=object_info.info.directional;
 
-	var px_transition=new Fx.Styles(object, {duration: 500, unit: 'px', transition: Fx.Transitions.linear});
+	// Speed is the tiles the player can enter per move
+	var speed = 5;
+	if ($defined(object_info.info.speed)) speed=object_info.info.speed;	
+	var enter_interval = 1000-(speed*100); if (enter_interval<10) enter_interval=10;
+	var animation_fps = speed*2; if (animation_fps<1) animation_fps=1;
+	
+	var px_transition=new Fx.Styles(object, {duration: enter_interval, unit: 'px', transition: Fx.Transitions.linear});
 	var walk_step = function() {
 		// Check if we have more steps to go
 		if (!$defined(path[i])) {
@@ -1719,78 +1837,82 @@ function map_fx_pathmove_thread(object_info, path) {
 		// If this object is directional, calculate it's direction
 		// and update the image
 		if (directional) {
-			// Calculate image prefix
-			var info = $(object).getStyles('left','top');
-			var from_x = Math.round(Number(info.left.replace('px',''))/32);
-			var from_y = Math.round(Number(info.top.replace('px',''))/32);
+			
+			// Calculate previous and next position
+			if (j<1) {
+				var info = $(object).getStyles('left','top');
+				var from_x = Math.round(Number(info.left.replace('px',''))/32);
+				var from_y = Math.round(Number(info.top.replace('px',''))/32);
+			} else {
+				var from_x = path[j-1].x;
+				var from_y = path[j-1].y;
+			}
 			var to_x = path[j].x;
-			var to_y = path[j].y;			
-			//window.alert('Going from '+info.left.replace('px','')+' to '+path[j].x*32+"\nAnd from "+info.top.replace('px','')+' to '+path[j].y*32);
+			var to_y = path[j].y;						
 			var dir_x = to_x - from_x;
 			var dir_y = to_y - from_y;
-			var dir = [[1,2],[2,2],[3,2],[4,2],[5,2]]; // Default
-			last_stand_dir = [0,2];
 			
+			var dir = []; // Defaults
+			last_stand_dir = [0,0];
+
 			if (dir_x>0) {
 				if (dir_y>0) {
-					// Right-Bottom
-					if (directional == 2) { 
-						//dir = 'rb' 
-					} else {
-						dir = [[1,3],[2,3],[3,3],[4,3],[5,3]];
-						last_stand_dir = [0,3];
-					};
+					// Right-Down
+					spath = map_fx_pathmove_build_spritepath(object_info, 'rd');
+					dir = spath[0]; last_stand_dir = spath[1];
+					ani_dir = 'rd';
 				} else if (dir_y<0) {
-					// Right-Top
-					if (directional == 2) { 
-						//dir = 'rt' 
-					} else { 
-						dir = [[1,3],[2,3],[3,3],[4,3],[5,3]];
-						last_stand_dir = [0,3];
-					};
+					// Right-Up
+					spath = map_fx_pathmove_build_spritepath(object_info, 'ru');
+					dir = spath[0]; last_stand_dir = spath[1];
+					ani_dir = 'ru';
 				} else {
 					// Right
-					dir = [[1,3],[2,3],[3,3],[4,3],[5,3]];
-					last_stand_dir = [0,3];
+					spath = map_fx_pathmove_build_spritepath(object_info, 'r');
+					dir = spath[0]; last_stand_dir = spath[1];
+					ani_dir = 'r';
 				}
 			} else if (dir_x<0) {
 				if (dir_y>0) {
-					// Left-Bottom
-					if (directional == 2) { 
-						//dir = 'lb' 
-					} else { 
-						dir = [[1,1],[2,1],[3,1],[4,1],[5,1]];
-						last_stand_dir = [0,1];
-					};
+					// Left-Down
+					spath = map_fx_pathmove_build_spritepath(object_info, 'ld');
+					dir = spath[0]; last_stand_dir = spath[1];
+					ani_dir = 'ld';
 				} else if (dir_y<0) {
-					// Left-Top
-					if (directional == 2) { 
-						//dir = 'lt' 
-					} else { 
-						dir = [[1,1],[2,1],[3,1],[4,1],[5,1]];
-						last_stand_dir = [0,1];
-					};
+					// Left-Up
+					spath = map_fx_pathmove_build_spritepath(object_info, 'lu');
+					dir = spath[0]; last_stand_dir = spath[1];
+					ani_dir = 'lu';
 				} else {
 					// Left
-					dir = [[1,1],[2,1],[3,1],[4,1],[5,1]];
-					last_stand_dir = [0,1];
+					spath = map_fx_pathmove_build_spritepath(object_info, 'l');
+					dir = spath[0]; last_stand_dir = spath[1];
+					ani_dir = 'l';
 				}
 			} else {
 				if (dir_y>0) {
-					// Up
-					dir = [[1,0],[2,0],[3,0],[4,0],[5,0]];
-					last_stand_dir = [0,0];
-				} else if (dir_y<0) {
 					// Down
-					dir = [[1,2],[2,2],[3,2],[4,2],[5,2]];
-					last_stand_dir = [0,2];
+					spath = map_fx_pathmove_build_spritepath(object_info, 'd');
+					dir = spath[0]; last_stand_dir = spath[1];
+					ani_dir = 'd';
+				} else if (dir_y<0) {
+					// Up
+					spath = map_fx_pathmove_build_spritepath(object_info, 'u');
+					dir = spath[0]; last_stand_dir = spath[1];
+					ani_dir = 'u';
 				} else {
-					// Same place as before :P
+					// (Default)
+					spath = map_fx_pathmove_build_spritepath(object_info, 'u');
+					dir = spath[0]; last_stand_dir = spath[1];
+					ani_dir = 'u';
 				}
 			}
 			
-			// Animate the object
-			fx_sprite_animate(object, 8, dir);
+			// Animate the object only if the animation is changed
+			if (last_ani_dir != ani_dir) {
+				fx_sprite_animate(object, animation_fps, dir);
+				last_ani_dir = ani_dir;
+			}
 		}
 		
 		// Calculate new Z-Index
@@ -1912,7 +2034,7 @@ function map_updateobject(uid,data) {
 				
 			case 'path':
 				if ($defined(data.fx_path)) {
-					map_fx_pathmove(old_data, data.fx_path, dir, old_data.info.id);
+					map_fx_pathmove(old_data, data.fx_path);
 					
 					// No need to keep the grid in memory any more
 					delete data.fx_path;
@@ -2751,6 +2873,23 @@ $(document).addEvent('contextmenu', function(e){
 	//e.stop();
 });
 
+
+var c=null;
+function moveto(x,y) {
+	if (c == null) {
+		c = new Element('img', {src: 'images/UI/cursor/round.png'});
+		c.inject($('datapane'));
+		c.setStyles({
+			'z-index': 65535,
+			'position': 'absolute'
+		});
+	}
+	c.setStyles({
+		'left': x*32,
+		'top': y*32				
+	});
+}
+
 // Initialize mouse handler on window
 $(document).addEvent('mousemove', function(e) {
 	try {
@@ -2786,6 +2925,7 @@ $(document).addEvent('mousemove', function(e) {
 	}
 
 	// If we have an open pop-up element, do nothing
+	moveto(xP,yP);
 	if (!pie_visible) {
 
 		// Collision test with action grids
