@@ -1,5 +1,6 @@
 <?php
 
+registerEvent('portal_map_move', 'map.move');
 function portal_map_move(&$player_guid, &$from_x, &$from_y, &$from_map, &$to_x, &$to_y, &$to_map, $by_script) {
 	global $sql;
 

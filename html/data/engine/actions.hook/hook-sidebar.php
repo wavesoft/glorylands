@@ -20,6 +20,8 @@ function sidebar_fix_time($sec) {
 }
 
 // Feed user status on the sidebar module
+registerEvent('sidebar_data_feed', 'system.clientpoll');
+registerEvent('sidebar_data_feed', 'system.complete_operation');
 function sidebar_data_feed() {
 
 	// Display some general information about the player
@@ -83,6 +85,7 @@ function sidebar_data_feed() {
 }
 
 // This function resets content hash when the main interface is requested
+registerEvent('sidebar_data_initialize', 'system.init_operation');
 function sidebar_data_initialize($lastop, $newop) {
 	if ($newop == 'interface.main') {
 		$_SESSION[DATA]['sidebar-hash']='';

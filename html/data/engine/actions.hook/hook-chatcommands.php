@@ -1,5 +1,6 @@
 <?php
 
+registerEvent('chat_admin', 'chat.command');
 function chat_admin(&$cmd, $parameters, &$answer) {
 	global $sql;
 
@@ -243,6 +244,7 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 
 }
 
+registerEvent('chat_notify_zidchange', 'map.updategrid');
 function chat_notify_zidchange($zid, $map) {
 	global $sql;
 
@@ -255,6 +257,7 @@ function chat_notify_zidchange($zid, $map) {
 }
 
 $chat_initialized = false;
+registerEvent('chat_module_initialize', 'system.init_operation');
 function chat_module_initialize($lastop, $newop) {
 	global $_VER, $chat_initialized;
 	if (($newop == 'interface.main') && !$chat_initialized) {

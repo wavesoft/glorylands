@@ -3,7 +3,7 @@
 # Please do not edit by hand!
 global $TableInstanceFields;
 $TableInstanceFields = array(
-'char' => array('parent','account','name','x','y','map','level','inventory_bag','model','online','visible','state','HP','MP','STR','DEX','CON','INT','WIS','CHA','contributor'),
+'char' => array('parent','account','name','x','y','map','level','inventory_bag','model','online','visible','state','HP','MP','STR','DEX','CON','INT','WIS','CHA','contributor','speed'),
 'gameobject' => array('parent','name','x','y','z','map','level','visible','model','mixhash','contributor'),
 'item' => array('parent','item_type','item_template','item_count','item_variables','mixhash','contributor'),
 'npc' => array('x','y','map','level','model','visible','state','contributor'),

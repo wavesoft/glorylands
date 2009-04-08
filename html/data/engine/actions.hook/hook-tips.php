@@ -1,5 +1,6 @@
 <?php
 
+registerEvent('tipshook_complete_operation', 'system.complete_operation');
 function tipshook_complete_operation($operation) {
 	global $sql;
 	

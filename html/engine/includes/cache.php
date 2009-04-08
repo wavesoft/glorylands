@@ -12,12 +12,14 @@
   * @version 1.0
   */
 
-global $cache_mode, $cache_mem;
+global $cache_mode, $cache_mem, $cache_data;
 
-define('CACHE_AUTO', 0);	// Automatically detect the cache target
-define('CACHE_FAST', 1);	// Cache operations are time-depending. Store it on RAM or session
-define('CACHE_LARGE', 2);	// A large ammout of data must be cached. Store it on Disk
-define('CACHE_STATIC', 3);	// The data must be preserved. Store it on Disk
+define('CACHE_PERMANENT', 1);	// Permanent cache - Remains in storage even if the server is restarted
+define('CACHE_SESSION', 2);		// Session cache - Remains in memory only while the user stays logged
+define('CACHE_LOCAL', 3);		// Local cache - Released when execution is completed
+
+define('CACHE_FAST', 4);		// Fast flag - Defines that this operation must be done quickly
+define('CACHE_BIG', 8);			// Large flag - Defines that the cache data are considerably big
 
 /**
   * Detect the cache mode to use and connect on MemCache daemon
@@ -43,37 +45,66 @@ if ($_CONFIG[MCACHE][ENABLE]) {
   *  
   * This function stores a structure into the game cache
   *
-  * @param	$cache_id	string	The cache name
-  * @param	$data		mixed	The structure to save on cache
-  * @param	$pref_mode	int		The prefered caching method to use
+  * @param	$cache_group string	The storage group name
+  * @param	$cache_id	 mixed	The cache reference ID
+  * @param	$data		 mixed	The structure to save on cache
+  * @param	$pref_mode	 int	The prefered caching method to use
   *	@return	bool				TRUE if successfull, FALSE otherways
   *
   */
-function gl_cache_save($cache_id, $data, $pref_mode=0) {
-	global $cache_mode, $cache_mem;
+function gl_cache_set($cache_group, $cache_id, $data, $pref_mode=CACHE_LOCAL) {
+	global $cache_mode, $cache_mem, $cache_data;
 
-	// Check chat cache method to use
-	if ($cache_mode == 'ram') {
-		return $cache_mem->set($cache_id, $data, MEMCACHE_COMPRESSED);
-	} else {
-		$chunk = serialize($data);
-		$md5 = md5($chunk);
-		$cache = DIROF('SYSTEM.ENGINE').'data/cache/'.$cache_id;
-		$cache_data = $cache.'.dat';
-		$cache_md5 = $cache.'.md5';
-		
-		// If the file exists, check if we don't have changes
-		if (file_exists($cache_md5)) {
-			$c_md5 = file_get_contents($cache_md5);
-			if ($c_md5 == $md5) return true;
-		}
-		
-		// Save the cache data and the MD5 signature
-		file_put_contents($cache_data, $chunk);
-		file_put_contents($cache_md5, $md5);
+	// Check the target mode
+	if ($pref_mode == CACHE_LOCAL) {
+			
+		// Local cache is stored on local variables
+		if (!isset($cache_data[$cache_group])) $cache_data[$cache_group]=array();
+		$cache_data[$cache_group][$cache_id] = $data;
 		return true;
-	}
+		
+		// NOTE: FAST and BIG flaags are not used here
+		
+	} elseif ($pref_mode == CACHE_SESSION) {
+
+		// Session cache is stored on the session variables
+		if (!isset($_SESSION['cache'])) $_SESSION['cache'] = array();
+		if (!isset($_SESSION['cache'][$cache_group])) $_SESSION['cache'][$cache_group]=array();
+		$_SESSION['cache'][$cache_group][$cache_id] = $data;
+		return true;
+
+		// NOTE: FAST and BIG flaags are not used here
 	
+	} elseif ($pref_mode == CACHE_PERMANENT) {
+	
+		// Check chat cache method to use
+		if ($cache_mode == 'ram') {
+			
+			// Check what communication mode to use, based on the flags we used
+			$mode = MEMCACHE_COMPRESSED;
+			if (($pref_mode && CACHE_FAST)!=0) $mode=0;
+			return $cache_mem->set($cache_group.'::'.$cache_id, $data, MEMCACHE_COMPRESSED);
+			
+		} else {
+			$chunk = serialize($data);
+			$md5 = md5($chunk);
+			$cache = DIROF('SYSTEM.ENGINE').'data/cache/'.$cache_group.'-'.$cache_id;
+			$cache_data = $cache.'.dat';
+			$cache_md5 = $cache.'.md5';
+			
+			// If the file exists, check if we don't have changes
+			if (file_exists($cache_md5)) {
+				$c_md5 = file_get_contents($cache_md5);
+				if ($c_md5 == $md5) return true;
+			}
+			
+			// Save the cache data and the MD5 signature
+			file_put_contents($cache_data, $chunk);
+			file_put_contents($cache_md5, $md5);
+			return true;
+		}
+	
+	}	
 }
 
 /**
@@ -81,30 +112,52 @@ function gl_cache_save($cache_id, $data, $pref_mode=0) {
   *  
   * This function retrives a cached structure, previously saved with gl_cache_save
   *
-  * @param	$cache_id	string	The cache name
-  *	@return	mixed				The cached structure
+  * @param	$cache_group string	The storage group name
+  * @param	$cache_id	 mixed	The cache reference ID
+  * @param	$pref_mode	 int	The prefered caching method to use
+  *	@return	mixed				The cached structure or NULL if missing
   *
   */
-function gl_cache_get($cache_id) {
+function gl_cache_get($cache_group, $cache_id, $pref_mode=CACHE_LOCAL) {
+	global $cache_mode, $cache_mem, $cache_data;
 
-	// Check chat cache method to use
-	if ($cache_mode == 'ram') {
+	// Check the target mode
+	if ($pref_mode == CACHE_LOCAL) {
+
+		// Local cache is stored on local variables
+		if (!isset($cache_data[$cache_group])) return NULL;
+		return $cache_data[$cache_group][$cache_id];
+		
+		// NOTE: FAST and BIG flaags are not used here
+		
+	} elseif ($pref_mode == CACHE_SESSION) {
+
+		// Session cache is stored on the session variables
+		if (!isset($_SESSION['cache'])) return NULL;
+		if (!isset($_SESSION['cache'][$cache_group])) return NULL;
+		return $_SESSION['cache'][$cache_group][$cache_id];
+
+		// NOTE: FAST and BIG flaags are not used here
 	
-		return $cache_mem->get($cache_id);
+	} elseif ($pref_mode == CACHE_PERMANENT) {
 		
-	} else {
-		$cache = DIROF('SYSTEM.ENGINE').'data/cache/'.$cache_id;
-		$cache_data = $cache.'.dat';
-		
-		// If the file exists, check if we don't have changes
-		if (file_exists($cache_md5)) {
-			$data = unserialize(file_get_contents($cache_data));
-			return $data;
+		// Check chat cache method to use
+		if ($cache_mode == 'ram') {		
+			return $cache_mem->get($cache_group.'::'.$cache_id);
+			
 		} else {
-			return false;
-		}		
+			$cache = DIROF('SYSTEM.ENGINE').'data/cache/'.$cache_group.'-'.$cache_id;
+			$cache_data = $cache.'.dat';
+			
+			// If the file exists, return it
+			if (file_exists($cache_data)) {
+				$data = unserialize(file_get_contents($cache_data));
+				return $data;
+			} else {
+				return NULL;
+			}		
+		}
 	}
-
 }
 
 /**  

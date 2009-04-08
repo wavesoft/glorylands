@@ -1,6 +1,7 @@
 <?php
 
 // Update linked views when map object changes position
+registerEvent('hb_dynamic_grid_alter', 'grid.alter');
 function hb_dynamic_grid_alter($ignore_guid, $x, $y, $map) {
 
 	global $sql, $_CONFIG;
@@ -46,6 +47,7 @@ function hb_dynamic_grid_alter($ignore_guid, $x, $y, $map) {
 }
 
 // Hooks 'system.guid.update_end' and updates all the related material
+registerEvent('hb_update_user_session', 'system.guid.update_end');
 function hb_update_user_session($guid, $group, $vars) {
 
 	// If the GUID is the player's GUID, update the local session
@@ -63,12 +65,11 @@ function hb_update_user_session($guid, $group, $vars) {
 
 // Hooks 'system.guid.update' and updates the old
 // parent if an item is switching parent
+registerEvent('hb_dynupdate_parent', 'system.guid.update');
 function hb_dynupdate_parent($guid, $group, $vars) {
 
 	// Check if we are changing parent
-	if (isset($vars['parent'])) {	
-	
-	
+	if (isset($vars['parent'])) {			
 		// Get item's current parent
 		$parent = gl_get_guid_parent($guid);
 		
@@ -86,6 +87,7 @@ function hb_dynupdate_parent($guid, $group, $vars) {
 }
 
 // Hooks 'system.guid.deleted' and updates all the related material
+registerEvent('hb_guid_deleted', 'system.guid.deleted');
 function hb_guid_deleted($guid) {
 
 	// Perform Dynamic Updates

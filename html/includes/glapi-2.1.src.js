@@ -57,6 +57,83 @@ var CBChain = new Class({
 });
 var callback = new CBChain();
 
+// Image preloading system (MooTools has a crappy one)
+var GLImageLoader = new Class({
+	elements: {},
+	clear: function() {
+		for (var i=0; i<this.elements.length; i++) {
+			try {
+				this.elements[i].remove();
+			} catch(e) {
+			}
+		}
+		this.elements = [];
+	},
+	replace: function(existing_object, image_src) {
+		var new_object = this.get(image_src);
+		if (!new_object) return existing_object;
+		
+		var host = existing_object.getParent();
+		var pos = existing_object.getStyles('left','top');
+		new_object.inject(host);
+		new_object.setStyles({
+			'left': pos.left.toInt(),
+			'top': pos.top.toInt(),
+		});
+		existing_object.remove();
+		return new_object;
+	},
+	get: function(image) {
+		if ($defined(this.elements[image])) {
+			return this.elements[image].clone();
+		} else {
+			return false;
+		}
+	},
+    preload: function(image_list, opt){
+		if (!$defined(opt.onProgress)) opt.onProgress=function(){};
+		if (!$defined(opt.onComplete)) opt.onComplete=function(){};
+		var load_counter = 0;
+		var load_total = image_list.length;
+		var loaded = [];
+		var host = this;
+		var img_loaded = function(element,success) {
+			var i = element.getProperty('index');
+			// If loading was not successfull, remove the element
+			if (!success) element = false
+			
+			// Make sure this function is not called twice for the same object
+			if (!$defined(loaded[i])) {
+				loaded[i] = element;
+				host.elements[image_list[i]] = element;
+				opt.onProgress(i,element);
+				load_counter++;
+				if (load_counter == load_total) {
+					opt.onComplete(loaded);
+				}
+			}			
+		};
+		for (var i=0; i<image_list.length; i++) {			
+			var image = new Element('img', {'index': i});
+			image.addEvent('load', function(e) { img_loaded(this,true); });
+			image.addEvent('error', function(e) { img_loaded(this,false); });
+			image.addEvent('abort', function(e) { img_loaded(this,false); });	
+			if ($defined(this.elements[image_list[i]])) {
+				var previous = 	this.elements[image_list[i]];
+				if (previous!=false) {
+					previous.setProperty('id', i);
+					img_loaded(previous,true);
+					continue;
+				}
+			}
+			image.src = image_list[i];
+			if (image.width && image.height) image.fireEvent('load', image, 1);
+			if (image.complete) image.fireEvent('load', image, 1);
+		}
+    },	
+});
+var ImageLoader = new GLImageLoader();
+
 // Helper function: Identify scroll position
 function getScrollPosition () {
 	var x = 0;
@@ -168,11 +245,8 @@ function draggable_win_align(win) {
 		b: w_pos.y+w_siz.y
 	};
 	var limits = $(document.body).getSize().size;
-	$debug('[Align] Rect: '+$trace(w_rect));
-	$debug('[Align] Limits: '+$trace(limits));	
 	var i;
 	winStack.each(function(win) {
-		$debug('[Align] Checking :'+win);			
 		try{
 			var pos = win.getPosition();
 			var siz = win.getSize().size;
@@ -183,8 +257,8 @@ function draggable_win_align(win) {
 				b: pos.y+siz.y
 			};
 			if (rect_collide(rect, w_rect)) {
-				collides = {x: pos.x+16, y: pos.y+16};				
-				break;
+				collides = {x: pos.x+16, y: pos.y+16};
+				return;
 			}
 		} catch(e) {
 		}
@@ -887,6 +961,23 @@ function fx_sprite_frame(id) {
 	});
 }
 
+/**
+  * Convert a sprited image back to it's original form
+  *
+  */
+function fx_sprite_undo(object) {
+	var pos = $(object).getStyles('left','top');
+	var image = $(object).getChildren()[0];
+	var host = $(object).getParent();	
+	object.remove();
+	image.inject(host);
+	image.setStyles({
+		'left': pos.left.toInt(),
+		'top': pos.top.toInt(),
+	});
+	return image;
+}
+
 
 /**
   * Prepare a sprite for animation
@@ -895,16 +986,17 @@ function fx_sprite_frame(id) {
   *
   */
 function fx_sprite_prepare(object, x_sprites, y_sprites) {
+	var style = $(object).getStyles('left','top');
 	var dim = $(object).getSize().size;
-	var pos = $(object).getPosition();
+	var pos = {x: style.left.toInt(), y: style.top.toInt()};
 	var div_mask = new Element('div');	
 	var info = {
 		'object': object,
 		'mask': div_mask ,
 		'width': dim.x,
 		'height': dim.y,
-		'sprite_w': (dim.x/x_sprites),
-		'sprite_h': (dim.y/y_sprites),
+		'sprite_w': Math.round(dim.x/x_sprites),
+		'sprite_h': Math.round(dim.y/y_sprites),
 		'animation': [],
 		'frame': 0,
 		'timer': 0
@@ -924,6 +1016,45 @@ function fx_sprite_prepare(object, x_sprites, y_sprites) {
 	$(object).injectInside(div_mask);
 	fx_sprites_animating.push(info);
 	return div_mask;
+}
+
+/**
+  * Update a sprite for animation
+  *
+  * This function prepares a sprite for animation
+  *
+  */
+function fx_sprite_update(mask_object, new_image_object, x_sprites, y_sprites) {
+	var image = $(mask_object).getChildren()[0]	
+	var id = fx_sprite_get_id(mask_object);	
+	
+	// Insert and remove DOM element in order to get
+	// the proper dimensions
+	new_image_object.inject(mask_object);	
+	var dim = $(new_image_object).getSize().size;
+	new_image_object.remove();
+	
+	var info = fx_sprites_animating[id]; 
+		
+	info.width = dim.x;
+	info.height = dim.y;
+	info.sprite_w = Math.round(dim.x/x_sprites);
+	info.sprite_h = Math.round(dim.y/y_sprites);
+	
+	mask_object.setStyles({
+		'width': info.sprite_w,
+		'height': info.sprite_h,
+	});
+	image.setStyles({
+		'left': 0,
+		'top': 0
+	});
+
+	// Instead of cloning the image, update only the SRC
+	image.src = new_image_object.src;
+
+	fx_sprites_animating[id] = info;
+	return mask_object;
 }
 
 /**
@@ -1175,6 +1306,7 @@ function map_loadbase(mapname) {
   * This function shall not be called directly
   *
   */
+
 function map_preload() {
 	showStatus('Loading Graphics...');
 	var lt_timer=null; /* Loading Timeout */
@@ -1200,16 +1332,17 @@ function map_preload() {
 	images.push('images/tiles/'+map_info.background); /* (3) Background tile */
 	
 	// Precache all map images
-	new Asset.images(images, {
+	//new Asset.images(images, {
+	ImageLoader.preload(images, {
 		onComplete: function(){
 			lt_finalized=true;
 			if (lt_timer) {clearTimeout(lt_timer);lt_timer=null;};
 			map_finalize();			
 		},
-		onProgress: function(img_id) {
+		onProgress: function(img_id, img_obj) {			
 			// If we are completed, this is just a late call..
 			// ignore it...
-			if (!lt_finalized) {
+			if (!lt_finalized) {				
 				var perc = Math.ceil(100*img_id/images.length);
 				if (perc > 100) perc-=100; /* When objects are already cached, the maximum value seems to be 200% */
 				showStatus('Loading Graphics ['+perc+' %]');
@@ -1342,6 +1475,7 @@ function map_objecttrigger(uid, trigger, e) {
   */
   
 var map_preloaded_stack = [];
+
 function map_preloaded_update(data) {
 	// And place them on map
 	var images = [];
@@ -1354,19 +1488,22 @@ function map_preloaded_update(data) {
 		if (map_preloaded_stack.indexOf(e.image)<0) {
 			images.push(e.image);
 			map_preloaded_stack.push(e.image);
-			$debug('Loading: '+e.image);
 		} else {
-			$debug('Already loaded: '+e.image);			
 		}
 	});	
 	
 	// Precache all map images
 	if (images.length>0) {
 		showStatus('Loading new objects...');
-		new Asset.images(images, {
+		//new Asset.images(images, {
+		ImageLoader.preload(images, {						   
 			onComplete: function(){
 				showStatus();
 				map_updatedata(data);
+			},
+			onProgress: function(img_id) {
+				// Store the object image
+				//map_images[images[img_id]] = this;
 			}
 		});
 	} else {
@@ -1496,11 +1633,12 @@ function map_addobject(data) {
 	callback.call('object_put', data);
 	
 	// Create and insert image
-	var im = $(document.createElement('img'));
-	im.src = data.image;
+	//var im = $(document.createElement('img'));
+	//im.src = data.image;	
+	var im = ImageLoader.get(data.image);
 	$('datapane').appendChild(im);	
 
-	// If the image is directionable, convert the image to sprite
+	// If the image is sprite, convert the image to sprite
 	if ($defined(data.sprite)) im = fx_sprite_prepare(im, data.sprite[0],data.sprite[1]);
 	var size = im.getSize().size;
 
@@ -1769,15 +1907,13 @@ function map_fx_pathmove_build_spritepath(object_info, facing_side) {
 	};
 	// Default animation columns
 	var ani = {
-		'walk': [1,2,3,4],
+		'walk': [1,2,3,4,5],
 		'stay': 0
 	};
 	
 	// Check if the object contains custom coordinates
 	if ($defined(object_info.info.sprite_direction_grid)) dirgrid=object_info.info.sprite_direction_grid;
 	if ($defined(object_info.info.sprite_direction_ani)) ani=object_info.info.sprite_direction_ani;
-	$debug('Using dirgrid: '+$trace(dirgrid));
-	$debug('And ani: '+$trace(ani));
 	
 	// Detect the row ID, based on the facing side
 	var row=0;
@@ -1797,7 +1933,6 @@ function map_fx_pathmove_build_spritepath(object_info, facing_side) {
 	for (var i=0; i<ani.walk.length; i++) {
 		frames.push([ani.walk[i], row]);
 	}
-	$debug('Built frames: '+$trace(frames));
 	
 	// Find the standing frame
 	var stand=[ani.stay, row];
@@ -1841,8 +1976,8 @@ function map_fx_pathmove_thread(object_info, path) {
 			// Calculate previous and next position
 			if (j<1) {
 				var info = $(object).getStyles('left','top');
-				var from_x = Math.round(Number(info.left.replace('px',''))/32);
-				var from_y = Math.round(Number(info.top.replace('px',''))/32);
+				var from_x = Math.round(info.left.toInt()/32);
+				var from_y = Math.round(info.top.toInt()/32);
 			} else {
 				var from_x = path[j-1].x;
 				var from_y = path[j-1].y;
@@ -1852,7 +1987,7 @@ function map_fx_pathmove_thread(object_info, path) {
 			var dir_x = to_x - from_x;
 			var dir_y = to_y - from_y;
 			
-			var dir = []; // Defaults
+			var dir = false; // Defaults
 			last_stand_dir = [0,0];
 
 			if (dir_x>0) {
@@ -1901,17 +2036,15 @@ function map_fx_pathmove_thread(object_info, path) {
 					dir = spath[0]; last_stand_dir = spath[1];
 					ani_dir = 'u';
 				} else {
-					// (Default)
-					spath = map_fx_pathmove_build_spritepath(object_info, 'u');
-					dir = spath[0]; last_stand_dir = spath[1];
-					ani_dir = 'u';
 				}
 			}
 			
 			// Animate the object only if the animation is changed
-			if (last_ani_dir != ani_dir) {
-				fx_sprite_animate(object, animation_fps, dir);
-				last_ani_dir = ani_dir;
+			if (dir != false) {
+				if (last_ani_dir != ani_dir) {
+					fx_sprite_animate(object, animation_fps, dir);
+					last_ani_dir = ani_dir;
+				}
 			}
 		}
 		
@@ -1935,8 +2068,8 @@ function map_fx_pathmove_thread(object_info, path) {
 	// (Checking if the last position is the current position)
 	var info = $(object).getStyles('left','top');
 	var dim = $(object).getSize().size;
-	var from_x = Math.round(Number(info.left.replace('px',''))/32);
-	var from_y = Math.round(Number(info.top.replace('px',''))/32);
+	var from_x = Math.round(info.left.toInt()/32);
+	var from_y = Math.round(info.top.toInt()/32);
 	var to_x = path[path.length-1].x;
 	var to_y = path[path.length-1].y-1;
 	if ((from_x == to_x) && (from_y == to_y)) {
@@ -1969,11 +2102,27 @@ function map_updateobject(uid,data) {
 	if (!$defined(data.x)) data.x=old_data.info.x;
 	if (!$defined(data.y)) data.y=old_data.info.y;
 	
-	// Update image
-	old_data.object.src = data.image;
-	var size = old_data.object.getSize().size;
+	// If image is changed, perform update
+	if (old_data.info.image != data.image) {		
+		// If the old image is sprite...
+		if ($defined(old_data.info.sprite)) {
+			// But is no more.. Remove the sprite and update image
+			if (!$defined(data.sprite)) {
+				old_data.object = fx_sprite_undo(old_data.object);
+				old_data.object.src = data.image;
+
+			// Elseways, update the sprite image and dimensions
+			} else {
+				fx_sprite_update(old_data.object, ImageLoader.get(data.image), data.sprite[0],data.sprite[1]);
+			}
+		} else {
+			// Not sprite? Update image...
+			old_data.object.src = data.image;
+		}				
+	}	
 
 	// Re-map x-y
+	var size = old_data.object.getSize().size;
 	var x=data.x*32-data.cx;
 	var y=data.y*32-data.cy-size.y;
 
@@ -2231,7 +2380,7 @@ function hoverShow(text,x,y,align) {
 			
 			// Calculate the vertical position
 			if (top < 0) {
-				top += hoverInfo.sz.y+12;
+				top += hoverInfo.sz.y+24;
 			}
 			
 			// Render in different ways as specified
@@ -2818,7 +2967,7 @@ $(document).addEvent('keydown', function(e){
 			gloryIO('?a=interface.inventory');
 		} else if (e.key == 'd') {
 			e.stop();
-			window.alert($trace(map_objects));
+			window.alert($trace(map_images));
 		}
 	} else if (e.key == 'right') {
 		v_center.x=200;
@@ -2873,7 +3022,6 @@ $(document).addEvent('contextmenu', function(e){
 	//e.stop();
 });
 
-
 var c=null;
 function moveto(x,y) {
 	if (c == null) {
@@ -2890,10 +3038,42 @@ function moveto(x,y) {
 	});
 }
 
+$(document).addEvent('click', function(e) {
+	e = new Event(e);
+	if (e.rightClick) return;
+	
+	// Get DataPane left offset
+	var dpX = $('datapane').getLeft();
+	var dpY = $('datapane').getTop();
+	
+	// Get Scroll position
+	var scrl = getScrollPosition();
+
+	// Check if we are out of datahost
+	var xP = e.event.clientX;
+	var yP = e.event.clientY;
+	var dhPos = $('datahost').getPosition();
+	var dhSiz = $('datahost').getSize().size;
+	if ((xP<dhPos.x) || (xP>(dhPos.x+dhSiz.x)) ||
+		(yP<dhPos.y) || (yP>(dhPos.y+dhSiz.y))) {
+		return;
+	}
+
+	// Calculate cell X,Y
+	var bxP = Math.ceil((xP-dpX+scrl.x)/32)-1;
+	var byP = Math.ceil((yP-dpY+scrl.y)/32)-1;
+	var xP = bxP+glob_x_base;
+	var yP = byP+glob_y_base;
+
+	// Send movement
+	gloryIO('?a=map.grid.get&x='+xP+'&y='+yP);
+	e.stop();
+});
+
 // Initialize mouse handler on window
 $(document).addEvent('mousemove', function(e) {
 	try {
-	e = new Event(e);							
+	e = new Event(e);
 	
 	// Get DataPane left offset
 	var dpX = $('datapane').getLeft();
