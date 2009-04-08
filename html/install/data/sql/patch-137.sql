@@ -1,12 +1,13 @@
 /*
-Added: International translations for GUIDs
+Added: Speed field on char_instance
+Updated: Hooking system table
 Date: 5/4/2009 3:03:55 pm
 */
 
 -- ----------------------------
 -- Update system_messages
 -- ----------------------------
-ALTER TABLE `char_instance` ADD `speed` INT NOT NULL DEFAULT '0';
+ALTER TABLE `char_instance` ADD `speed` INT NOT NULL DEFAULT '5';
 
 -- ----------------------------
 -- Update system_messages
