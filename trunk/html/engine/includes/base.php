@@ -48,6 +48,9 @@ header("Content-Type: text/html; charset=UTF-8");
 ### Initialize session
 include_once DIROF('SYSTEM.INCLUDE')."session.php";
 
+### Initialize event system ###
+gl_init_events();
+
 ### Process any scheduled evens
 gl_process_schedules();
 gl_spawn_check();

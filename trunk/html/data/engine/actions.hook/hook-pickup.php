@@ -1,5 +1,6 @@
 <?php
 
+registerEvent('pickuphook_check_compatibility', 'item.pickup');
 function pickuphook_check_compatibility($source, $dest) {
 	global $sql;
 	

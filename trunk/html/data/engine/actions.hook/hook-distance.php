@@ -2,6 +2,7 @@
 // We need this library, so include it
 include_once(DIROF('ACTION.LIBRARY')."/actionrange.lib.php");
 
+registerEvent('renderRange', 'map.render');
 function renderRange(&$data) {
 	global $result, $mapper;
 	$result = array();
@@ -39,11 +40,13 @@ function renderRange(&$data) {
 		$ans = array('x' => $x, 'y' => $y, 'id' => $id);
 
 		// Check if the position we hit has something interesting, like teleport point	
+		/*
 		if ($sql->poll("SELECT `index` FROM `data_maps_teleports` WHERE `x` = $x AND `y` = $y AND `map` = ".$_SESSION[PLAYER][DATA]['map'])) {
 			// Change tile color
 			$ans['color'] = '#FF0000';
 			$ans['title'] = 'Teleport point';
 		}
+		*/
 				
 		// Store the mapper index for quickly obdaining the index
 		$index = $x.','.$y;
@@ -75,6 +78,7 @@ function renderRange(&$data) {
 			// If we have the previous steps used, use them to animate the user
 			if (is_array($steps)) {
 				$data['objects'][$id]['fx_move'] = 'path';
+				array_shift($steps);
 				$data['objects'][$id]['fx_path'] = $steps;
 			}
 		} else {
@@ -101,6 +105,7 @@ function renderRange(&$data) {
 }
 
 // Hooks system.init_operation to map request value "id" into "x","y" coordinates
+registerEvent('opinitTranslateID', 'system.init_operation');
 function opinitTranslateID($lastop, $newop) {
 	if ($newop == 'map.grid.get') {
 		if (isset($_REQUEST['id']) && isset($_SESSION[DATA]['WALKID'])) {

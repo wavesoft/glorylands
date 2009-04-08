@@ -2,6 +2,7 @@
 // We need this library, so include it
 include_once(DIROF('ACTION.LIBRARY')."/quickbar.lib.php");
 
+registerEvent('itemuse_schedule_hook', 'system.schedule');
 function itemuse_schedule_hook($scheduleid, $data, $user_guid) {	
 	if ($scheduleid == 'item.revert') {
 				
@@ -24,11 +25,13 @@ function itemuse_schedule_hook($scheduleid, $data, $user_guid) {
 	return true;
 }
 
+registerEvent('itemuse_quickbar_init', 'map.render');
 function itemuse_quickbar_init() {
 	// When map is rendered, update quickbar
 	qb_update_view();
 }
 
+registerEvent('itemuse_guid_deleted', 'system.guid.deleted');
 function itemuse_guid_deleted($guid) {
 	global $sql;
 
@@ -38,6 +41,7 @@ function itemuse_guid_deleted($guid) {
 	qb_update_view();
 }
 
+registerEvent('itemuse_dropdown', 'interface.dropdown');
 function itemuse_dropdown(&$data, $guid) {
 	// Add pickup handler
 	array_push($data, array(

@@ -47,21 +47,6 @@ if (!isset($_SESSION[DATA][DYNAMIC])) {
 	// on the session to speed-up the xecution
 	$_SESSION[DATA][DYNAMIC] = array();
 
-	// Try to build event chain
-	$EventChain = array();
-	$ans=$sql->query("SELECT * FROM `system_hooks` WHERE `active` = 'YES'");
-	if (!(!$ans) && !$sql->emptyResults) {
-		while ($row = $sql->fetch_array(MYSQL_ASSOC)) {
-			if (!isset($EventChain[$row['hook']])) $EventChain[$row['hook']] = array();
-			array_push($EventChain[$row['hook']], array(
-				$row['filename'], $row['function']
-			));
-		}
-	}	
-	
-	// Cache it into session
-	$_SESSION[DATA][DYNAMIC]['hook'] = $EventChain;
-
 	// Try to build straight and reverse GUID dictionary data
 	$GUIDGroupOf = array();
 	$GUIDReverseOf = array();

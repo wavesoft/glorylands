@@ -1,5 +1,6 @@
 <?php
 
+registerEvent('admin_hook_dropdown', 'interface.dropdown');
 function admin_hook_dropdown(&$menuitems, &$guid) {
 	// Interrupts 'interface.dropdown' event
 

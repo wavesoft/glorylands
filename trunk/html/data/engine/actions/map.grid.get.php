@@ -72,7 +72,7 @@ $ans=$sql->query("SELECT
 	`gameobject_instance`.`map` = $map
 ");
 while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
-	$objects[] = array(
+	$myobj = array(
 		// Storage/Information variables
 		'guid' => $row['guid'],
 		'name' => $row['name'],
@@ -90,6 +90,8 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		'fx_show' => 'fade',
 		'fx_hide' => 'fade'
 	);
+	callEvent('map.render.gameobject', $myobj, $row['guid'], $row);	
+	$objects[] = $myobj;
 }
 
 // Get NPCs
@@ -133,6 +135,7 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		$myobj['click'] = '?a=merchant.buy&guid='.$row['guid'];
 	}
 	
+	callEvent('map.render.npc', $myobj, $row['guid'], $row);		
 	$objects[] = $myobj;
 }
 
@@ -144,6 +147,7 @@ $ans=$sql->query("SELECT
 	`char_instance`.`map`,
 	`char_instance`.`model`,
 	`char_instance`.`name`,
+	`char_instance`.`speed`,
 	`char_template`.`icon`,
 	`char_template`.`flags`
 	FROM
@@ -194,6 +198,18 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	if ($row['guid']==$_SESSION[PLAYER][GUID]) {
 		$myobj['focus'] = true;
 		$myobj['player'] = true;
+		$myobj['speed'] = $row['speed'];
+		$myobj = array_merge($myobj, array(
+			/*
+			'sprite' => array(4,4),
+			'sprite_direction_grid' => array('d'=>0,'l'=>1,'r'=>2,'u'=>3),
+			'sprite_direction_ani' => array('walk'=>array(0,1,2,3),'stand'=>0),
+			'image' => 'elements/sprites/magus.gif'
+			*/
+		));
+		callEvent('map.render.player', $myobj, $row['guid'], $row);
+	} else {
+		callEvent('map.render.char', $myobj, $row['guid'], $row);
 	}
 	$objects[] = $myobj;
 }
@@ -207,8 +223,8 @@ if (!$quick) {
 			if (!is_array($data)) {
 				echo "<h1>Data:<pre>".print_r($data,true)."</pre></h1>";
 			} else {
-				$_SESSION['GRID']['ZID'] = $data;
-				callEvent('map.updategrid', $_SESSION['GRID']['ZID'], $map_info['filename']);
+				callEvent('map.updategrid', $data, $map_info['filename']);
+				gl_cache_set('grid', 'zmap', $data, CACHE_SESSION);
 			}
 		}
 		$_SESSION['GRID']['ID'] = $map;

@@ -1,4 +1,29 @@
 <?php
+$EventChain = array();
+
+function gl_init_events() {
+	global $sql;
+	// Load the hook files
+	$ans=$sql->query("SELECT * FROM `system_hooks` WHERE `active` = 'YES'");
+	if (!(!$ans) && !$sql->emptyResults) {
+		while ($row = $sql->fetch_array(MYSQL_ASSOC)) {
+			include_once(DIROF('DATA.HOOK').$row['filename']);
+		}
+	}
+}
+
+function registerEvent($function, $event_or_class, $event=false) {
+	global $EventChain;
+	
+	if ($event===false) {
+		$event = $event_or_class;
+	} else {
+		$function = array($function, $event_or_class);		
+	}
+	
+	if (!isset($EventChain[$event])) $EventChain[$event]=array();
+	$EventChain[$event][] = $function;
+}
 
 // -------------------------------------------------------
 //                     Call Chained Evens
@@ -22,9 +47,9 @@ function callEvent($event,&$a=false,&$b=false,&$c=false,&$d=false,&$e=false,&$f=
 	
 	// Start chaining
 	foreach ($EventChain[$event] as $calee) {
-		include_once(DIROF('DATA.HOOK').$calee[0]);
+		//include_once(DIROF('DATA.HOOK').$calee[0]);
 		$ans = true;
-		$ans = call_user_func_array($calee[1], $parm);
+		$ans = call_user_func_array($calee, $parm);
 		if ($ans === false) return false;
 	}
 	

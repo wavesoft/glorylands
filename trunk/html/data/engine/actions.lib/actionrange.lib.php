@@ -12,7 +12,7 @@ function range_calculate($x, $y, $distance, $callback, $callback_always) {
 			if ($range_left<1) return false;
 			
 			// No attennuation exists? We cannot enter there...
-			$grid = &$_SESSION['GRID']['ZID'];
+			$grid = &gl_cache_get('grid','zmap',CACHE_SESSION);
 			if (!$grid[$y]) return false;
 			if (!$grid[$y][$x]) return false;
 			
