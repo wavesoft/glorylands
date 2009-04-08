@@ -1,10 +1,10 @@
-﻿/*
+/*
 Added: International translations for GUIDs
 Date: 5/4/2009 3:03:55 pm
 */
 
 -- ----------------------------
--- Table structure alteration
+-- Update system_messages
 -- ----------------------------
 ALTER TABLE `char_instance` ADD `speed` INT NOT NULL DEFAULT '0';
 
