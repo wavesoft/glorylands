@@ -22,7 +22,8 @@ if (!$f || !$w || !$h || !$a) {
 }
 
 if (!$t) {
-	$t='cache/done';
+	$t='cache/.done';
+	if (!is_dir($t)) mkdir($t);
 }
 
 for ($y = 0; $y < $h; $y++) {
