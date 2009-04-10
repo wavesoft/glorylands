@@ -21,8 +21,10 @@ function c2g_sort_directions($from_x, $from_y, $to_x, $to_y, &$directions) {
 	usort($directions, 'c2g_sort_function');
 }
 
-function c2g_pathwalk($from_x, $from_y, $to_x, $to_y, $speed) {
+function c2g_pathwalk($from_x, $from_y, $to_x, $to_y, $speed, $parent_x=false, $parent_y=false) {
 	global $c2g_log;
+	if ($parent_x===false) $parent_x = $from_x;
+	if ($parent_y===false) $parent_y = $from_y;
 	
 	$c2g_log .= "Entering $from_x,$from_y with speed $speed\n";
 	
@@ -48,7 +50,7 @@ function c2g_pathwalk($from_x, $from_y, $to_x, $to_y, $speed) {
 		array(-1,0) ,              array(1,0),
 		              array(0,1) 
 	);
-	$direction_count = 8;
+	$direction_count = sizeof($directions);
 	c2g_sort_directions($from_x, $from_y, $to_x, $to_y, $directions);		
 	$c2g_log .= "Directions sorted:".print_r($directions,true)."\n";
 	
@@ -63,8 +65,11 @@ function c2g_pathwalk($from_x, $from_y, $to_x, $to_y, $speed) {
 			return array(array('x'=>$to_x, 'y'=>$to_y),array('x'=>$from_x, 'y'=>$from_y));
 		}
 		
+		// If we are about to enter the place we came from, proceed to the next		
+		if (($test_x == $parent_x) && ($test_y == $parent_y)) continue;
+		
 		// Try to walk this direction
-		$result = c2g_pathwalk($test_x, $test_y, $to_x, $to_y, $speed);
+		$result = c2g_pathwalk($test_x, $test_y, $to_x, $to_y, $speed, $from_x, $from_y);
 		
 		// If the next step successfully reaches the target, stack
 		// our position on the return stack and quit
@@ -88,7 +93,7 @@ function c2g_move($guid, $from_x, $from_y, $from_map, &$to_x, &$to_y, $to_map) {
 	if ($from_map != $to_map) return true;
 	
 	// If we move from a position to another, we should check what path to use
-	$path = c2g_pathwalk($from_x, $from_y, $to_x, $to_y, 50);
+	$path = c2g_pathwalk($from_x, $from_y, $to_x, $to_y, 10);
 	
 	if ($path!==false) {
 		$to_x = $path[0]['x'];
