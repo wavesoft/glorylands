@@ -5,11 +5,15 @@ var isMozilla=(navigator.userAgent.indexOf("Gecko")>=0);
 var isOpera=(navigator.userAgent.indexOf("Opera")>=0);
 
 // ### DEBUG FUNCTIONS ###
-function $trace(obj) {
+function $trace(obj,level) {
 	ans='';
 	$each(obj, function(value, name) {
 		if (ans!='') ans+=', ';
-		ans+='['+name+'] = '+value;
+		if (!level) {
+			ans+='['+name+'] = '+value;
+		} else {
+			ans+='['+name+'] = {'+$trace(value,level-1)+'}';
+		}
 	});	
 	return ans;
 }
@@ -707,7 +711,6 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 	//	window.alert(url);
 		data_io_time = $time();
 		var json = new Json.Remote(url, {
-			headers: {'X-StreamID': '41293'},
 			onComplete: function(obj) {
 				showStatus();
 				data_io_time = $time()-data_io_time;

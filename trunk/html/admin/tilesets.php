@@ -41,16 +41,18 @@ a.cache {
 <body>
 <?php
 
-$bp = 'Z:\(Downloads)\[UNSORTED]\== Glory Lands ==\2D Tilesets\old';
+#$bp = 'Z:\(Downloads)\[UNSORTED]\== Glory Lands ==\2D Tilesets\old';
+$bp = 'Z:\(Downloads)\[UNSORTED]\== Glory Lands ==\BlitZ';
 
 $d = dir($bp);
 while (false !== ($entry = $d->read())) {
 	if (strtolower(substr($entry,-4)) == '.png') {
 		$f = substr($entry,0,-4);
+		$f2 = str_replace('-','_',$f);
 		$tp = 'normal';
 		if (file_exists("cache/{$f}-0-0.png")) $tp = 'cache';
 		//if (file_exists("../images/tiles/{$f}-0-0.gif")) $tp = 'done';
-		if (file_exists("cache/done/{$f}-0-0.png")) $tp = 'done';
+		if (is_dir("cache/.done/{$f2}")) $tp = 'done';
 		echo "File: <b><a class=\"{$tp}\" href=\"tilesets_process.php?f=$entry\">$entry</a></b><br>\n";
 	}
 }
