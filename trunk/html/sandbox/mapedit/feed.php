@@ -15,8 +15,8 @@ if ($_REQUEST['a']=='save') {
 	// <<<<
 	
 	$buffer = json_decode($str_buffer,true);
-	//file_put_contents('dump.txt', $str_buffer);
-	//file_put_contents('trace.txt', print_r($buffer,true));
+	file_put_contents('dump.txt', $str_buffer);
+	file_put_contents('trace.txt', print_r($buffer,true));
 	
 	$data = $buffer['map'];
 	foreach ($data as $gid => $grid) {
@@ -156,7 +156,19 @@ if ($_REQUEST['a']=='save') {
 
 } elseif ($_REQUEST['a']=='objects') {
 	$base = $_REQUEST['base'];
-	if (!$base) $base='furniture';
+	if (!$base || $base=='') {
+		$d = dir("../../images/elements");
+		while (false !== ($entry = $d->read())) {
+			if ( (substr($entry,0,1)!='.') && (substr($entry,-4)=='.png') && (substr($entry,0,strlen($base)+1)==$base.'-') )  {
+				$files[]='../../images/elements/'.$entry;		
+			}
+			if ( (substr($entry,0,1)!='.') && (substr($entry,-4)=='.gif') && (substr($entry,0,strlen($base)+1)==$base.'-') )  {
+				$files[]='../../images/elements/'.$entry;		
+			}
+		}
+		$d->close();
+		$base='furniture';
+	}
 	
 	$files = array();
 	$x=0; $ok=true;
@@ -173,7 +185,28 @@ if ($_REQUEST['a']=='save') {
 	
 } elseif ($_REQUEST['a']=='tiles') {
 	$base = $_REQUEST['base'];
-	if (!$base) $base='z-field-ext';
+	if (!$base) {
+		$d = dir("../../images/tiles");		
+		$base = $d->read();
+		if ($base!==false) {
+			while ((strtolower(substr($base,-4)) != '.png') && ($base !== false)) {
+				$base = $d->read();
+			}
+		}
+		$d->close();
+
+		if ($base===false) {
+			$files=array();
+			echo json_encode($files);
+			die();
+		} else {
+			$parts = explode('-',$base);
+			$len = sizeof($parts);
+			unset($parts[$len-1]);
+			unset($parts[$len-2]);
+			$base = implode('-',$parts);
+		}
+	}
 	
 	$files = array();
 	$x=0; $ok=true;
