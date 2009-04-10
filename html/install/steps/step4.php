@@ -45,41 +45,49 @@ function sql_run($file) {
 }
 
 // Check if we have patch or install mode
-if ($_SESSION['dbmode'] == 'patch') {
+if ($_SESSION['dbmode'] != 'patch') {
+	echo "Importing data into <b>".$_CONFIG[DB][DATABASE].". This might take a while..</b>\n\n";
+	sql_run("data/sql/dbschema.sql");
+}
 
-	echo "Patching database <b>".$_CONFIG[DB][DATABASE]." from revision ".$_SESSION['dbrev']."</b> to latest. This might take a while..\n\n";
+// Detect the previous version
+$ans=$sql->query("SELECT * FROM `db_version`");
+// We have an error? Probably `db_version` is missing. If that's the case
+// we are using version < 115. Apply the patches from rev. 115 and above
+if (!$ans) {
+	$prev_rev=110;
+} else {
+	$verinfo = $sql->fetch_array($ans,MYSQL_NUM);
+	$prev_rev = $verinfo[0];
+}
 
-	// Search for patches and build patch filename tree
-	$patches = array();
-	$d = dir("data/sql");
-	while (false !== ($entry = $d->read())) {
-		if (strtolower(substr($entry,-4))=='.sql') {
-			if (strtolower(substr($entry,0,6)) == 'patch-') {
-				$rev = (int) substr(substr($entry,6),0,-4);
-				if ($rev > $_SESSION['dbrev']) {
-					$patches[]=$entry;
-				}
+echo "Patching database <b>".$_CONFIG[DB][DATABASE]." from revision ".$prev_rev."</b> to latest. This might take a while..\n\n";
+
+// Search for patches and build patch filename tree
+$patches = array();
+$d = dir("data/sql");
+while (false !== ($entry = $d->read())) {
+	if (strtolower(substr($entry,-4))=='.sql') {
+		if (strtolower(substr($entry,0,6)) == 'patch-') {
+			$rev = (int) substr(substr($entry,6),0,-4);
+			if ($rev > $prev_rev) {
+				$patches[]=$entry;
 			}
 		}
 	}
-	$d->close();
-	sort($patches);
-	
-	if (sizeof($patches) == 0) {
-		echo "No patching required. Your database is up to date!\n";
-	} else {		
-		// Run patches	
-		foreach ($patches as $patch) {
-			echo "Importing patch <b>$patch</b>...\n";
-			sql_run("data/sql/$patch");
-		}
+}
+$d->close();
+sort($patches);
+
+// Apply patches
+if (sizeof($patches) == 0) {
+	echo "No patching required. Your database is up to date!\n";
+} else {		
+	// Run patches	
+	foreach ($patches as $patch) {
+		echo "Importing patch <b>$patch</b>...\n";
+		sql_run("data/sql/$patch");
 	}
-
-} else {
-
-	echo "Importing data into <b>".$_CONFIG[DB][DATABASE].". This might take a while..</b>\n\n";
-	sql_run("data/sql/dbschema.sql");
-	
 }
 
 // Check and show status

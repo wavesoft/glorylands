@@ -15,6 +15,7 @@
 global $cache_mode, $cache_mem, $cache_data;
 
 define('CACHE_PERMANENT', 1);	// Permanent cache - Remains in storage even if the server is restarted
+define('CACHE_GLOBAL', 1);		// Alias for permanent
 define('CACHE_SESSION', 2);		// Session cache - Remains in memory only while the user stays logged
 define('CACHE_LOCAL', 3);		// Local cache - Released when execution is completed
 
@@ -56,7 +57,8 @@ function gl_cache_set($cache_group, $cache_id, $data, $pref_mode=CACHE_LOCAL) {
 	global $cache_mode, $cache_mem, $cache_data;
 
 	// Check the target mode
-	if ($pref_mode == CACHE_LOCAL) {
+	$pref_mode_hi = $pref_mode & 0x03;
+	if ($pref_mode_hi == CACHE_LOCAL) {
 			
 		// Local cache is stored on local variables
 		if (!isset($cache_data[$cache_group])) $cache_data[$cache_group]=array();
@@ -65,7 +67,7 @@ function gl_cache_set($cache_group, $cache_id, $data, $pref_mode=CACHE_LOCAL) {
 		
 		// NOTE: FAST and BIG flaags are not used here
 		
-	} elseif ($pref_mode == CACHE_SESSION) {
+	} elseif ($pref_mode_hi == CACHE_SESSION) {
 
 		// Session cache is stored on the session variables
 		if (!isset($_SESSION['cache'])) $_SESSION['cache'] = array();
@@ -75,14 +77,14 @@ function gl_cache_set($cache_group, $cache_id, $data, $pref_mode=CACHE_LOCAL) {
 
 		// NOTE: FAST and BIG flaags are not used here
 	
-	} elseif ($pref_mode == CACHE_PERMANENT) {
+	} elseif ($pref_mode_hi == CACHE_PERMANENT) {
 	
 		// Check chat cache method to use
 		if ($cache_mode == 'ram') {
 			
 			// Check what communication mode to use, based on the flags we used
 			$mode = MEMCACHE_COMPRESSED;
-			if (($pref_mode && CACHE_FAST)!=0) $mode=0;
+			if ($pref_mode & CACHE_FAST) $mode=0;
 			return $cache_mem->set($cache_group.'::'.$cache_id, $data, MEMCACHE_COMPRESSED);
 			
 		} else {
@@ -122,7 +124,8 @@ function gl_cache_get($cache_group, $cache_id, $pref_mode=CACHE_LOCAL) {
 	global $cache_mode, $cache_mem, $cache_data;
 
 	// Check the target mode
-	if ($pref_mode == CACHE_LOCAL) {
+	$pref_mode_hi = $pref_mode & 0x03;
+	if ($pref_mode_hi == CACHE_LOCAL) {
 
 		// Local cache is stored on local variables
 		if (!isset($cache_data[$cache_group])) return NULL;
@@ -130,7 +133,7 @@ function gl_cache_get($cache_group, $cache_id, $pref_mode=CACHE_LOCAL) {
 		
 		// NOTE: FAST and BIG flaags are not used here
 		
-	} elseif ($pref_mode == CACHE_SESSION) {
+	} elseif ($pref_mode_hi == CACHE_SESSION) {
 
 		// Session cache is stored on the session variables
 		if (!isset($_SESSION['cache'])) return NULL;
@@ -139,7 +142,7 @@ function gl_cache_get($cache_group, $cache_id, $pref_mode=CACHE_LOCAL) {
 
 		// NOTE: FAST and BIG flaags are not used here
 	
-	} elseif ($pref_mode == CACHE_PERMANENT) {
+	} elseif ($pref_mode_hi == CACHE_PERMANENT) {
 		
 		// Check chat cache method to use
 		if ($cache_mode == 'ram') {		
