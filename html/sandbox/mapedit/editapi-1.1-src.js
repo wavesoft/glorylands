@@ -311,7 +311,7 @@ function win_objparm_show(infobj) {
 	win_objparm_spawncontrol('Object is dynamic','dynamic',infobj['dynamic'],'checkbox');
 	$each(infobj, function(v,id) {
 		if ((id!='x') && (id!='y') && (id!='z') && (id!='image') && (id!='dynamic') && (id!='cx') && (id!='cy')) {
-			win_objparm_spawncontrol(id,id,v);
+			win_objparm_spawncontrol(id,id,unescape(v));
 		}
 	});
 }
@@ -397,7 +397,7 @@ function win_editobj_save() {
 		var value = elm.getProperty('value');
 		var type = elm.getProperty('type');		
 		if (type == 'text') {
-			win_objparm_active_infobj[name]=value;
+			win_objparm_active_infobj[name]=escape(value);
 		} else if  (type == 'checkbox') {
 			win_objparm_active_infobj[name]=elm.getProperty('checked');
 		}
@@ -1744,8 +1744,8 @@ function cgrid_render(grid) {
 
 $(window).addEvent('load', function(e){	
 
-	tloader_download('z-field-ext');
-	oloader_download('furniture');
+	tloader_download('');
+	oloader_download('');
 	cgrid_setatt(0,$$('.slider a')[0]);
 
 	$('content_host').addEvent('mousemove', function(e){
