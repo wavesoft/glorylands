@@ -89,7 +89,7 @@ if ($_REQUEST['dbmode'] == 'new') {
 			$step=3;
 			return;	
 		}
-		mysql_free_result($query);
+		@mysql_free_result($query);
 		
 	} else {
 		// Database exists... flush it
@@ -108,7 +108,7 @@ if ($_REQUEST['dbmode'] == 'new') {
 				return;	
 			}
 		}
-		mysql_free_result($query);
+		@mysql_free_result($query);
 	}
 } else {
 
@@ -119,23 +119,6 @@ if ($_REQUEST['dbmode'] == 'new') {
 		return;		
 	}
 	
-	// If user has selected patch mode, detect the previous version
-	if ($_REQUEST['dbmode'] == 'patch') {
-			mysql_select_db($_REQUEST['config']['DATABASE']);
-			$ans=mysql_query("SELECT * FROM `db_version`");
-			// We have an error? Probably `db_version` is missing. If that's the case
-			// we are using version < 115. Apply the patches from rev. 115 and above
-			if (!$ans) {
-				$prev_ver=110;
-			} else {
-				$verinfo = mysql_fetch_row($ans);
-				mysql_free_result($ans);
-				$prev_ver = $verinfo[0];
-			}
-			
-			// Save the revision (Used by ste4.php)
-			$_SESSION['dbrev'] = $prev_ver;
-	}
 }
 
 // Save the configuration file

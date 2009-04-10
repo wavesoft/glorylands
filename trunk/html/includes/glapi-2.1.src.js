@@ -356,6 +356,9 @@ function createWindow(header, content, x, y, w, h, guid) {
 		$(eBody).addEvent('mousedown', function(e) {
 			eBody.setStyles({'z-index': lastZ++});
 		});
+		$(eBody).addEvent('click', function(e) {
+			new Event(e).stop();
+		});
 		
 		// Move to a specific location (if set)
 		if (x) eBody.setStyles({'left':x});
@@ -2050,7 +2053,8 @@ function map_fx_pathmove_thread(object_info, path) {
 		
 		// Calculate new Z-Index
 		var dim = object.getSize().size;
-		var zindex = (path[j].y+Math.round(dim.y/32))*500+path[j].x;
+		var zYp = Math.round(dim.y/32);
+		var zindex = (Number(path[j].y)+zYp-1)*500+Number(path[j].x);
 		if (zindex<0) zindex=1;
 		
 		// Update z index

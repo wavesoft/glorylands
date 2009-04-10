@@ -31,12 +31,12 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 			<td>
 				<?php 
 					$ver = phpversion();
-					$check = version_compare($ver, "5.2.1", ">=");
+					$check = version_compare($ver, "5.2.0", ">=");
 					if ($check) {
 						echo "<span class=\"ok\">$ver</span>";
 					} else {
-						echo "<span class=\"error\">&lt; 5.2.1</span>";
-						$issues[]='PHP Version 5.2.1 or later is required';
+						echo "<span class=\"error\">&lt; 5.2.0</span>";
+						$issues[]='PHP Version 5.2.0 or later is required';
 						$has_error = true;
 					}
 				?>
@@ -48,16 +48,14 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 				<?php 
 					$sapi_type = php_sapi_name();
 					if (substr($sapi_type, 0, 3) == 'cgi') {
-						echo "<span class=\"error\">{$sapi_type}</span>";
-						$issues[]='It seems PHP is running as CGI Binary, probably for security reasons. This mode is not supported. Please contact your hosting provider to fix this issue.';
-						$has_error = true;
+						echo "<span class=\"warn\">{$sapi_type}</span>";
+						$issues[]='It seems PHP is running as CGI Binary, probably for security reasons. This mode is not fully supported. Please contact your hosting provider to fix this issue.';
 					} else {
 						echo "<span class=\"ok\">{$sapi_type}</span>";
 						$ok = function_exists('apache_request_headers'); 
 						if (!$ok) {
-							echo "<span class=\"error\"> (Erroreus)</span>";
+							echo "<span class=\"warn\"> (Erroreus)</span>";
 							$issues[]='PHP Is running as a module, but not all the functionality is provided! In detail, the function apache_request_headers() was not found declared.';
-							$has_error = true;
 						}
 					}
 				?>
