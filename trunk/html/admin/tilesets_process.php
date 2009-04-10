@@ -10,7 +10,9 @@
 <pre>
 <?php
 
-$bp = 'Z:\(Downloads)\[UNSORTED]\== Glory Lands ==\2D Tilesets\old';
+#$bp = 'Z:\(Downloads)\[UNSORTED]\== Glory Lands ==\2D Tilesets\old';
+$bp = 'Z:\(Downloads)\[UNSORTED]\== Glory Lands ==\BlitZ';
+
 $fn = $_REQUEST['f'];
 if (!isset($fn)) {
 	die("Invalid file specified");
@@ -64,6 +66,7 @@ for ($y = 0; $y < $h; $y++) {
 echo "</table>\n";
 
 echo "<a href=\"tilesets_install.php?f={$fn}&w={$w}&h={$h}&a=c\">Install tileset</a>\n";
+echo "<a href=\"tilesets_package.php?f={$fn}&w={$w}&h={$h}\">Package tileset</a>\n";
 echo "<a href=\"tilesets_install.php?f={$fn}&w={$w}&h={$h}&a=d\">Delete cache</a>\n";
 echo "<a href=\"tilesets.php\">Back to tilesets</a>\n";
 
