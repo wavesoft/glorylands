@@ -2057,7 +2057,7 @@ function map_fx_pathmove_thread(object_info, path) {
 		// Calculate new Z-Index
 		var dim = object.getSize().size;
 		var zYp = Math.round(dim.y/32);
-		var zindex = (Number(path[j].y)+zYp-1)*500+Number(path[j].x);
+		var zindex = (Number(path[j].y)+zYp)*500+Number(path[j].x);
 		if (zindex<0) zindex=1;
 		
 		// Update z index
@@ -2905,6 +2905,10 @@ $(window).addEvent('load', function(e){
 		
 		// Dispose dropdown (if visible)
 		piemenu_dispose();
+	
+		// Send movement
+		gloryIO('?a=map.grid.get&x='+xP+'&y='+yP);
+
 	});
 
 	
@@ -3066,14 +3070,6 @@ $(document).addEvent('click', function(e) {
 		return;
 	}
 
-	// Calculate cell X,Y
-	var bxP = Math.ceil((xP-dpX+scrl.x)/32)-1;
-	var byP = Math.ceil((yP-dpY+scrl.y)/32)-1;
-	var xP = bxP+glob_x_base;
-	var yP = byP+glob_y_base;
-
-	// Send movement
-	gloryIO('?a=map.grid.get&x='+xP+'&y='+yP);
 	e.stop();
 });
 
