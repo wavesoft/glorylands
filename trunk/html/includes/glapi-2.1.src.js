@@ -1871,17 +1871,19 @@ function map_fx_pathmove(object, path) {
 	// animation on the same object.
 	// This function just chains the concurrent requests and handles
 	// it, only when the previouse ones are completed
-	if ($defined(map_fx_pathmove_stack[object.info.id])) {
+	var i_object = object;
+	var i_path = path;
+	if ($defined(map_fx_pathmove_stack[i_object.info.id])) {
 		//$debug('[path] ('+object.info.id+') Appending to stack...');
-		map_fx_pathmove_stack[object.info.id].push(
-			function() {map_fx_pathmove_thread(object,path); }
+		map_fx_pathmove_stack[i_object.info.id].push(
+			function() {map_fx_pathmove_thread(i_object,i_path); }
 		);
 	} else {
 		//$debug('[path] ('+object.info.id+') Creating stack...');
-		map_fx_pathmove_stack[object.info.id] = [
-			function() {map_fx_pathmove_thread(object,path); }
+		map_fx_pathmove_stack[i_object.info.id] = [
+			function() {map_fx_pathmove_thread(i_object,i_path); }
 		];
-		map_fx_pathmove_next(object.info.id);
+		map_fx_pathmove_next(i_object.info.id);
 	}
 }
 function map_fx_pathmove_next(id) {
