@@ -45,7 +45,7 @@ var edit_attrib_grid= [
 			['Clickable (Can be clicked)', 'click'],
 			['Weapon (Can be used as weapon)', 'weapon'],
 			['Shield (Can be used as shield)', 'shield'],
-			['Container (Contains sub-items)', 'shield'],
+			['Container (Contains sub-items)', 'container'],
 			['None (Just stores variables)', 'none'],
 		],
 		ofs: false
@@ -62,7 +62,8 @@ var edit_attrib_grid= [
 			['Shoes', 'shoes'],
 			['Fingers', 'fingers'],
 			['Neck','neck'],
-			['Ears','ears']
+			['Ears','ears'],
+			['Backpack','backpack']
 		],
 		ofs: false
 	},
@@ -106,7 +107,7 @@ var edit_attrib_grid= [
 		mods: false,
 		ofs: true
 	},
-	{	name: 'Calls script',
+	{	name: 'Handled by script',
 		id: 'call',
 		mods: true,
 		ofs: true
@@ -119,7 +120,9 @@ var edit_attrib_grid= [
 	{	name: 'Requires Lock',
 		id: 'lock',
 		mods: [
-			['Container', 'container'],
+			['Container Template', 'ctemplate'],
+			['Item Template', 'itemplate'],
+			['Item Instance', 'iinstance'],
 			['Spell', 'spell'],
 			['Level', 'level'],
 			['XP', 'xp'],

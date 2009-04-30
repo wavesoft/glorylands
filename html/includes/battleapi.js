@@ -10,8 +10,8 @@ var fight_fx=[];
 
 function battle_fx_preload() {	
 	var images = [
-		'images/fx/crystal-01.png', 'images/fx/fire-01.png', 'images/fx/lightning-01.png',
-		'images/fx/shadow.png', 'images/fx/snap-01.png', 'images/fx/water-01.png'
+		'images/UI/fx/crystal-01.png', 'images/UI/fx/fire-01.png', 'images/UI/fx/lightning-01.png',
+		'images/UI/fx/shadow.png', 'images/UI/fx/snap-01.png', 'images/UI/fx/water-01.png'
 	];
 	
 	// Precache all map images

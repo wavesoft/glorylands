@@ -177,6 +177,8 @@ function gl_do($new_operation, $new_parameters=false) {
 	if (defined("IN_PROCESS")) {
 		// We are inside a process system (ex. called by an action script)
 		// [Direct contact with the browser]
+		
+		// Change our current operation
 		array_push($operationstack, array('op' => $new_operation, 'parm' => $new_parameters));
 	} else {
 		// We are outside the process system (ex. called by message hook)
