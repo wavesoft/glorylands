@@ -57,7 +57,7 @@ $ans=$sql->query("SELECT * FROM `db_version`");
 if (!$ans) {
 	$prev_rev=110;
 } else {
-	$verinfo = $sql->fetch_array($ans,MYSQL_NUM);
+	$verinfo = $sql->fetch_array_fromresults($ans,MYSQL_NUM);
 	$prev_rev = $verinfo[0];
 }
 
