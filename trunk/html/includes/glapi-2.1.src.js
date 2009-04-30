@@ -674,6 +674,34 @@ function handleMessages(msg) {
 
 			// ## Alter a map object ##
 			} else if (mType=='ALTER') {
+				
+				if ($defined(msg.message[i][1].guid)) {
+					var uid = map_objectid_fromguid(msg.message[i][1].guid);
+					if (uid == 0) continue;
+					map_updateobject(uid, msg.message[i][1]);
+				}
+				
+			// ## Animate a map object ##
+			} else if (mType=='ANIMATE') {
+
+				var uid = map_objectid_fromguid(msg.message[i][1]);
+				if (uid == 0) continue;
+				var animation = [];
+				var frame_rate = 25;
+				var loops = 1;
+				if ($defined(msg.message[i][2])) animation=msg.message[i][2];
+				if ($defined(msg.message[i][3])) frame_rate=msg.message[i][3];
+				if ($defined(msg.message[i][4])) loops=msg.message[i][4];
+				
+				var id=map_object_index.indexOf(uid);
+				var object = map_objects[id].object;
+				if (!object) continue;
+				
+				if (animation == []) {
+					fx_sprite_stop(object);
+				} else {
+					fx_sprite_animate(object, frame_rate, animation, loops);
+				}
 
 			// ## Show action grid ##
 			} else if (mType=='ACTIONGRID') {
@@ -955,7 +983,18 @@ function fx_sprite_frame(id) {
 	// Calcuate frame
 	var frame = info.frame+1;
 	var max_frames = info.animation.length;
-	if (frame >= max_frames) frame=0;
+	if (frame >= max_frames) {
+		frame=0;
+		if (info.callback) info.callback(info.object);
+		if (!info.loops) {			
+		} else {
+			info.loops--;
+			if (info.loops == 0) {
+				fx_sprite_stop(info.object);
+				return;
+			}
+		}
+	}
 	info.frame=frame;
 	
 	var current_frame = info.animation[frame];
@@ -1005,7 +1044,9 @@ function fx_sprite_prepare(object, x_sprites, y_sprites) {
 		'sprite_h': Math.round(dim.y/y_sprites),
 		'animation': [],
 		'frame': 0,
-		'timer': 0
+		'timer': 0,
+		'loops': 0,
+		'callback': null
 	};
 	div_mask.setStyles({
 		'width': info.sprite_w,
@@ -1086,12 +1127,14 @@ function fx_sprite_get_id(object) {
   * This function starts the sprite animation
   *
   */
-function fx_sprite_animate(object,frame_rate,animation) {
+function fx_sprite_animate(object,frame_rate,animation,loops,end_callback) {
 	var i = fx_sprite_get_id(object);
 	if (i<0) return false;
 	var info = fx_sprites_animating[i];
 	info.animation = animation;
 	info.frame = 0;
+	info.loops = loops;
+	info.callback = end_callback;
 	if (info.timer!=0) clearInterval(info.timer);
 	info.timer = setInterval(fx_sprite_frame, (1000/frame_rate), i);
 	return true;
@@ -1135,7 +1178,7 @@ var map_back = [];				// Background objects
 var map_curtain_status = false;	// The last status of the map curtain
 var map_curtain_fx = null;		// This holds the last instance of the curtain Fx class - Used to stop animation
 var map_scroll_pos = {x:0,y:0};	// The current scroll position
-var map_last_id = 0;			// Used to provide unique IDs while storing objects
+var map_last_id = 1;			// Used to provide unique IDs while storing objects
 var map_viewpoint = {x:0,y:0};	// The center of the current view
 var map_center_fx = null;		// This holds the last instance of the center Fx class - Used to stop animation
 var map_current = '';			// The currently active MAP
@@ -1265,7 +1308,7 @@ function map_reset() {
 	map_info = [];
 	map_back = [];
 	map_object_index = [];
-	map_last_id = 0;
+	map_last_id = 1;
 	map_viewpoint = {x:0,y:0};
 }
 
@@ -1866,24 +1909,18 @@ function map_removeobject(uid, nofx) {
   */
 var map_fx_pathmove_stack = [];
 function map_fx_pathmove(object, path) {
-	$trace('Moving path');
 	// This function is used to prohibit multiple requests for
 	// animation on the same object.
 	// This function just chains the concurrent requests and handles
 	// it, only when the previouse ones are completed
-	var i_object = object;
-	var i_path = path;
-	if ($defined(map_fx_pathmove_stack[i_object.info.id])) {
+	if ($defined(map_fx_pathmove_stack[object.info.id])) {
 		//$debug('[path] ('+object.info.id+') Appending to stack...');
-		map_fx_pathmove_stack[i_object.info.id].push(
-			function() {map_fx_pathmove_thread(i_object,i_path); }
-		);
+		map_fx_pathmove_stack[object.info.id].push([object,path]);
 	} else {
 		//$debug('[path] ('+object.info.id+') Creating stack...');
-		map_fx_pathmove_stack[i_object.info.id] = [
-			function() {map_fx_pathmove_thread(i_object,i_path); }
-		];
-		map_fx_pathmove_next(i_object.info.id);
+		map_fx_pathmove_stack[object.info.id] = [];
+		map_fx_pathmove_stack[object.info.id].push([object,path]);
+		map_fx_pathmove_next(object.info.id);
 	}
 }
 function map_fx_pathmove_next(id) {
@@ -1896,7 +1933,8 @@ function map_fx_pathmove_next(id) {
 		} else {
 			//$debug('[path] ('+id+') We have '+map_fx_pathmove_stack[id].length+' to do');
 			var f = map_fx_pathmove_stack[id].shift();
-			f();
+			//$debug('[path] ('+id+') Running '+f[0]+' with '+$trace(f[1]));
+			map_fx_pathmove_thread(f[0], f[1]);
 		}
 	}
 }
@@ -1968,6 +2006,8 @@ function map_fx_pathmove_thread(object_info, path) {
 	
 	var px_transition=new Fx.Styles(object, {duration: enter_interval, unit: 'px', transition: Fx.Transitions.linear});
 	var walk_step = function() {
+		//$debug('[path] ('+id+') Thread');
+				
 		// Check if we have more steps to go
 		if (!$defined(path[i])) {
 			fx_sprite_stop(object,last_stand_dir);	
@@ -1977,23 +2017,29 @@ function map_fx_pathmove_thread(object_info, path) {
 		var j=i;
 		i++;
 
+		// Calculate previous and next position
+		if (j<1) {
+			var info = $(object).getStyles('left','top');
+			var from_x = Math.round(info.left.toInt()/32);
+			var from_y = Math.round(info.top.toInt()/32);
+		} else {
+			var from_x = path[j-1].x;
+			var from_y = path[j-1].y;
+		}
+		var to_x = path[j].x;
+		var to_y = path[j].y;						
+		var dir_x = to_x - from_x;
+		var dir_y = to_y - from_y;
+
+		//$debug('Waking to '+to_x+','+to_y+' from '+from_x+','+from_y);
+		if ((dir_x == 0) && (dir_y == 0)) {
+			walk_step();
+			return;
+		}
+
 		// If this object is directional, calculate it's direction
 		// and update the image
 		if (directional) {
-			
-			// Calculate previous and next position
-			if (j<1) {
-				var info = $(object).getStyles('left','top');
-				var from_x = Math.round(info.left.toInt()/32);
-				var from_y = Math.round(info.top.toInt()/32);
-			} else {
-				var from_x = path[j-1].x;
-				var from_y = path[j-1].y;
-			}
-			var to_x = path[j].x;
-			var to_y = path[j].y;						
-			var dir_x = to_x - from_x;
-			var dir_y = to_y - from_y;
 			
 			var dir = false; // Defaults
 			last_stand_dir = [0,0];
@@ -2087,6 +2133,22 @@ function map_fx_pathmove_thread(object_info, path) {
 	
 	// Start walking
 	walk_step();
+}
+
+/**
+  * Find an object
+  *
+  * This function locates the object UID based on the
+  * object's GUID
+  *
+  */
+function map_objectid_fromguid(guid) {
+	for (var i=0; i<map_objects.length; i++) {
+		if (map_objects[i].info.guid == guid) {
+			return map_object_index[i];
+		}
+	}
+	return 0;
 }
 
 /**
