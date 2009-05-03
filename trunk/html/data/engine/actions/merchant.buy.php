@@ -43,8 +43,6 @@ if (isset($_REQUEST['buy'])) {
 	}
 }
 
-debug_message("Text sent: $text");
-
 $item_guids = gl_get_guid_children($_REQUEST['guid'],'item',STACK_ALWAYS);
 $objects = array();
 

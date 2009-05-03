@@ -32,17 +32,9 @@ if ($act_valid) {
 	$smarty->compile_check = false;
 	$smarty->debugging = false;
 	$smarty->config_load($_CONFIG[GAME][LANG].'.dat');
-	
-	// Translate variables
-	$tpl_output = json_encode($act_result);	
-	$tpl_output = preg_replace_callback('/{#([^#]*)#}/i', 
-		create_function(
-			'$matches',
-			'global $smarty; return $smarty->get_config_vars($matches[1]);'
-		), 
-		$tpl_output);
-		
+
 	// Send results
+	$tpl_output = gl_translate(json_encode($act_result));
 	echo $tpl_output;
 	
 } else {

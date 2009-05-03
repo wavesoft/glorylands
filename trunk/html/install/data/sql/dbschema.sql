@@ -1,18 +1,10 @@
-﻿/*
+/*
 Complete GloryLands Database
-Revision: 115
+Revision: 149
+Date: 3/5/2009 3:12:54 am
 */
 
 SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for db_version
--- ----------------------------
-CREATE TABLE `db_version` (
-  `revision` int(11) default NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-INSERT INTO `db_version` VALUES (115);
-
 -- ----------------------------
 -- Table structure for char_instance
 -- ----------------------------
@@ -42,9 +34,9 @@ CREATE TABLE `char_instance` (
   `WIS` int(11) default NULL,
   `CHA` int(11) default NULL,
   `contributor` int(11) NOT NULL default '0',
+  `speed` int(11) NOT NULL default '5',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
-
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for char_international
@@ -68,7 +60,7 @@ CREATE TABLE `char_template` (
   `description` varchar(250) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for char_vardesc
@@ -83,7 +75,7 @@ CREATE TABLE `char_vardesc` (
   `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_maps
@@ -98,7 +90,7 @@ CREATE TABLE `data_maps` (
   `z-base` int(11) default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_maps_teleports
@@ -114,7 +106,7 @@ CREATE TABLE `data_maps_teleports` (
   `message` varchar(120) collate utf8_unicode_ci default NULL,
   `locks` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_mix_defaults
@@ -130,7 +122,7 @@ CREATE TABLE `data_mix_defaults` (
   `attennuation` float(11,2) default '-1.00',
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_mix_iconrules
@@ -144,7 +136,7 @@ CREATE TABLE `data_mix_iconrules` (
   `check` enum('EXISTS','GREATER','LESS','EQUAL') collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_mix_icons
@@ -155,7 +147,7 @@ CREATE TABLE `data_mix_icons` (
   `suggestname` varchar(120) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_mix_mixgroups
@@ -176,7 +168,7 @@ CREATE TABLE `data_mix_mixgroups` (
   `attennuate_max` int(11) default '100',
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_regquiz_answers
@@ -187,7 +179,7 @@ CREATE TABLE `data_regquiz_answers` (
   `answer` varchar(250) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_regquiz_data
@@ -201,7 +193,7 @@ CREATE TABLE `data_regquiz_data` (
   `i_parent` int(11) default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_regquiz_questions
@@ -212,7 +204,7 @@ CREATE TABLE `data_regquiz_questions` (
   `title` varchar(250) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_religions
@@ -228,7 +220,7 @@ CREATE TABLE `data_religions` (
   `image` varchar(120) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_spawn
@@ -244,7 +236,7 @@ CREATE TABLE `data_spawn` (
   `variables` text collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_spawn_times
@@ -254,7 +246,7 @@ CREATE TABLE `data_spawn_times` (
   `spawn_id` int(11) default NULL,
   `last_spawn` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for data_tips
@@ -268,7 +260,14 @@ CREATE TABLE `data_tips` (
   `tip` longtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- ----------------------------
+-- Table structure for db_version
+-- ----------------------------
+CREATE TABLE `db_version` (
+  `revision` int(11) default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for gameobject_instance
@@ -290,7 +289,7 @@ CREATE TABLE `gameobject_instance` (
   `mixhash` varchar(40) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for gameobject_international
@@ -315,7 +314,7 @@ CREATE TABLE `gameobject_template` (
   `flags` set('OPENABLE','TRIGGER') collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for gameobject_vardesc
@@ -330,7 +329,7 @@ CREATE TABLE `gameobject_vardesc` (
   `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for interface_module_assign
@@ -342,7 +341,7 @@ CREATE TABLE `interface_module_assign` (
   `position` int(11) default NULL,
   `weight` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for interface_module_resources
@@ -353,7 +352,7 @@ CREATE TABLE `interface_module_resources` (
   `mode` enum('CSS','JS','HEADER','FOOTER') collate utf8_unicode_ci default NULL,
   `filename` varchar(120) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for interface_modules
@@ -363,8 +362,9 @@ CREATE TABLE `interface_modules` (
   `name` varchar(30) collate utf8_unicode_ci default NULL,
   `description` text collate utf8_unicode_ci,
   `filename` varchar(120) collate utf8_unicode_ci default NULL,
+  `status` enum('ENABLED','DISABLED') character set latin1 collate latin1_general_ci default 'ENABLED',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for interface_openwin
@@ -375,7 +375,7 @@ CREATE TABLE `interface_openwin` (
   `player` int(11) default '0',
   `updateurl` varchar(250) collate utf8_unicode_ci default NULL COMMENT 'The reply message to update the content',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Contains the player''s open pop-up windows.Used for DynUpdate';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Contains the player''s open pop-up windows.Used for DynUpdate';
 
 -- ----------------------------
 -- Table structure for item_instance
@@ -393,7 +393,7 @@ CREATE TABLE `item_instance` (
   `mixhash` varchar(40) collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Contains all the initialization instances that must be done';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Contains all the initialization instances that must be done';
 
 -- ----------------------------
 -- Table structure for item_international
@@ -424,7 +424,7 @@ CREATE TABLE `item_template` (
   `sell_price` int(11) NOT NULL default '0',
   `buy_price` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for item_vardesc
@@ -439,7 +439,7 @@ CREATE TABLE `item_vardesc` (
   `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for locks_global
@@ -451,7 +451,7 @@ CREATE TABLE `locks_global` (
   `timeout` int(11) default NULL,
   `description` varchar(250) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for locks_private
@@ -462,7 +462,7 @@ CREATE TABLE `locks_private` (
   `timeout` int(11) default NULL,
   `description` varchar(250) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for mod_chat_channel_registrations
@@ -472,7 +472,7 @@ CREATE TABLE `mod_chat_channel_registrations` (
   `user` int(11) default NULL,
   `channel` varchar(30) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for mod_quickbar_slots
@@ -483,7 +483,7 @@ CREATE TABLE `mod_quickbar_slots` (
   `slot` int(11) default NULL,
   `guid` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for npc_instance
@@ -502,7 +502,7 @@ CREATE TABLE `npc_instance` (
   `state` enum('NORMAL','GHOST','INVISIBLE') collate utf8_unicode_ci default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for npc_international
@@ -529,7 +529,7 @@ CREATE TABLE `npc_template` (
   `description` text collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for npc_vardesc
@@ -544,7 +544,7 @@ CREATE TABLE `npc_vardesc` (
   `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for system_dictionaries
@@ -557,7 +557,7 @@ CREATE TABLE `system_dictionaries` (
   `mode` enum('FIXED','DYNAMIC') collate utf8_unicode_ci default NULL,
   `package` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for system_files
@@ -570,20 +570,18 @@ CREATE TABLE `system_files` (
   `version` int(11) default NULL,
   `hash` varchar(32) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for system_hooks
 -- ----------------------------
 CREATE TABLE `system_hooks` (
   `index` int(11) NOT NULL auto_increment,
-  `hook` varchar(128) collate utf8_unicode_ci default NULL,
-  `filename` varchar(128) collate utf8_unicode_ci default NULL,
-  `function` varchar(128) collate utf8_unicode_ci default NULL,
+  `filename` varchar(250) collate utf8_unicode_ci default NULL,
   `active` enum('YES','NO') collate utf8_unicode_ci default 'YES',
-  `package` int(11) default '0',
+  `package` int(11) default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for system_messages
@@ -596,7 +594,7 @@ CREATE TABLE `system_messages` (
   `data` text collate utf8_unicode_ci,
   `onceid` varchar(20) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for system_packages
@@ -615,7 +613,7 @@ CREATE TABLE `system_packages` (
   `require` mediumtext collate utf8_unicode_ci,
   `status` enum('ACTIVE','INACTIVE','INCOMPLETED','BUGGY','UNINSTALLINIG') collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for system_packages_install
@@ -627,7 +625,7 @@ CREATE TABLE `system_packages_install` (
   `use` enum('INSTALL','ENABLE') collate utf8_unicode_ci default 'INSTALL',
   `data` varchar(120) collate utf8_unicode_ci default NULL,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for system_packages_uninstall
@@ -639,7 +637,7 @@ CREATE TABLE `system_packages_uninstall` (
   `use` enum('UNINSTALL','DISABLE') collate utf8_unicode_ci default 'UNINSTALL',
   `data` text collate utf8_unicode_ci,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for system_scheduler
@@ -652,7 +650,7 @@ CREATE TABLE `system_scheduler` (
   `description` varchar(250) collate utf8_unicode_ci default NULL,
   `data` text collate utf8_unicode_ci,
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for unit_instance
@@ -668,7 +666,7 @@ CREATE TABLE `unit_instance` (
   `level` int(11) default NULL,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for unit_international
@@ -692,7 +690,7 @@ CREATE TABLE `unit_template` (
   `description` mediumtext collate utf8_unicode_ci COMMENT 'Unit Description',
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`template`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for unit_vardesc
@@ -707,7 +705,7 @@ CREATE TABLE `unit_vardesc` (
   `translation` mediumtext collate utf8_unicode_ci,
   `contributor` int(11) NOT NULL default '0',
   PRIMARY KEY  (`variable`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table structure for users_accounts
@@ -723,13 +721,13 @@ CREATE TABLE `users_accounts` (
   `online` tinyint(1) default NULL,
   `level` enum('BANNED','USER','EDITOR','MODERATOR','ADMIN') collate utf8_unicode_ci default 'USER',
   PRIMARY KEY  (`index`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `char_template` VALUES ('1', 'map=1&x=25&y=25&visible=1&state=NORMAL&model=char-pillard.png&INT=10&STR=50&DEX=10&CON=3&WIS=3&CHA=20&money=2000', 'Human', 'portraits/clans_alchemist.gif', null, 'This is a human player. It is said that human players tend to have better abilities on trade operations that any other race.', '0');
-INSERT INTO `char_template` VALUES ('2', 'map=1&x=25&y=25&visible=1&state=NORMAL&model=char-cape-grise.png&INT=40&STR=10&DEX=10&CON=50&WIS=50&CHA=10&money=1000', 'Elf', 'portraits/neutral_elfranger.gif', null, 'This is an elf player.', '0');
+INSERT INTO `char_template` VALUES ('1', 'map=1&x=25&y=25&visible=1&state=NORMAL&model=sprites_map_claudius.png&INT=10&STR=50&DEX=10&CON=3&WIS=3&CHA=20&money=2000', 'Human', 'portraits/clans_alchemist.gif', null, 'This is a human player. It is said that human players tend to have better abilities on trade operations that any other race.', '0');
+INSERT INTO `char_template` VALUES ('2', 'map=1&x=25&y=25&visible=1&state=NORMAL&model=sprites_map_laila.png&INT=40&STR=10&DEX=10&CON=50&WIS=50&CHA=10&money=1000', 'Elf', 'portraits/neutral_elfranger.gif', null, 'This is an elf player.', '0');
 INSERT INTO `char_vardesc` VALUES ('race', 'Race', '2', '0', '(Unknown)', 'RAW', null, '0');
 INSERT INTO `char_vardesc` VALUES ('money', 'Money', '2', '1', '42', 'MONEY', null, '0');
 INSERT INTO `char_vardesc` VALUES ('itelligence', 'Itelligence', '2', '1', '10', 'SCRIPT', 'if ($var > 90) {\r\n	$color=\'red\';\r\n} elseif ($var > 50) {\r\n	$color=\'blue\';\r\n} elseif ($var > 30) {\r\n	$color=\'green\';\r\n} else {\r\n	$color=\'grey\';\r\n}\r\nreturn \"<font color=\\\"$color\\\">$var %</font>\";', '0');
@@ -761,6 +759,7 @@ INSERT INTO `data_spawn_times` VALUES ('2', '2', '0');
 INSERT INTO `data_tips` VALUES ('1', 'interface.main', '', 'NORMAL', 'Game interface', '<div style=\"padding: 5px;\">\r\n<b>Welcome to GloryLands!</b><br />\r\n<p>This is the main game interface. From here you can do all the game actions.</p>\r\n<p>On your left, you can see the map. Moving your cursor to the middle-bottom of your character shows a highlighted green area. This area shows the maximum range you can move. You can click on a green rectange to move to the specified position.</p>\r\n<p>On your right, you can see the status bar. The status bar contains your character status, the main menu buttons and the chat window</p>\r\n<p>On the bottom, you can see the quick access bar. You can drag items here from your bag, spellbooks or information windows, and use them with a single click</p>\r\n</div>', '2');
 INSERT INTO `data_tips` VALUES ('2', 'map.grid.get', '%map% ! 1', 'NORMAL', 'Discovery', '<p>You have just discovered a new area!<br />Always have your eyes open for places that you can enter!</p>', '3');
 INSERT INTO `data_tips` VALUES ('3', 'interface.dropdown', '', 'NORMAL', 'Dropdown Menu', '<p><strong>Dropdown Menu</strong></p>\r\n<p>You can perform various actions by right-clicking on a map object:</p>\r\n<ul>\r\n<li><img style=\"vertical-align: middle;\" src=\"images/UI/piemenu/help.gif\" alt=\"\" align=\"absmiddle\" />Clicking on this icon will show more details about the object</li>\r\n<li><img style=\"vertical-align: middle;\" src=\"images/UI/piemenu/take.gif\" alt=\"\" align=\"absmiddle\" />Pick up this item (if able)</li>\r\n<li><img style=\"vertical-align: middle;\" src=\"images/UI/piemenu/find.gif\" alt=\"\" align=\"absmiddle\" />Search this item</li>\r\n</ul>', '1');
+INSERT INTO `db_version` VALUES ('149');
 INSERT INTO `gameobject_template` VALUES ('1', 'z=0&visible=1&model=&level=1&displayname=Object', 'Testing Object', '(Developing Usage)', 'inventory/box128.png', null, null, '0');
 INSERT INTO `gameobject_vardesc` VALUES ('mixinfo', 'Mixing', '0', '0', null, 'SCRIPT', 'return \"<font size=\\\"-1\\\">\".gl_mix_visualize($var,true, true).\"</font>\";', '0');
 INSERT INTO `interface_module_assign` VALUES ('1', 'interface.main', 'CHATWIN', '2', '10');
@@ -774,10 +773,12 @@ INSERT INTO `interface_module_resources` VALUES ('4', 'SIDEBAR', 'CSS', '{DATA.M
 INSERT INTO `interface_module_resources` VALUES ('5', 'QUICKBAR', 'CSS', '{DATA.MODULE}/mod_quickbar/quickbar.css');
 INSERT INTO `interface_module_resources` VALUES ('6', 'QUICKBAR', 'JS', '{DATA.MODULE}/mod_quickbar/quickbar.js');
 INSERT INTO `interface_module_resources` VALUES ('7', 'AUDIO', 'JS', '{DATA.MODULE}/mod_audio/soundapi.js');
-INSERT INTO `interface_modules` VALUES ('CHATWIN', 'Chat Window', 'Cross-player chat window and system message receiver for any User Interface', 'chat');
-INSERT INTO `interface_modules` VALUES ('SIDEBAR', 'Side Bar', 'A sidebar that displays the user\'s current statistics', 'sidebar');
-INSERT INTO `interface_modules` VALUES ('QUICKBAR', 'Qucik Access Bar', 'A bar with 12 buttons with droppable/customizable ability that allows user to hold there items and actions', 'quickbar');
-INSERT INTO `interface_modules` VALUES ('AUDIO', 'Audio Provider', 'This module provides the sound to the game', 'audio');
+INSERT INTO `interface_modules` VALUES ('CHATWIN', 'Chat Window', 'Cross-player chat window and system message receiver for any User Interface', 'chat', 'ENABLED');
+INSERT INTO `interface_modules` VALUES ('SIDEBAR', 'Side Bar', 'A sidebar that displays the user\'s current statistics', 'sidebar', 'ENABLED');
+INSERT INTO `interface_modules` VALUES ('QUICKBAR', 'Qucik Access Bar', 'A bar with 12 buttons with droppable/customizable ability that allows user to hold there items and actions', 'quickbar', 'ENABLED');
+INSERT INTO `interface_modules` VALUES ('AUDIO', 'Audio Provider', 'This module provides the sound to the game', 'audio', 'ENABLED');
+INSERT INTO `item_international` VALUES ('1', 'el', 'a:2:{s:4:\"name\";s:67:\"Ελαφρύ Σπαθί\";s:11:\"description\";s:280:\"Ένα ελαφρύ σπαθί το οποίο συνήθως έχει η φυλή των Νάνων\";}');
+INSERT INTO `item_international` VALUES ('2', 'el', 'a:2:{s:4:\"name\";s:67:\"Ξύλινο Σπαθί\";s:11:\"description\";s:264:\"Ενα ξύλινο σπαθί που χρησιμοποιείται για εξάσκιση\";}');
 INSERT INTO `item_template` VALUES ('1', null, 'Light Sword', 'A quite light sword, mostly used by dwarfs', 'WEAPON', 'ONEHAND-SWORD', 'inventory/Kunai-128x128.png', '1', '2', '1', '0', '1', '5', '10');
 INSERT INTO `item_template` VALUES ('2', null, 'Woodsman Sword', 'A Wooden excercising sword', 'WEAPON', 'TWOHAND-SWORD', 'inventory/Kunai-128x128.png', '2', '20', '0', '0', '1', '10', '20');
 INSERT INTO `item_template` VALUES ('3', 'slots=10', 'Woolen Bag', 'A bag made of wool. This bag can carry up to 10 items', 'CONTAINER', 'GENERIC', 'inventory/box128.png', '1', '5', '0', '0', '1', '400', '500');
@@ -806,25 +807,16 @@ INSERT INTO `system_dictionaries` VALUES ('3', 'GUID', 'ITEM', '2', 'FIXED', '0'
 INSERT INTO `system_dictionaries` VALUES ('4', 'GUID', 'NPC', '3', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('5', 'GUID', 'GAMEOBJECT', '4', 'FIXED', '0');
 INSERT INTO `system_dictionaries` VALUES ('6', 'GUID', 'SPELL', '5', 'FIXED', '0');
-INSERT INTO `system_hooks` VALUES ('1', 'map.move', 'hook-portal.php', 'portal_map_move', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('2', 'chat.command', 'hook-chatcommands.php', 'chat_admin', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('3', 'map.updategrid', 'hook-chatcommands.php', 'chat_notify_zidchange', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('4', 'interface.dropdown', 'hook-admin.php', 'admin_hook_dropdown', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('5', 'grid.alter', 'hook-base.php', 'hb_dynamic_grid_alter', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('6', 'system.init_operation', 'hook-distance.php', 'opinitTranslateID', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('7', 'system.init_operation', 'hook-chatcommands.php', 'chat_module_initialize', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('8', 'system.clientpoll', 'hook-sidebar.php', 'sidebar_data_feed', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('9', 'system.schedule', 'hook-itemuse.php', 'itemuse_schedule_hook', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('10', 'system.guid.update_end', 'hook-base.php', 'hb_update_user_session', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('11', 'map.render', 'hook-distance.php', 'renderrange', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('12', 'system.init_operation', 'hook-sidebar.php', 'sidebar_data_initialize', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('13', 'interface.dropdown', 'hook-itemuse.php', 'itemuse_dropdown', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('14', 'map.render', 'hook-itemuse.php', 'itemuse_quickbar_init', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('15', 'system.guid.deleted', 'hook-itemuse.php', 'itemuse_guid_deleted', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('16', 'item.pickup', 'hook-pickup.php', 'pickuphook_check_compatibility', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('17', 'system.guid.deleted', 'hook-base.php', 'hb_guid_deleted', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('18', 'system.complete_operation', 'hook-sidebar.php', 'sidebar_data_feed', 'YES', '0');
-INSERT INTO `system_hooks` VALUES ('19', 'system.complete_operation', 'hook-tips.php', 'tipshook_complete_operation', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('1', 'hook-admin.php', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('2', 'hook-base.php', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('3', 'hook-chatcommands.php', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('4', 'hook-distance.php', 'NO', '0');
+INSERT INTO `system_hooks` VALUES ('5', 'hook-itemuse.php', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('6', 'hook-pickup.php', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('7', 'hook-portal.php', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('8', 'hook-sidebar.php', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('9', 'hook-tips.php', 'YES', '0');
+INSERT INTO `system_hooks` VALUES ('10', 'hook-clicktogo.php', 'YES', '0');
 INSERT INTO `unit_template` VALUES ('1', 'owner=0&religion=1&citizens=20&soldiers=0&x=12', 'Luskan Village', null, 'elements/mini/city.gif', 'Luskan village is a small, quite village oriented on the north side of the dark cliff.', '0');
 INSERT INTO `unit_template` VALUES ('2', 'owner=1292&religion=1&citizens=20&soldiers=0', 'Mormon City', 'custom', 'elements/mini/capital.gif', 'Mormon is the capital of the strongholme kingdom. The king Melaton VI currently rules this area...', '0');
 INSERT INTO `unit_vardesc` VALUES ('owner', 'Unit owner', '1', '0', '0', 'GUID', null, '0');
@@ -833,5 +825,3 @@ INSERT INTO `unit_vardesc` VALUES ('citizens', 'Number of citizens', '1', '0', '
 INSERT INTO `unit_vardesc` VALUES ('soldiers', 'Number of soldiers', '1', '0', '0', 'RAW', null, '0');
 INSERT INTO `users_accounts` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '', null, null, null, null, 'ADMIN');
 INSERT INTO `users_accounts` VALUES ('2', 'player', '912af0dff974604f1321254ca8ff38b6', '', null, null, null, null, 'USER');
-INSERT INTO `item_international` VALUES ('1', 'el', 'a:2:{s:4:\"name\";s:67:\"Ελαφρύ Σπαθί\";s:11:\"description\";s:280:\"Ένα ελαφρύ σπαθί το οποίο συνήθως έχει η φυλή των Νάνων\";}');
-INSERT INTO `item_international` VALUES ('2', 'el', 'a:2:{s:4:\"name\";s:67:\"Ξύλινο Σπαθί\";s:11:\"description\";s:264:\"Ενα ξύλινο σπαθί που χρησιμοποιείται για εξάσκιση\";}');

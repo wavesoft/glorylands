@@ -18,6 +18,9 @@ if (!file_exists(DIROF('DATA.INTERFACE')."{$act_interface}.tpl")) {
 	return false;
 }
 
+// Set the UTF-8 header
+header("Content-Type: text/html; charset=UTF-8");
+
 // Load and init Smarty Engine
 $smarty = new Smarty;
 $smarty->template_dir = DIROF('DATA.INTERFACE',true);
@@ -53,11 +56,12 @@ $ans=$sql->query("SELECT
 				`interface_modules`
 				Inner Join `interface_module_assign` ON `interface_module_assign`.`module` = `interface_modules`.`index`
 				WHERE
-				`interface_module_assign`.`action` =  '{$operation}'
+				`interface_module_assign`.`action` =  '{$operation}' AND
+				`interface_modules`.`status` = 'ENABLED'
 				ORDER BY
 				`interface_module_assign`.`weight` ASC
 				");
-				
+
 if ($ans && !$sql->emptyResults) {
 	$qres='';
 	while ($mod = $sql->fetch_array_fromresults($ans, MYSQL_ASSOC)) {

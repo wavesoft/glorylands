@@ -33,6 +33,6 @@ gl_user_action();
 callEvent('system.clientpoll');
 
 // Send messages
-echo json_encode(array('messages'=>jsonPopMessages(MSG_INTERFACE)));
+echo json_encode(array('messages'=>gl_translate(jsonPopMessages(MSG_INTERFACE))));
 
 ?>

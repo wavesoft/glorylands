@@ -718,6 +718,7 @@ function gl_get_guid_vars($guid) {
 	$template_vars = $row;
 
 	// Convert template variables with the appropriate translation
+	$start = microtime(true);
 	$ans = $sql->query("SELECT * FROM `{$parts['group']}_international` WHERE `template` = {$template} AND `lang` = '".$_CONFIG[GAME][LANG]."'");
 	if (!$ans) { debug_error($sql->getError()); return false; }
 	if (!$sql->emptyResults) {
@@ -729,6 +730,8 @@ function gl_get_guid_vars($guid) {
 			if (isset($template_vars[$var])) $template_vars[$var] = $value;
 		}
 	}
+	global $translate_time;
+	$translate_time += microtime(true)-$start;
 	
 	// Return result
 	return array_merge($template_vars, $instance_vars, $data_vars);

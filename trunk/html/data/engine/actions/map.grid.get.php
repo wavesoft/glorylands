@@ -200,13 +200,14 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		$myobj['player'] = true;
 		$myobj['speed'] = $row['speed'];
 		$myobj = array_merge($myobj, array(
-			/*
-			'sprite' => array(4,4),
-			'sprite_direction_grid' => array('d'=>0,'l'=>1,'r'=>2,'u'=>3),
-			'sprite_direction_ani' => array('walk'=>array(0,1,2,3),'stand'=>0),
-			'image' => 'elements/sprites/magus.gif'
-			*/
+			'sprite' => array(18,4),
+			'sprite_direction_grid' => array('d'=>0,'l'=>2,'r'=>3,'u'=>1),
+			'sprite_direction_ani' => array('walk'=>array(2,3,4,5),'stay'=>0),
+			'image' => 'elements/sprites/claudius.png'
 		));
+		if ($row['speed'] > 6) {
+			$myobj['sprite_direction_ani'] = array('walk'=>array(7,8,9,10,11),'stay'=>0);
+		}
 		callEvent('map.render.player', $myobj, $row['guid'], $row);
 	} else {
 		callEvent('map.render.char', $myobj, $row['guid'], $row);

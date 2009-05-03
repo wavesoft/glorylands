@@ -1,0 +1,31 @@
+GAME_UNDER_CONSTRUCTION = "Ce jeu est en développement et le serveur n'est pas ouvert au public."
+SERVER_STATUS = "Statuts du serveur"
+LOGIN = "Connexion"
+WELCOME = "Bienvenue"
+USERNAME = "Utilisateur"
+PASSWORD = "Mot de passe"
+LOGIN_OK = "Vous ętes connecté au jeu. Merci de selectionner un de vos personnages ci-dessous pour jouer."
+PLAYER_INFO = "Infos joueur"
+LOADING_GRAPHICS = "Chargement du graphisme..."
+
+TOO_FAR_AWAY = "Vous ętes trop loin. Rapprochez-vous !"
+
+STATISTICS = "Statistiques"
+
+COINS = "Pičces"
+
+SHOP_BUY_WELCOME = "Bienvenue dans mon échoppe, voyageur ! Que désirez-vous acheter ?"
+SHOP_BUY_THANKS_1 = "Voici votre"
+SHOP_BUY_THANKS_2 = ". Merci."
+SHOP_BUY_THANKS_PL_1 = "Voici vos"
+SHOP_BUY_THANKS_PL_2 = ". Merci."
+SHOP_BUY_EXPENSIVE = "Oups, il semblerait que cet objet est trop cher pour vous."
+SHOP_BUY_EXPENSIVE_PL = "Oups, il semblerait que vous n'avez pas assez d'argent pour tout cela."
+SHOP_BUY_NOTHING = "Désolé, je n'ai rien que vous puissiez acheter."
+
+SHOP_SELL_WELCOME = "Bienvenue dans mon échoppe, voyageur ! Que désirez-vous me vendre ?"
+SHOP_SELL_THANKS_1 = "Merci pour votre"
+SHOP_SELL_THANKS_2 = ". Voici vos "
+SHOP_SELL_THANKS_PL_1 = "Merci pour vos"
+SHOP_SELL_THANKS_PL_2 = ". Voici vos "
+SHOP_SELL_NOTHING = "Vous n'avez rien que vous puissiez vendre."
