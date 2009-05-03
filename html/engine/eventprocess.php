@@ -190,6 +190,9 @@ while ($operation != $last_operation) {
 			include DIROF('OUTPUT.PROCESSOR')."out.".$useBuf.".php";
 		}
 		
+		// Translate backbone variables
+		#gl_translate($act_result);
+		
 		### Display time resuts
 		$time_end = microtime(true);
 		$time = $time_end - $script_time;
@@ -205,9 +208,10 @@ while ($operation != $last_operation) {
 			'Parsed Files' => sizeof(get_included_files()),
 			'Memory Usage' => number_format(memory_get_usage()/1024,2).' Kb',
 			'Peak Memory Usage' => number_format(memory_get_peak_usage()/1024,2).' Kb',
-			'Script Time' => number_format($time*1000, 2).' ms',
 			'MySQL Queries' => $sql->totQueries,
+			'Execution Time' => number_format($time*1000, 2).' ms',
 			'MySQL Time' => number_format($sql->totTime*1000, 2).' ms',
+			'Translate Time' => number_format($translate_time*1000, 2).' ms',
 		);
 		if (defined('GLOB_DEBUG')) {
 			$_SESSION['stats']['MySQL Queries'] = '<pre>'.print_r($sql->queryList,true).'</pre>';

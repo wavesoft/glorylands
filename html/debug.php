@@ -62,7 +62,7 @@ td.stats {
 		if (isset($_SESSION['stats'])) {
 			echo "<table>";
 			foreach ($_SESSION['stats'] as $name => $value) {
-				echo "<tr><td class=\"stats\">$name</td><td>$value</td></tr>\n";
+				echo "<tr><td class=\"stats\">$name</td><td>".htmlspecialchars($value)."</td></tr>\n";
 			}
 			echo "</table>";
 		} else {

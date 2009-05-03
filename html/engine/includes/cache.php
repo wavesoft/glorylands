@@ -85,7 +85,7 @@ function gl_cache_set($cache_group, $cache_id, $data, $pref_mode=CACHE_LOCAL) {
 			// Check what communication mode to use, based on the flags we used
 			$mode = MEMCACHE_COMPRESSED;
 			if ($pref_mode & CACHE_FAST) $mode=0;
-			return $cache_mem->set($cache_group.'::'.$cache_id, $data, MEMCACHE_COMPRESSED);
+			return $cache_mem->set($cache_group.'::'.$cache_id, $data, $mode);
 			
 		} else {
 			$chunk = serialize($data);

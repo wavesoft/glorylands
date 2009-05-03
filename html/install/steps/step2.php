@@ -38,6 +38,7 @@ $root_url = str_replace('\\','/', $root_url);
 			<td><select class="text" name="config[LANG]" >
 				<option <?php _selected($_SESSION['config']['GAME']['LANG'],'en',true); ?> value="en">English</option>
 				<option <?php _selected($_SESSION['config']['GAME']['LANG'],'el',false); ?> value="el">Ελληνικά</option>
+				<option <?php _selected($_SESSION['config']['GAME']['LANG'],'fr',false); ?> value="fr">Français</option>
 			</select></td>
 		</tr>
 	</table>

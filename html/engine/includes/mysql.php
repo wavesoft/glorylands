@@ -116,6 +116,10 @@ class db {
 		// Select database
 		$this->errPosition = "selecting database '<strong>{$vdb}</strong>'";
 		if (!mysql_select_db($vdb, $id)) return false;
+
+		// Enable UTF-8
+		mysql_query("SET CHARACTER SET 'utf8'");
+		mysql_query("SET SESSION collation_connection ='utf8_general_ci'");
 		
 		// Initialize variables
 		$queryList = array();

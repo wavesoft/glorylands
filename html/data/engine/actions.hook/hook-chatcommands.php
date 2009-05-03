@@ -225,16 +225,19 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 
 	} elseif ($cmd == 'emote') {
 
-		relayMessage(MSG_INTERFACE, 'ANIMATE', $_SESSION[PLAYER][GUID], array(
-			array(0,0),array(1,0),array(2,0),array(3,0),
-			array(0,1),array(1,1),array(2,1),array(3,1),
-			array(0,2),array(1,2),array(2,2),array(3,2),
-			array(0,3),array(1,3),array(2,3),array(3,3),
-			array(0,0),array(1,0),array(2,0),array(3,0),
-			array(0,1),array(1,1),array(2,1),array(3,1),
-			array(0,2),array(1,2),array(2,2),array(3,2)
-		), 10);
-		$answer = 'Animation sent';
+		if ($parameters[0] == 'wow') {
+			relayMessage(MSG_INTERFACE, 'ANIMATE', $_SESSION[PLAYER][GUID], array(
+				array(12,0),array(13,0),array(14,0),array(15,0),array(16,0),array(17,0)
+			), 10);
+			$answer = 'Animation sent';
+		} elseif ($parameters[0] == 'standby') {
+			relayMessage(MSG_INTERFACE, 'ANIMATE', $_SESSION[PLAYER][GUID], array(
+				array(12,1),array(13,1),array(14,1),array(12,1),array(13,1),array(14,1),array(12,1),array(13,1),array(14,1)
+			), 5);
+			$answer = 'Animation sent';
+		} else {
+			$answer = 'Unknown emotion! Try: wow, standby';		
+		}
 
 	} elseif ($cmd == 'help') {
 		

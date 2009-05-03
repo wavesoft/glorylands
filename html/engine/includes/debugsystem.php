@@ -99,7 +99,7 @@ function debug_render_backtrace($backtrace) {
 		if ($base!='') $base=$trace['class'].$base;
 		$html .= '<b>&bull; '.(sizeof($backtrace)-$index).'</b> '.$base.$trace['function'];
 		if (isset($trace['args'])) {
-			$html.='('.debug_render_args($trace['args']).')';
+			$html.='('.htmlspecialchars(debug_render_args($trace['args'])).')';
 		} else {
 			$html.='()';
 		}
@@ -174,7 +174,7 @@ function debug_render_errors() {
 		$html .= '<tr><td>'.date('H:i:s', $error['timestamp']).'</td>';
 		$html .= '<td>'.$levelname[$error['level']].'</td>';
 		$html .= '<td>'.debug_render_backtrace($error['trace']).'</td>';
-		$html .= '<td valign="top"><span style="font-size: 12px;">'.$error['description'].'</span></td>';
+		$html .= '<td valign="top"><pre style="font-size: 10px; padding: 0px; margin: 0px;">'.htmlspecialchars($error['description']).'</pre></td>';
 		$html .= '</tr>'."\n";
 	}
 	
