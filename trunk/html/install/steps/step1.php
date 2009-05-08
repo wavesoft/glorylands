@@ -183,7 +183,7 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 						echo "<span class=\"ok\">Exists</span>";
 					} else {
 						echo "<span class=\"warn\">Missing</span>";
-						$issues[]='MemCache extension not found. Memory caching will be disabled.';
+						$issues[]='MemCache extension not found. Memory caching will be disabled.<br /><b>It is highly recommended to mount the /engine/data folder under a RAM filesystem!</b>(16Mb should be enough)';
 					}
 				?>
 			</td>

@@ -3069,7 +3069,7 @@ function piemenu_init(x,y,guid,position,parent_guid) {
 /* ==================================================================================================================================== */
 
 function iface_selecttab(tabid) {
-	for (var i=1; i<=3; i++) {
+	for (var i=1; i<=4; i++) {
 		if (i!=tabid) {
 			$('tb'+i).setStyle('display', 'none');
 			$('tl'+i).removeClass('active');
