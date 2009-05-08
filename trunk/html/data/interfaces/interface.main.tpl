@@ -18,8 +18,8 @@ var mapOfsX = 12;
 var mapOfsY = 8;
 </script>
 {/literal}
-<script language="javascript" src="includes/mootools-release-1.11.js"></script>
-<script language="javascript" src="includes/glapi-2.1.src.js"></script>
+<script language="javascript" src="includes/mootools.js"></script>
+<script language="javascript" src="includes/glapi.js"></script>
 <script language="javascript" src="includes/popup.js"></script>
 <script language="javascript" src="includes/merchant-functions.js"></script>
 <script language="javascript" src="includes/battleapi.js"></script>
@@ -101,7 +101,7 @@ var mapOfsY = 8;
 	top: 0px; 
 	z-index: 250000; 
 	background-color: #000000; 
-	width: 768px; 
+	width: 100%; 
 	height: 512px; 
 	background-image: url(images/loading.gif); 
 	background-repeat: no-repeat; 
@@ -111,7 +111,7 @@ var mapOfsY = 8;
 	top: 280px;
 	position: absolute;
 	color: #CCCCCC;
-	width: 768px;
+	width: 100%;
 	text-align: center;
 	font-family: Geneva, Arial, Helvetica, sans-serif;
 	font-size: 12px;
@@ -120,12 +120,72 @@ var mapOfsY = 8;
 #datahost {
 	background-color: #000000;
 	position: relative; 
-	width: 768px; 
+	width: 100%; 
 	height: 512px; 
 	display: block; 
 	left:0px; 
 	top: 0px; 
 	overflow: hidden;
+}
+
+.lower_bar {
+	position: absolute;
+	top: 465px;
+	z-index: 250002;
+	text-align: center;
+}
+
+.right_bar {
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	z-index: 250003;
+	background-color: #000000;
+	padding: 5px;
+}
+
+.right_bar .floater {
+	float: left;
+}
+
+.right_bar .contenthost {
+	max-width: 300px;
+	float: left;
+	border: solid 1px #999999;
+}
+
+.right_bar .tabhost {
+	float:left;
+	width: 18px;
+	padding: 1px;
+	margin: 2px;
+}
+
+.right_bar .tabhost a {
+	position: relative;
+	text-decoration: none;
+	display: block;
+	width: 16px;
+	height: 16px;
+	color: #CCCCCC;
+	border-top: solid 1px #999999;
+	border-right: solid 1px #999999;
+	border-bottom: solid 1px #999999;
+	border-left: solid 1px #999999;
+	margin-top: 2px;
+	left: -1px;
+}
+
+.right_bar .tabhost a.active {
+	left: -4px;
+	border-left: solid 1px #000000;
+}
+
+.right_bar .tabhost a:hover {
+	text-decoration: none;
+	display: block;
+	background-color:#CCCCCC;
+	color: #333333;
 }
 
 </style>
@@ -146,117 +206,47 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 </div>
 </td></tr></table>
 </div>
-<table width="100%">
- <tr height="536">
-  <td align="left" width="788" valign="top">
-	<table class="backload" cellspacing="0" cellpadding="0">
-	<tr height="12">
-		<td class="br1_lt" width="10">&nbsp;</td>
-		<td class="br1_t"></td>
-		<td class="br1_rt" width="10"></td>
-	</tr>
-	<tr>
-		<td class="br1_l" width="10">&nbsp;</td>
-		<td>
-		<div id="datahost">
-			<div id="datapane">
-			<!-- GRID Contents -->	
-			<!-- <div style="border: solid 2px #FF0000; z-index: 1000000; text-align:center; width: 32px; height:32px; position:absolute;" id="zp">&nbsp;</div> -->
-			</div>
-			<div id="databuffer">
-			<!-- MAIN Data buffer contents -->
-			</div>
-			<div id="dataloader"><div id="dataloader_text"></div></div>
+
+<div id="datahost">
+	<div id="datapane">
+	<!-- GRID Contents -->	
+	<!-- <div style="border: solid 2px #FF0000; z-index: 1000000; text-align:center; width: 32px; height:32px; position:absolute;" id="zp">&nbsp;</div> -->
+	</div>
+	<div id="databuffer">
+	<!-- MAIN Data buffer contents -->
+	</div>
+	<div id="dataloader"><div id="dataloader_text"></div></div>
+</div>
+<div class="lower_bar" align="center">
+	{$modules.201}
+</div>
+<div class="right_bar" align="center">
+	<div class="contenthost">
+		<div>
+			{$modules.100}
 		</div>
-		<div style="position: absolute; visibility: hidden; padding: 12px;" id="actionpane"></div>		
-		</td>
-		<td class="br1_r" width="10"></td>
-	</tr>
-	<tr height="12">
-		<td class="br1_lb" width="10">&nbsp;</td>
-		<td class="br1_b"></td>
-		<td class="br1_rb" width="10"></td>
-	</tr>
-	</table>   </td>
-   <td align="center" valign="top">
-   <table width="100%" height="534" cellspacing="0" cellpadding="0">
-	<tr>
-		<td align="center" valign="top">
-			<table class="backload" style="background: none #000000; height: 100%" width="100%" cellspacing="0" cellpadding="0">
-			<tr height="12">
-				<td class="br1_lt" width="10">&nbsp;</td>
-				<td class="br1_t"></td>
-				<td class="br1_rt" width="10"></td>
-			</tr>
-			<tr>
-				<td class="br1_l" width="10">&nbsp;</td>
-				<td>
-				{$modules.0}				</td>
-				<td class="br1_r" width="10"></td>
-			</tr>
-			<tr height="12">
-				<td class="br1_lb" width="10">&nbsp;</td>
-				<td class="br1_b"></td>
-				<td class="br1_rb" width="10"></td>
-			</tr>
-			</table>		
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<table class="backload" style="background: none #000000; height: 100%" width="100%" cellspacing="0" cellpadding="0">
-			<tr height="12">
-				<td class="br1_lt" width="10">&nbsp;</td>
-				<td class="br1_t"></td>
-				<td class="br1_rt" width="10"></td>
-			</tr>
-			<tr>
-				<td class="br1_l" width="10">&nbsp;</td>
-				<td align="left spanaligned">
-				<span><a href="#" onclick="javascript:gloryIO('?a=interface.inventory');" title="Open Inventory"><img border="0" src="images/UI/navbtn_explore.gif" /></a></span>
-				{$modules.1}				
-				</td>
-				<td class="br1_r" width="10"></td>
-			</tr>
-			<tr height="12">
-				<td class="br1_lb" width="10">&nbsp;</td>
-				<td class="br1_b"></td>
-				<td class="br1_rb" width="10"></td>
-			</tr>
-			</table>		</td>
-	</tr>
-	<tr>
-		<td align="center" valign="bottom">
-			<table class="backload" style="background: none #000000; height: 100%" width="100%" cellspacing="0" cellpadding="0">
-			<tr height="12">
-				<td class="br1_lt" width="10">&nbsp;</td>
-				<td class="br1_t"></td>
-				<td class="br1_rt" width="10"></td>
-			</tr>
-			<tr>
-				<td class="br1_l" width="10">&nbsp;</td>
-				<td>
-				{$modules.2}				</td>
-				<td class="br1_r" width="10"></td>
-			</tr>
-			<tr height="12">
-				<td class="br1_lb" width="10">&nbsp;</td>
-				<td class="br1_b"></td>
-				<td class="br1_rb" width="10"></td>
-			</tr>
-			</table>		</td>
-	</tr>
-   </table>   </td>
- </tr>
- 
- <tr>
-   <td colspan="2" align="center">{$modules.4}</td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center" class="footer"><small>Released under the GNU/GPL Licence. Author: John Haralampidis<br /><a href="javascript:popUpWindow('debug.php',700,300,true,true);">Debug Console</a></small></td>
-  </tr>
-</table>
-<div style="" id="prompt"></div>
-{$modules.5}
+		<div id="tb1">			
+			{$modules.101}
+		</div>
+		<div id="tb2">			
+			{$modules.102}
+		</div>
+		<div id="tb3">			
+			{$modules.103}		
+		</div>
+		<div>
+			{$modules.199}		
+		</div>
+	</div>
+	<div class="tabhost">
+		<a id="tl1" href="javascript:;" onclick="iface_selecttab(1)" title="Statistics"><img src="images/UI/navmenu/stats.png" /></a>
+		<a id="tl2" href="javascript:;" onclick="iface_selecttab(2)" title="Player Inventory"><img src="images/UI/navmenu/inventory.png" /></a>
+		<a id="tl3" href="javascript:;" onclick="iface_selecttab(3)" title="Chat and messages"><img src="images/UI/navmenu/chat.png" /></a>
+	</div>
+</div>
+<div style="position: absolute; visibility: hidden; padding: 12px;" id="actionpane"></div>		
+<p align="center" class="footer"><small>Released under the GNU/GPL Licence. Author: John Haralampidis<br /><a href="javascript:popUpWindow('debug.php',700,300,true,true);">Debug Console</a></small></p>
+<div style="font-size: 10px" id="prompt"></div>
+{$modules.500}
 </body>
 </html>

@@ -194,20 +194,6 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 <p>
 	<table class="checks" width="400">
 		<tr>
-			<th width="270">Game Root</th>
-			<td>
-				<?php 						
-					if (is_writable($root_path)) {
-						echo "<span class=\"ok\">Writable</span>";
-					} else {
-						echo "<span class=\"error\">Not writable</span>";
-						$issues[]='Directory $root_path must be writable in order to continue this setup.';
-						$has_error = true;
-					}
-				?>
-			</td>
-		</tr>
-		<tr>
 			<th width="270">config/config.php</th>
 			<td>
 				<?php 						
@@ -223,104 +209,39 @@ $root_path = dirname(dirname(dirname(__FILE__)));
 				?>
 			</td>
 		</tr>
-		<tr>
-			<th width="120">admin/cache</th>
-			<td>
-				<?php 						
-					if (is_writable($root_path.'/admin/cache')) {
-						echo "<span class=\"ok\">Writable</span>";
-					} else {
-						echo "<span class=\"error\">Not writable</span>";
-						$issues[]='Folder /admin/cache must be writable in order to continue this setup.';
-						$has_error = true;
-					}
-				?>
-			</td>
-		</tr>
-		<tr>
-			<th width="120">admin/packages</th>
-			<td>
-				<?php 						
-					if (is_writable($root_path.'/admin/packages')) {
-						echo "<span class=\"ok\">Writable</span>";
-					} else {
-						echo "<span class=\"error\">Not writable</span>";
-						$issues[]='Folder /admin/packages must be writable in order to continue this setup.';
-						$has_error = true;
-					}
-				?>
-			</td>
-		</tr>
-		<tr>
-			<th width="120">admin/scripts</th>
-			<td>
-				<?php 						
-					if (is_writable($root_path.'/admin/scripts')) {
-						echo "<span class=\"ok\">Writable</span>";
-					} else {
-						echo "<span class=\"error\">Not writable</span>";
-						$issues[]='Folder /admin/scripts must be writable in order to continue this setup.';
-						$has_error = true;
-					}
-				?>
-			</td>
-		</tr>
-		<tr>
-			<th width="120">engine/outputprocessors/interfaces/cache</th>
-			<td>
-				<?php 						
-					if (is_writable($root_path.'/engine/outputprocessors/interfaces/cache')) {
-						echo "<span class=\"ok\">Writable</span>";
-					} else {
-						echo "<span class=\"error\">Not writable</span>";
-						$issues[]='Folder /engine/outputprocessors/interfaces/cache must be writable in order to continue this setup.';
-						$has_error = true;
-					}
-				?>
-			</td>
-		</tr>
-		<tr>
-			<th width="120">images</th>
-			<td>
-				<?php 						
-					if (is_writable($root_path.'/images')) {
-						echo "<span class=\"ok\">Writable</span>";
-					} else {
-						echo "<span class=\"error\">Not writable</span>";
-						$issues[]='Folder /images must be writable in order to continue this setup.';
-						$has_error = true;
-					}
-				?>
-			</td>
-		</tr>
-		<tr>
-			<th width="120">engine</th>
-			<td>
-				<?php 						
-					if (is_writable($root_path.'/engine')) {
-						echo "<span class=\"ok\">Writable</span>";
-					} else {
-						echo "<span class=\"error\">Not writable</span>";
-						$issues[]='Folder /images/tiles must be writable in order to continue this setup.';
-						$has_error = true;
-					}
-				?>
-			</td>
-		</tr>
-		<tr>
-			<th width="120">data</th>
-			<td>
-				<?php 						
-					if (is_writable($root_path.'/data')) {
-						echo "<span class=\"ok\">Writable</span>";
-					} else {
-						echo "<span class=\"error\">Not writable</span>";
-						$issues[]='Folder /data must be writable in order to continue this setup.';
-						$has_error = true;
-					}
-				?>
-			</td>
-		</tr>
+
+		<?php
+		$dirs = array(
+			'config',
+			'admin/cache',
+			'admin/packages',
+			'admin/scripts',
+			'engine/outputprocessors/interfaces/cache',
+			'engine/data',
+			'images',
+			'images',
+			'data'		
+		);
+		foreach ($dirs as $dir) {
+			$check_dir = $root_path.'/'.$dir;
+			?>
+			<tr>
+				<th width="270">/<?php echo $dir; ?></th>
+				<td>
+					<?php 						
+						if (is_writable($check_dir)) {
+							echo "<span class=\"ok\">Writable</span>";
+						} else {
+							echo "<span class=\"error\">Not writable</span>";
+							$issues[]='Directory $dir must be writable in order to continue this setup.';
+							$has_error = true;
+						}
+					?>
+				</td>
+			</tr>		
+			<?php
+		}
+		?>
 	</table>
 </p>
 <div class="separator">Check results</div>

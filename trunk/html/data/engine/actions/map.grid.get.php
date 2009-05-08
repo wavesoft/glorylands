@@ -39,6 +39,9 @@ if (!$quick) {
 	gl_update_guid_vars($_SESSION[PLAYER][GUID], array('x'=>$Gx,'y'=>$Gy,'map'=>$map));
 }
 
+// We started map rendering. Notify everyone interested.
+callEvent('map.render.start');
+
 // Prepare Object cache
 $objects = array();
 $sql->query("SELECT * FROM `data_maps` WHERE `index` = $map");
@@ -118,15 +121,27 @@ while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 		'guid' => $row['guid'],
 		'x' => $row['x'],
 		'y' => $row['y']+1,
-		'image' =>'chars/'. $row['model'],
+		'image' =>'elements/'. $row['model'],
 		'name' => $row['name'],
 		'icon' => $row['icon'],
 		'flags' => $row['flags'],
 		'id' => $row['guid'],
 		'dynamic' => true,
-		'fx_move' => 'slide',
+		'fx_move' => 'fade',
 		'fx_show' => 'fade',
-		'fx_hide' => 'fade'
+		'fx_hide' => 'fade',
+		
+		'directional' => 1,		
+		'speed' => 5,
+		'sprite' => array(6,4),
+		'sprite_direction_grid' => array('d'=>0,'l'=>2,'r'=>3,'u'=>1),
+		'sprite_direction_ani' => array('walk'=>array(2,3,4,5),'stay'=>0),
+		/*
+		'sprite' => array(4,4),
+		'sprite_direction_grid' => array('d'=>0,'l'=>1,'r'=>2,'u'=>3),
+		'sprite_direction_ani' => array('walk'=>array(0,1,2,3),'stand'=>0)
+		*/
+		
 	);
 	$details = gl_get_guid_vars($row['guid']);
 	if (strstr($details['flags'],'VENDOR')) {

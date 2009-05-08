@@ -24,7 +24,14 @@ include "engine/includes/base.php";
 define('IN_MSGFEED', true);
 
 // Make sure session is valid
-if (!isset($_SESSION[PLAYER][GUID])) die();
+if (!isset($_SESSION[PLAYER][GUID])) {
+	debug_message('Session GUID not found. Player session: '.print_r($_SESSION,true));
+	die(json_encode(array(
+		'mode'=>'ERROR',
+		'number' => 101,
+		'error'=>'Session lost'
+	)));
+}
 
 // User is active. Poll database to keep user online
 gl_user_action();

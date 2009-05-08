@@ -5,7 +5,7 @@ $action = 'CANCEL';
 if ($_REQUEST['mode'] == 'move') {
 
 	// Call custom handlers on item.move
-	if (callEvent('item.move', $_REQUEST['guid'], $_REQUEST['container'], $_REQUEST['slot'], $_REQUEST['fromslot'], $_REQUEST['fromcontainer'], $_REQUEST['count'])) {	
+	if (callEvent('item.move', $_REQUEST['guid'], $_REQUEST['container'], $_REQUEST['slot'], $_REQUEST['fromslot'], $_REQUEST['fromcontainer'], $_REQUEST['count'], $action)) {	
 
 		// Check for some invalid moves
 		if ($_REQUEST['guid'] == $_REQUEST['container']) {
@@ -19,6 +19,14 @@ if ($_REQUEST['mode'] == 'move') {
 				$ans=$sql->editRow('mod_quickbar_slots', '`guid` = '.$_REQUEST['guid'].' AND `player` = '.$_SESSION[PLAYER][GUID], array(
 					'slot' => $_REQUEST['slot']
 				));
+
+			// If we are moving from/to quickbar, move the item
+			} elseif ($_REQUEST['container'] == -1) {
+				if ($_REQUEST['fromcontainer'] == -1) {
+					$action = 'MOVE';
+				} else {
+					$action = 'COPY';
+				}
 								
 			// If we are moving from something else into the quick bar, copy the item	
 			} elseif ($_REQUEST['container'] == 0) {
