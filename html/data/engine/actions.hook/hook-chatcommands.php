@@ -239,6 +239,19 @@ function chat_admin(&$cmd, $parameters, &$answer) {
 			$answer = 'Unknown emotion! Try: wow, standby';		
 		}
 
+	} elseif ($cmd == 'test') {
+		
+		$items = array(
+			1 => array(
+				'name' => 'Fish of barbuf',
+				'image' => 'images/inventory/aquarium-48x48.png',
+				'guid' => 1234,
+				'tip' => '<b>Fish of barbuf</b><br />An old fish jar. Quite usefull for helmet!'
+			)
+		);
+		relayMessage(MSG_INTERFACE,'INVENTORY',$items);
+		$answer = 'Inventory updated';
+	
 	} elseif ($cmd == 'help') {
 		
 		$answer="Commands that can be used:<ul>";

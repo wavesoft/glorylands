@@ -5,6 +5,7 @@ body {
 	color: #CCCCCC;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
+	overflow: hidden;
 }
 pre {
 	background-color: #EEEEEE;
@@ -349,14 +350,14 @@ div.dd_blackie {
 
 div.bag_slotted {
 	float: left;
-	background-color:#000000;
+	/* background-color:#000000; */
 }
 
 div.bag_slotted div {
 	position: relative;
 	width: 41px;
 	height: 41px;
-	background-image: url(../../images/UI/qbar-emptyslot.jpg);
+	background-image: url(../../images/UI/qbar-emptyslot.png);
 	background-position: center;
 	background-repeat: no-repeat;
 	text-align: center;

@@ -43,7 +43,6 @@ $sql = new db($_CONFIG[DB][DATABASE], $_CONFIG[DB][HOST], $_CONFIG[DB][USER], $_
 
 ### Initialize UNICODE UTF-8 support
 mb_internal_encoding('utf-8');
-echo "Encoding: ".mysql_client_encoding();
 
 ### Initialize session
 include_once DIROF('SYSTEM.INCLUDE')."session.php";
@@ -53,6 +52,7 @@ gl_init_events();
 
 ### Process any scheduled evens
 gl_process_schedules();
+gl_process_timesync();
 gl_spawn_check();
 
 ### Start output compression

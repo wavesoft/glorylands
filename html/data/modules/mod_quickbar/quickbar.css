@@ -8,7 +8,7 @@
 #quickbar_data div {
 	width: 41px;
 	height: 41px;
-	background-image: url(../../../images/UI/qbar-emptyslot.jpg);
+	background-image: url(images/qbar-emptyslot.png);
 	background-position: center;
 	background-repeat: no-repeat;
 	text-align: center;

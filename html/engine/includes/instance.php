@@ -317,6 +317,9 @@ function gl_get_guid_children($parent, $group=false, $stack=false) {
 		$tpl = implode(",",array_unique($templates));
 		$stacks = array();
 		$stack_counters = array();
+
+		//
+		if ($tpl=='') return $guids;
 		
 		// Get the stacking information for each template
 		$ans=$sql->query("SELECT `stackable`,`template` FROM `{$group}_template` WHERE `template` IN (".$tpl.")");

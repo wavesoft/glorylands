@@ -88,7 +88,7 @@ function drag_update() {
 									child.setStyles({
 										'width': 38,
 										'height': 38,
-										'padding': 1,										
+										'padding': 1									
 									});
 									if (!isInternetExplorer) {
 										child.setAttribute('class', 'drag_able '+data.item.guid);
@@ -260,7 +260,7 @@ function drag_update() {
 									srcelm.setStyles({
 										'width': 38,
 										'height': 38,
-										'padding': 1,										
+										'padding': 1
 									});
 									if (!isInternetExplorer) {
 										srcelm.setAttribute('class', 'drag_able '+data.item.guid);

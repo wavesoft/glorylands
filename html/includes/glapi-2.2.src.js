@@ -8,16 +8,19 @@ var isOpera=(navigator.userAgent.indexOf("Opera")>=0);
 function $trace(obj,level) {
 	ans='';
 	$each(obj, function(value, name) {
-		if (ans!='') ans+=', ';
-		if (!level) {
-			ans+='['+name+'] = '+value;
-		} else {
-			ans+='['+name+'] = {'+$trace(value,level-1)+'}';
+		if ($type(value) != 'function') {
+			if (ans!='') ans+=', ';
+			if (!level) {
+				ans+='['+name+'] = '+value;
+			} else {
+				ans+='['+name+'] = {'+$trace(value,level-1)+'}';
+			}
 		}
 	});	
 	return ans;
 }
 
+/*
 var debug_obj = false;
 function $debug(text) {
 	if (!debug_obj) {
@@ -39,7 +42,7 @@ function $debug(text) {
 	debug_obj.scrollTop = debug_obj.scrollHeight;	// FF
 	setTimeout(function() { debug_obj.scrollTop = debug_obj.scrollHeight; }, 10); // IE
 }
-
+*/
 
 // Hook chains for later-included scripts
 var CBChain = new Class({
@@ -82,7 +85,7 @@ var GLImageLoader = new Class({
 		new_object.inject(host);
 		new_object.setStyles({
 			'left': pos.left.toInt(),
-			'top': pos.top.toInt(),
+			'top': pos.top.toInt()
 		});
 		existing_object.remove();
 		return new_object;
@@ -91,7 +94,7 @@ var GLImageLoader = new Class({
 		if ($defined(this.elements[image])) {
 			return this.elements[image].clone();
 		} else {
-			return false;
+			return new Element('img', {'src': image});
 		}
 	},
     preload: function(image_list, opt){
@@ -134,9 +137,56 @@ var GLImageLoader = new Class({
 			if (image.width && image.height) image.fireEvent('load', image, 1);
 			if (image.complete) image.fireEvent('load', image, 1);
 		}
-    },	
+    }
 });
 var ImageLoader = new GLImageLoader();
+
+// Interval-o-matic
+// This class provides a cross-browser implementation of 
+// setInterval / clearInterval 
+// (Because IE do not support parameters on setInterval)
+var GLInterval = new Class({
+	intervals: [],
+	last_id: 0,
+	initialize: function() {
+		setInterval(this.interval, 100);
+	},
+	add: function(func_ref, delay, param) {
+		this.last_id++
+		var obj = {
+			'func': func_ref,
+			'delay': Math.round(delay/100),
+			'count': 0,
+			'param': param,
+			'id': this.last_id
+		};
+		
+		this.intervals.push(obj);
+		return obj.id;
+	},
+	remove: function(id) {
+		for (var i in this.intervals) {
+			if ($type(i) != 'function') {
+				if (this.intervals[i].id == id) {
+					this.intervals.splice(i,1);
+					return;
+				}
+			}
+		}
+	},
+	interval: function() {
+		var intervals = Interval.intervals;
+		intervals.each(function(o,i) {
+			o.count++;
+			if (o.count >= o.delay) {
+				o.count = 0;
+				o.func(o.param);
+			}
+		});
+	}
+});
+var Interval = new GLInterval();
+
 
 // Helper function: Identify scroll position
 function getScrollPosition () {
@@ -225,7 +275,7 @@ function showStatus(text,timeout) {
 // =====================================================
 var winCache = [];
 var winStack = [];
-var lastZ=250002;
+var lastZ=250100;
 
 function rect_collide(r1, r2) {
 	if ((r1.l >= r2.l) && (r1.l <= r2.r) && (r1.t >= r2.t) && (r1.t <= r2.b)) {
@@ -652,6 +702,7 @@ function handleMessages(msg) {
 				// ## Alter a map object ##
 				} else if (mType=='ALTER') {
 					
+					//$debug('Altering:'+"\n"+$trace(msg.message[i][1]));
 					if ($defined(msg.message[i][1].guid)) {
 						var uid = map_objectid_fromguid(msg.message[i][1].guid);
 						if (uid == 0) continue;
@@ -739,7 +790,6 @@ function handleMessages(msg) {
 var data_io_time = 0;
 function gloryIO(url, data, silent, oncomplete_callback) {	
 	try {
-		
 		// Check if we are running in library mode
 		if (!$defined($('datapane'))) {
 			library_mode = true;
@@ -758,6 +808,7 @@ function gloryIO(url, data, silent, oncomplete_callback) {
 	
 		if (!silent) showStatus('Loading...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/UI/mouseloading.gif" />');
 		//window.alert(url);
+		//$debug('&lt&lt; '+url);
 		data_io_time = $time();
 		var json = new Json.Remote(url, {
 			onComplete: function(obj) {
@@ -1011,6 +1062,7 @@ var fx_sprites_animating=[];
   *
   */
 function fx_sprite_frame(id) {
+	if (!$defined(id)) return;
 	var info = fx_sprites_animating[id];
 	
 	// Calcuate frame
@@ -1051,7 +1103,7 @@ function fx_sprite_undo(object) {
 	image.inject(host);
 	image.setStyles({
 		'left': pos.left.toInt(),
-		'top': pos.top.toInt(),
+		'top': pos.top.toInt()
 	});
 	return image;
 }
@@ -1067,6 +1119,8 @@ function fx_sprite_prepare(object, x_sprites, y_sprites) {
 	var style = $(object).getStyles('left','top');
 	var dim = $(object).getSize().size;
 	var pos = {x: style.left.toInt(), y: style.top.toInt()};
+	if (isNaN(pos.x)) pos.x=0;
+	if (isNaN(pos.y)) pos.y=0;
 	var div_mask = new Element('div');	
 	var info = {
 		'object': object,
@@ -1123,7 +1177,7 @@ function fx_sprite_update(mask_object, new_image_object, x_sprites, y_sprites) {
 	
 	mask_object.setStyles({
 		'width': info.sprite_w,
-		'height': info.sprite_h,
+		'height': info.sprite_h
 	});
 	image.setStyles({
 		'left': 0,
@@ -1168,8 +1222,8 @@ function fx_sprite_animate(object,frame_rate,animation,loops,end_callback) {
 	info.frame = 0;
 	info.loops = loops;
 	info.callback = end_callback;
-	if (info.timer!=0) clearInterval(info.timer);
-	info.timer = setInterval(fx_sprite_frame, (1000/frame_rate), i);
+	if (info.timer!=0) Interval.remove(info.timer);
+	info.timer = Interval.add(fx_sprite_frame, (1000/frame_rate), i);
 	return true;
 }
 
@@ -1184,7 +1238,7 @@ function fx_sprite_stop(object, frame) {
 	if (i<0) return false;
 	
 	var info = fx_sprites_animating[i];
-	clearInterval(info.timer);
+	Interval.remove(info.timer);
 	if (!frame) frame = info.animation[0];
 	var ofs_x = frame[0]*info.sprite_w;
 	var ofs_y = frame[1]*info.sprite_h;	
@@ -1720,6 +1774,8 @@ function map_addobject(data) {
 	var im = ImageLoader.get(data.image);
 	$('datapane').appendChild(im);	
 
+	//$debug('Inserting object: '+$trace(data));
+
 	// If the image is sprite, convert the image to sprite
 	if ($defined(data.sprite)) im = fx_sprite_prepare(im, data.sprite[0],data.sprite[1]);
 	var size = im.getSize().size;
@@ -1941,38 +1997,32 @@ function map_removeobject(uid, nofx) {
   *
   */
 var map_fx_pathmove_stack = [];
-var map_fx_active_stack = [];
-// Check if we have an active map effect for this object
-function map_fx_active(object) {
-	return (map_fx_active_stack.indexOf(object.info.id) >= 0);
-}
-function map_fx_pathmove(object, path) {
+function map_fx_pathmove(object, path, completed_callback) {
 	// This function is used to prohibit multiple requests for
 	// animation on the same object.
 	// This function just chains the concurrent requests and handles
 	// it, only when the previouse ones are completed
 	if ($defined(map_fx_pathmove_stack[object.info.id])) {
-		//$debug('[path] ('+object.info.id+') Appending to stack...');
 		map_fx_pathmove_stack[object.info.id].push([object,path]);
 	} else {
-		//$debug('[path] ('+object.info.id+') Creating stack...');
 		map_fx_pathmove_stack[object.info.id] = [];
 		map_fx_pathmove_stack[object.info.id].push([object,path]);
-		map_fx_pathmove_next(object.info.id);
+		map_fx_pathmove_next(object.info.id, completed_callback);
 	}
 }
-function map_fx_pathmove_next(id) {
+function map_fx_pathmove_next(id, completed_callback) {
 	$trace('Moving next');
 	//$debug('[path] ('+id+') Next called!');
 	if ($defined(map_fx_pathmove_stack[id])) {
 		if (map_fx_pathmove_stack[id].length == 0) {
 			//$debug('[path] ('+id+') No more. Erasing...!');
-			delete map_fx_pathmove_stack[id];
+			map_fx_pathmove_stack.splice(id,1);
+			if (completed_callback) completed_callback();
 		} else {
 			//$debug('[path] ('+id+') We have '+map_fx_pathmove_stack[id].length+' to do');
 			var f = map_fx_pathmove_stack[id].shift();
 			//$debug('[path] ('+id+') Running '+f[0]+' with '+$trace(f[1]));
-			map_fx_pathmove_thread(f[0], f[1]);
+			map_fx_pathmove_thread(f[0], f[1], completed_callback);
 		}
 	}
 }
@@ -2024,7 +2074,7 @@ function map_fx_pathmove_build_spritepath(object_info, facing_side) {
 	// Return the animation frames and the standing frame
 	return [frames, stand];
 }
-function map_fx_pathmove_thread(object_info, path) {
+function map_fx_pathmove_thread(object_info, path, completed_callback) {
 	var i=0;
 	var spath;
 	var last_stand_dir = [0,0];
@@ -2048,9 +2098,7 @@ function map_fx_pathmove_thread(object_info, path) {
 		// Check if we have more steps to go
 		if (!$defined(path[i])) {
 			fx_sprite_stop(object,last_stand_dir);	
-			map_fx_pathmove_next(id);
-			i = map_fx_active_stack.indexOf(id);
-			delete map_fx_active_stack[i];
+			map_fx_pathmove_next(id,completed_callback);
 			return;
 		}
 		var j=i;
@@ -2171,7 +2219,6 @@ function map_fx_pathmove_thread(object_info, path) {
 	}
 	
 	// Start walking
-	map_fx_active_stack.push(id);
 	walk_step();
 }
 
@@ -2192,6 +2239,130 @@ function map_objectid_fromguid(guid) {
 }
 
 /**
+  * Stack a map object animation/action
+  *
+  * This function is used to stack multiple animations
+  * and execute them in the correct order.
+  *
+  */
+var map_fxstack=[];
+function map_stack_movefx(uid, old_data, data, x, y, zindex, size) {
+	//$debug('Stacking object '+uid+' FX');
+	
+	// If we are already in position, this is not needed
+	var tollerance = 2;
+	pos = old_data.object.getStyles('left','top');
+	pos.left = pos.left.toInt();
+	pos.top = pos.top.toInt();
+	if ((Math.abs(pos.left-x)<tollerance) && (Math.abs(pos.top-y)<tollerance)) {
+		//$debug('Positions same. Rejected '+data.guid);
+		return;
+	}
+	
+	if (!$defined(map_fxstack[uid])) {
+		map_fxstack[uid] = [];
+		map_fxstack[uid].push([uid, old_data, data, x, y, zindex, size]);
+		map_stack_movefx_next(uid);
+	} else {
+		map_fxstack[uid].push([uid, old_data, data, x, y, zindex, size]);
+	}
+}
+function map_stack_movefx_next(uid) {
+	if ($defined(map_fxstack[uid])) {
+		if (map_fxstack[uid].length == 0) {
+			map_fxstack.splice(uid,1);
+			//$debug('Moving of object '+uid+': is completed');
+		} else {
+			var stack = map_fxstack[uid].shift();
+			//$debug('Processing stack of object '+uid+': '+stack[2].fx_move);
+			map_stack_movefx_thread(stack[0],stack[1],stack[2],stack[3],stack[4],stack[5],stack[6]);
+		}
+	} else {
+		// Already finished :P
+	}
+}
+function map_stack_movefx_thread(uid, old_data, data, x, y, zindex, size) {
+	// If we have transition, use them.
+	if (data.fx_move) {
+		switch (data.fx_move) {
+			case 'slide':
+				var px_transition=new Fx.Styles(old_data.object, {duration: 800, unit: 'px', transition: Fx.Transitions.linear});
+				var z_transition=new Fx.Styles(old_data.object, {duration: 800, unit: '', transition: Fx.Transitions.linear});				
+				z_transition.start({'z-index':zindex});
+				px_transition.start({
+						'top': y
+				}).chain(function() {
+						px_transition.start({'left': x});
+				}).chain(function() {
+						map_stack_movefx_next(uid);
+				});
+				break;
+
+			case 'bounce':
+				var px_transition=new Fx.Styles(old_data.object, {duration: 800, unit: 'px', transition: Fx.Transitions.Elastic.easeOut});
+				px_transition.start({
+						'left': x,
+						'top': y
+				}).chain(function() {
+						map_stack_movefx_next(uid);
+				});
+				old_data.object.setStyles({
+						'z-index':zindex
+				});
+				break;
+
+			case 'fade':
+				var imfx=new Fx.Styles(old_data.object, {wait: false, duration: 400, transition: Fx.Transitions.Quad.easeOut});
+				imfx.start({
+					'opacity':0
+				}).chain(function(){
+					old_data.object.setStyles({
+						'left': x,
+						'top': y,
+						'z-index': zindex
+					});			
+					imfx.start({
+						'opacity':1
+					}).chain(function(){
+						map_stack_movefx_next(uid);
+					})
+				});				
+				break;
+				
+			case 'path':
+				if ($defined(data.fx_path)) {
+					//$debug('Pathwalking '+data.guid);
+					map_fx_pathmove(old_data, data.fx_path, function(){
+						map_stack_movefx_next(uid)
+					});
+					
+					// No need to keep the grid in memory any more
+					delete data.fx_path;
+					break;
+				}
+				
+			default:
+				old_data.object.setStyles({
+					'left': x,
+					'top': y,
+					'z-index': zindex
+				});
+				map_stack_movefx_next(uid)
+		}		
+	
+	// Elseways, just update the object
+	} else {		
+		// Update object		
+		old_data.object.setStyles({
+			'left': x,
+			'top': y,
+			'z-index': zindex
+		});
+		map_stack_movefx_next(uid)
+	}
+}
+
+/**
   * Update a map object
   *
   * This function updates a map object. If the object contains
@@ -2200,12 +2371,17 @@ function map_objectid_fromguid(guid) {
   *
   */
 function map_updateobject(uid,data) {
+	try {
 	var id=map_object_index.indexOf(uid);
 	var old_data = map_objects[id];
-	if (!old_data) return;
+	if (!old_data) {
+		//$debug('Data mapping not found for UID '+uid);
+		return;
+	}
 	
 	// Callback notification
 	callback.call('object_update', {'old':old_data, 'new':data});
+	//$debug('Altering '+uid+' using data :'+"\n"+$trace(data));
 
 	// Store default values if something is missing
 	if (!$defined(data.cx)) data.cx=old_data.cx;
@@ -2258,82 +2434,17 @@ function map_updateobject(uid,data) {
 	// Check if this object is the player, and update UID value
 	if ($defined(data.player)) map_playeruid=uid;	
 
-	// If the object is already animating, do not stop it
-	// #!# This means we loose the new coord.
-	if (!map_fx_active(old_data)) {
-		
-		// If we have transition, use them.
-		if (data.fx_move) {
-			switch (data.fx_move) {
-				case 'slide':
-					var px_transition=new Fx.Styles(old_data.object, {duration: 800, unit: 'px', transition: Fx.Transitions.linear});
-					var z_transition=new Fx.Styles(old_data.object, {duration: 800, unit: '', transition: Fx.Transitions.linear});				
-					z_transition.start({'z-index':zindex});
-					px_transition.start({
-							'top': y
-					}).chain(function() {
-							px_transition.start({'left': x});
-					});
-					break;
-	
-				case 'bounce':
-					var px_transition=new Fx.Styles(old_data.object, {duration: 800, unit: 'px', transition: Fx.Transitions.Elastic.easeOut});
-					px_transition.start({
-							'left': x,
-							'top': y
-					});
-					old_data.object.setStyles({
-							'z-index':zindex
-					});
-					break;
-	
-				case 'fade':
-					var imfx=new Fx.Styles(old_data.object, {wait: false, duration: 400, transition: Fx.Transitions.Quad.easeOut});
-					imfx.start({
-						'opacity':0
-					}).chain(function(){
-						old_data.object.setStyles({
-							'left': x,
-							'top': y,
-							'z-index': zindex
-						});			
-						imfx.start({
-							'opacity':1
-						})
-					});				
-					break;
-					
-				case 'path':
-					if ($defined(data.fx_path)) {
-						map_fx_pathmove(old_data, data.fx_path);
-						
-						// No need to keep the grid in memory any more
-						delete data.fx_path;
-						break;
-					}
-					
-				default:
-					old_data.object.setStyles({
-						'left': x,
-						'top': y,
-						'z-index': zindex
-					});			
-			}		
-		
-		// Elseways, just update the object
-		} else {		
-			// Update object		
-			old_data.object.setStyles({
-				'left': x,
-				'top': y,
-				'z-index': zindex
-			});
-		}
-	}
+	// Stack the transition, including all the variables used,
+	// for chained execution
+	map_stack_movefx(uid, old_data, data, x, y, zindex, size);
 	
 	// If we must focus on this item, do it now
 	if ($defined(data.focus)) {
 		map_center(x+Math.ceil(old_data.width/2),y+Math.ceil(old_data.height/2),true);
+	}
+	
+	} catch (e) {
+		alert('Error updating UID '+uid+': '+$trace(e));
 	}
 	
 	// Javascript uses byRef for
@@ -2952,6 +3063,28 @@ function piemenu_init(x,y,guid,position,parent_guid) {
 	gloryIO('?a=interface.dropdown&guid='+guid+'&pos='+position+'&parent='+parent_guid, false, true);
 	piemenu_wait();
 }
+
+/* ==================================================================================================================================== */
+/*                                             SECTION : Interface Actions
+/* ==================================================================================================================================== */
+
+function iface_selecttab(tabid) {
+	for (var i=1; i<=3; i++) {
+		if (i!=tabid) {
+			$('tb'+i).setStyle('display', 'none');
+			$('tl'+i).removeClass('active');
+		} else {
+			if ($('tl'+i).hasClass('active')) {
+				$('tb'+i).setStyle('display', 'none');
+				$('tl'+i).removeClass('active');
+			} else {
+				$('tb'+i).setStyle('display', '');
+				$('tl'+i).addClass('active');
+			}
+		}
+	}
+}
+$(window).addEvent('load', function(e) { iface_selecttab(3); });
 
 /* ==================================================================================================================================== */
 /*                                        SECTION : Event handling and initialization

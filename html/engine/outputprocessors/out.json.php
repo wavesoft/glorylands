@@ -40,9 +40,11 @@ if ($act_valid) {
 } else {
 
 	// In case no valid data have arrived, just reply an error response
+	debug_message('Invalid action. Rejected on '.$act_invalid_position.'. Player session: '.print_r($_SESSION,true));	
 	echo json_encode(array(
-		'mode'=>'ERROR',
-		'error'=>'Action blocked in '.$act_invalid_position.' check'
+ 		'mode'=>'ERROR',
+		'number' => 101,
+		'error'=>'Session lost'
 	));
 
 }
