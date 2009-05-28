@@ -5582,6 +5582,7 @@ var Json = {
 	*/
 
 	evaluate: function(str, secure){
+		if (str == '') return null;
 		return (($type(str) != 'string') || (secure && !str.test(/^("(\\.|[^"\\\n\r])*?"|[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t])+?$/))) ? null : eval('(' + str + ')');
 	}
 
