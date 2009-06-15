@@ -8,7 +8,7 @@ Date: 8/5/2009 12:02:40 pm
 -- ----------------------------
 -- Update interrupts
 -- ----------------------------
-UPDATE `system_hooks` SET `filename`='hook-inventory.php' WHERE (`filename`='hook-pickup.php')  
+UPDATE `system_hooks` SET `filename`='hook-inventory.php' WHERE (`filename`='hook-pickup.php');
 
 -- ----------------------------
 -- Update database revision
