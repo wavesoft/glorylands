@@ -242,10 +242,10 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 		</div>
 	</div>
 	<div class="tabhost">
-		<a id="tl1" href="javascript:;" onclick="iface_selecttab(1)" title="Statistics"><img src="images/UI/navmenu/stats.png" /></a>
-		<a id="tl2" href="javascript:;" onclick="iface_selecttab(2)" title="Player Inventory"><img src="images/UI/navmenu/inventory.png" /></a>
-		<a id="tl3" href="javascript:;" onclick="iface_selecttab(3)" title="Chat and messages"><img src="images/UI/navmenu/chat.png" /></a>
-		<a id="tl4" href="javascript:;" onclick="iface_selecttab(4)" title="Main Menu"><img src="images/UI/navmenu/settings.png" /></a>
+		<a id="tl1" href="javascript:;" onclick="iface_selecttab(1)" title="Statistics"><img border="0" src="images/UI/navmenu/stats.png" /></a>
+		<a id="tl2" href="javascript:;" onclick="iface_selecttab(2)" title="Player Inventory"><img border="0" src="images/UI/navmenu/inventory.png" /></a>
+		<a id="tl3" href="javascript:;" onclick="iface_selecttab(3)" title="Chat and messages"><img border="0" src="images/UI/navmenu/chat.png" /></a>
+		<a id="tl4" href="javascript:;" onclick="iface_selecttab(4)" title="Main Menu"><img border="0" src="images/UI/navmenu/settings.png" /></a>
 	</div>
 </div>
 <div style="position: absolute; visibility: hidden; padding: 12px;" id="actionpane"></div>		

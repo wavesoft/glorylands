@@ -19,14 +19,6 @@ if ($_REQUEST['mode'] == 'move') {
 				$ans=$sql->editRow('mod_quickbar_slots', '`guid` = '.$_REQUEST['guid'].' AND `player` = '.$_SESSION[PLAYER][GUID], array(
 					'slot' => $_REQUEST['slot']
 				));
-
-			// If we are moving from/to quickbar, move the item
-			} elseif ($_REQUEST['container'] == -1) {
-				if ($_REQUEST['fromcontainer'] == -1) {
-					$action = 'MOVE';
-				} else {
-					$action = 'COPY';
-				}
 								
 			// If we are moving from something else into the quick bar, copy the item	
 			} elseif ($_REQUEST['container'] == 0) {
@@ -95,9 +87,9 @@ if ($_REQUEST['mode'] == 'move') {
 	
 	} else {
 	
-		// Call custom handlers on item.mix
+		// Call custom handlers on item.remove
 		if (callEvent('item.remove', $_REQUEST['guid'], $_REQUEST['slot'], $_REQUEST['container'], $_REQUEST['count'])) {
-			$action = 'CANCEL';
+			$action = 'DELETE';
 		}
 
 	}
