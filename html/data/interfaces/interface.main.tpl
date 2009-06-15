@@ -19,7 +19,7 @@ var mapOfsY = 8;
 </script>
 {/literal}
 <script language="javascript" src="includes/mootools.js"></script>
-<script language="javascript" src="includes/glapi.js"></script>
+<script language="javascript" src="includes/glapi-2.2.src.js"></script>
 <script language="javascript" src="includes/popup.js"></script>
 <script language="javascript" src="includes/merchant-functions.js"></script>
 <script language="javascript" src="includes/battleapi.js"></script>
