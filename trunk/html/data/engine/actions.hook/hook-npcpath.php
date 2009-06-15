@@ -55,7 +55,7 @@ function npcwalk_update() {
 		}
 		
 		// Notify nearby users for the animation
-		$ans = $sql->query("SELECT `guid` FROM `char_instance` WHERE `map` = $map AND `x` >= $x1 AND `x` <= $x2 AND `y` >= $y1 AND `y` <= $y2");
+		$ans = $sql->query("SELECT `guid` FROM `char_instance` WHERE `map` = $map AND `x` >= $x1 AND `x` <= $x2 AND `y` >= $y1 AND `y` <= $y2 AND `online` = 1");
 		while ($row = $sql->fetch_array_fromresults($ans, MYSQL_NUM)) {
 			$p_guid = $row[0];
 			//debug_message("Updating $p_guid with path ".print_r($coord['path'],true));
