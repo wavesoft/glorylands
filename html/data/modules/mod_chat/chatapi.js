@@ -2,13 +2,13 @@
 var eChatFloat = false; 
 var eChatText = false;
 
-$(window).addEvent('load', function(e) {
+$(window).addEvent('domready', function(e) {
 
 	try {
 	// Create some chat required elements
 	eChatFloat = $(document.createElement('div'));
 	eChatFloat.setStyles({'position':'absolute', 'visibility':'hidden'});
-	eChatFloat.setHTML('\
+	eChatFloat.set('html', '\
 		<table class="modchat_popup" cellspacing="0" cellpadding="0">\
 		<tr>\
 			<td class="tl" width="17">&nbsp;</td>\
@@ -53,7 +53,7 @@ function find_overlay_info(objectname) {
 				// Get DataPane left offset
 				var dpX = $('datapane').getLeft();
 				var dpY = $('datapane').getTop();
-				var objH = obj.object.getSize().size.y/2;
+				var objH = obj.object.getSize().y/2;
 				
 				result = {'x':obj.x+dpX-glob_x_base, 'y':obj.y+dpY-glob_y_base-objH, 'guid':obj.info.guid};	
 			}
@@ -65,7 +65,7 @@ function find_overlay_info(objectname) {
 var activeTimer = 0;
 function displayBubble(user, text) {
 	var hideBubble = false;
-	var fadeFX=new Fx.Styles(eChatFloat, {duration: 400, transition: Fx.Transitions.Back.easeIn,
+	var fadeFX=new Fx.Morph(eChatFloat, {duration: 400, transition: Fx.Transitions.Back.easeIn,
 		onComplete: function() {
 			if (hideBubble) {
 				eChatFloat.setStyles({lvisibility:'hidden'});
@@ -77,10 +77,10 @@ function displayBubble(user, text) {
 	if (gps == false) {
 	} else {
 		try {
-			eChatText.setHTML('<span class="user">['+user+']</span> '+text);
+			eChatText.set('html', '<span class="user">['+user+']</span> '+text);
 			eChatFloat.setStyles({'left': gps.x, 'top': gps.y, 'visibility':'visible', 'opacity':0, 'z-index': lastZ++});
 			hideBubble=false;
-			fadeFX.stop();
+			fadeFX.cancel();
 			fadeFX.start({'opacity': 1});
 			
 			if (activeTimer!=0) clearTimeout(activeTimer);
@@ -101,9 +101,9 @@ callback.register('message', function(msg) {
 			var e = $(e);
 			var HTML = e.innerHTML;			
 			if (msg[2].toLowerCase() == 'system') {
-				e.setHTML(HTML+'<p><font color="gold">'+msg[1]+'</font></p>');
+				e.set('html', HTML+'<p><font color="gold">'+msg[1]+'</font></p>');
 			} else {
-				e.setHTML(HTML+'<p><strong>['+msg[2]+']</strong>'+': '+msg[1]+'</p>');
+				e.set('html', HTML+'<p><strong>['+msg[2]+']</strong>'+': '+msg[1]+'</p>');
 			}
 			
 			displayBubble(msg[2],msg[1]);

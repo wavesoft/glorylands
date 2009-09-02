@@ -1,0 +1,3 @@
+/**
+  * Automation chat library
+  */

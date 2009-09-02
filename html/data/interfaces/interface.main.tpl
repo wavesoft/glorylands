@@ -18,11 +18,14 @@ var mapOfsX = 12;
 var mapOfsY = 8;
 </script>
 {/literal}
-<script language="javascript" src="includes/mootools.js"></script>
-<script language="javascript" src="includes/glapi-2.2.src.js"></script>
+<script language="javascript" src="includes/mootools-1.2.2-core-yc.js"></script>
+<script language="javascript" src="includes/mootools-1.2.2.2-more.js"></script>
+<script language="javascript" src="includes/glapi/get.php"></script>
 <script language="javascript" src="includes/popup.js"></script>
 <script language="javascript" src="includes/merchant-functions.js"></script>
 <script language="javascript" src="includes/battleapi.js"></script>
+<script language="javascript" src="includes/weatherapi.js"></script>
+
 {$javascript}
 <link href="{$theme}/style.css" rel="stylesheet" type="text/css" />
 {$stylesheet}
@@ -93,6 +96,7 @@ var mapOfsY = 8;
 	position: absolute; 
 	left:0px; 
 	top: 0px; 
+	cursor: url(images/UI/cursor/round.ico);
 }
 
 #dataloader {
@@ -188,6 +192,18 @@ var mapOfsY = 8;
 	color: #333333;
 }
 
+#weather {
+	z-index: 249999;
+	display: block;
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+	background-color:#333333;
+	opacity: 0.4;
+}
+
 </style>
 {/literal}
 </head>
@@ -215,7 +231,12 @@ Please&nbsp; <img src="images/UI/loading2.gif" align="absmiddle" /> &nbsp;wait..
 	<div id="databuffer">
 	<!-- MAIN Data buffer contents -->
 	</div>
-	<div id="dataloader"><div id="dataloader_text"></div></div>
+	<!--
+	<div id="weather">
+		<img src="images/fx/rainfall.gif" width="100%" height="100%" id="weather_img" />
+	</div>
+	-->
+	<div id="dataloader"><div id="dataloader_text"></div></div>	
 </div>
 <div class="lower_bar" align="center">
 	{$modules.201}

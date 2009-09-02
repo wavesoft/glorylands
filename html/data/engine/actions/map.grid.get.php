@@ -70,10 +70,12 @@ $ans=$sql->query("SELECT
 	Inner Join `gameobject_template` ON `gameobject_instance`.`template` = `gameobject_template`.`template`
 	WHERE
 	`gameobject_instance`.`visible` =  1 AND
-	(`gameobject_instance`.`x` > $basex) AND (`gameobject_instance`.`x` <  $xw) AND 
-	(`gameobject_instance`.`y` > $basey) AND (`gameobject_instance`.`y` <  $yh) AND 
 	`gameobject_instance`.`map` = $map
 ");
+/*
+	(`gameobject_instance`.`x` > $basex) AND (`gameobject_instance`.`x` <  $xw) AND 
+	(`gameobject_instance`.`y` > $basey) AND (`gameobject_instance`.`y` <  $yh) AND 
+*/
 while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	$myobj = array(
 		// Storage/Information variables
@@ -112,10 +114,12 @@ $ans=$sql->query("SELECT
 	Inner Join `npc_template` ON `npc_instance`.`template` = `npc_template`.`template`
 	WHERE
 	`npc_instance`.`visible` =  1 AND
-	(`npc_instance`.`x` > $basex) AND (`npc_instance`.`x` <  $xw) AND 
-	(`npc_instance`.`y` > $basey) AND (`npc_instance`.`y` <  $yh) AND 
 	`npc_instance`.`map` = $map
 ");
+/*
+	(`npc_instance`.`x` > $basex) AND (`npc_instance`.`x` <  $xw) AND 
+	(`npc_instance`.`y` > $basey) AND (`npc_instance`.`y` <  $yh) AND 
+*/
 while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	$myobj = array(
 		'guid' => $row['guid'],
@@ -173,10 +177,12 @@ $ans=$sql->query("SELECT
 	`users_accounts`.`online` =  1 AND
 	`char_instance`.`online` =  1 AND
 	`char_instance`.`visible` =  1 AND
-	(`char_instance`.`x` > $basex) AND (`char_instance`.`x` <  $xw) AND 
-	(`char_instance`.`y` > $basey) AND (`char_instance`.`y` <  $yh) AND 
 	`char_instance`.`map` = $map
 ");
+/*
+	(`char_instance`.`x` > $basex) AND (`char_instance`.`x` <  $xw) AND 
+	(`char_instance`.`y` > $basey) AND (`char_instance`.`y` <  $yh) AND 
+*/
 while ($row = $sql->fetch_array_fromresults($ans,MYSQL_ASSOC)) {
 	$myobj = array(
 		// Map information

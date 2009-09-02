@@ -9,8 +9,8 @@ callback.register('message', function(msg) {
 		
 		
 		vIcon.src = 'images/'+msg[1];
-		vHead.setHTML(msg[2]);
-		vText.setHTML(msg[3]);
+		vHead.set('html', msg[2]);
+		vText.set('html', msg[3]);
 		
 	}
 });

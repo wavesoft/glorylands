@@ -112,6 +112,142 @@ function gl_get_guid_index($guid) {
 }
 
 /**
+  * Check item compatibility
+  *  
+  * This function checks if an item is compatible with it's bag.
+  *
+  * @param array	$item_vars	The item variables
+  * @param array	$bag_vars	The bag variables
+  * @return boolean				Returns true if the item is compatible or false
+  */
+function gl_check_bag_compatibility($item_vars, $bag_vars) {
+
+	// Here is the mapping table type-container classes
+	$map_table = array(
+		'GENERIC' => array(
+			array(
+				'class' => '*',
+				'subclass' => '*'
+			)
+		),
+		'KEYRING' => array(
+			array(
+				'class' => 'KEY',
+				'subclass' => '*'
+			),
+			array(
+				'class' => 'LOCKPICK',
+				'subclass' => '*'
+			)
+		),
+		'SOULBAG' => array(
+			array(
+				'class' => 'KEY',
+				'subclass' => '*'
+			)
+		),
+		'HERBBAG' => array(
+			array(
+				'class' => 'CONSUMABLE',
+				'subclass' => 'GEM'
+			)
+		),				
+		'ENCHBAG' => array(
+			
+		),
+		'GEMBAG' => array(
+			array(
+				'class' => 'CONSUMABLE',
+				'subclass' => 'GEM'
+			)
+		),
+		'MININGBAG' => array(
+			
+		),
+		'QUIVER' => array(
+			array(
+				'class' => '',
+				'subclass' => 'ARROW'
+			)			
+		)
+	);
+
+}
+
+/**
+  * Find an empty bag compatible for the item provided
+  *  
+  * This function searches for an empty bag that can hold up to the defined
+  * number of the specified objects.
+  *
+  * @param int	$guid	The object to check for matching bag
+  * @param int	$count	The number of free slots the bug must have
+  * @param int	$parent	The parent guid to search for bags into
+  * @return int	Returns the bag GUID that can contain the object
+  */
+function gl_get_matching_bag($guid, $count=1, $parent=false) {
+	$vars = gl_get_guid_vars($guid);	
+}
+
+/**
+  * Find an empty bag
+  *  
+  * This function searches for an empty bag that can hold up to the defined
+  * number of the specified kind of objects.
+  *
+  * @param int			$count	The number of free slots the bug must have
+  * @param string|array	$type	The type of the object ('sub-class' or '#class') 
+  *								either comma-separated string or array.
+  * @param int			$parent	The parent guid to search for bags into
+  * @return int					Returns the bag GUID that can contain the object
+  */
+function gl_get_empty_bag($count=1, $type=false, $parent=false) {
+	global $sql, $_CONFIG;
+		
+	// Make sure $type is an array
+	if ($type === false) $type=array();
+	if (!is_string($type)) $type=explode(',',$type);
+	
+	// If the parent is false, replace it with
+	// the player GUID
+	if ($parent === false) $parent=$_SESSION[PLAYER][GUID];
+	
+	// Analyze GUID
+	$typedef = gl_analyze_guid($parent);
+	$guid_group = $typedef['group'];
+	
+	// Build the query
+	$query = "`class` = 'CONTAINER'";
+	foreach ($type as $typeid) {
+		if ($query!='') $query .= ' OR ';
+		$query .= "`match_class` = '".mysql_escape_string($typeid)."'";
+	}
+	$query = "SELECT `guid` FROM `{$guid_group}_instance` WHERE {$query}";
+	$ans = $sql->query($query);
+	
+	// Obdain the items that match the query and perform
+	// a further on the item numbers.
+	while ($row = $sql->fetch_array_fromresults($ans, MYSQL_NUMB)) {
+		$vars = gl_get_guid_vars($row[0]);
+		$count = gl_count_guid_children($row[0], $guid_group);
+		if (isset($vars['slots'])) {
+			$slots = $vars['slots'];
+		} else {
+			continue;
+		}
+		
+		// Check for free slots
+		$slots_left = $slots - $count;
+		if ($slots_left >= $count) {
+			return $row[0];
+		}
+	}
+	
+	// Not returned by now, return false
+	return false;	
+}
+
+/**
   * Move one or more items using grouping algorithm
   *  
   * This function changes an item's parent. If
