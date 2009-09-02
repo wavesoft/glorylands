@@ -170,7 +170,7 @@ function gl_process_timesync() {
 	$sec = floor($diff);
 	if ($sec > 0) {
 		callEvent('timesync.seconds',$sec);
-		if ($sec < 1000) {
+		if ($sec < 100) {
 			for ($i=1; $i<=$sec; $i++) {
 				callEvent('timesync.second');
 			}
@@ -186,7 +186,7 @@ function gl_process_timesync() {
 	$min = floor($diff/60);
 	if ($min > 0) {
 		callEvent('timesync.minutes',$min);
-		if ($min < 1000) {
+		if ($min < 100) {
 			for ($i=1; $i<=$min; $i++) {
 				callEvent('timesync.minute');
 			}
@@ -202,7 +202,7 @@ function gl_process_timesync() {
 	$hour = floor($diff/3600);
 	if ($hour > 0) {
 		callEvent('timesync.hours',$hour);
-		if ($hour < 1000) {
+		if ($hour < 100) {
 			for ($i=1; $i<=$hour; $i++) {
 				callEvent('timesync.hour');
 			}

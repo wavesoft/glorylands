@@ -1,10 +1,7 @@
 
 function inv_equip_reset() {
 	for (var i=0; i<=10; i++) {
-		var o = $('inveq_'+i);
-		o.getChildren().each(function(e) {
-			e.remove();
-		});
+		$('inveq_'+i).emtpy();
 	}
 }
 
@@ -45,6 +42,6 @@ callback.register('message', function(msg) {
 	}
 });
 
-$(window).addEvent('load', function(e) {
+$(window).addEvent('domready', function(e) {
 	drag_update();
 });

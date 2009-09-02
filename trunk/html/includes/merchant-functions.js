@@ -40,7 +40,7 @@ function mf_count_set(count) {
 }
 function mf_count_move(count) {
 	if (count>mf_coutner_count) count=mf_coutner_count;
-	$('mf_counter').setHTML(count);
+	$('mf_counter').set('html', count);
 	for (var i=1; i<21; i++) {
 		if (i<=count) {
 			$('fm_count_'+i).setProperty('class','active');

@@ -5,17 +5,17 @@ var drag_element = null;
 function drag_callback(mode, src, dst) {
 	try {
 		if (mode=='MOVE') {
-			if ($defined(src)) src.remove();
+			if ($defined(src)) src.dispose();
 			dst.setStyle('opacity',1);	
 		} else if (mode=='COPY') {	
 			src.setStyle('opacity',1);
 			dst.setStyle('opacity',1);	
 		} else if (mode=='CANCEL') {
-			if ($defined(dst)) dst.remove();
+			if ($defined(dst)) dst.dispose();
 			src.setStyle('opacity',1);
 		} else if (mode=='DELETE') {
-			if ($defined(src)) src.remove();
-			if ($defined(dst)) dst.remove();
+			if ($defined(src)) src.dispose();
+			if ($defined(dst)) dst.dispose();
 		}	
 	} catch(e) {
 	}
@@ -67,7 +67,7 @@ function drag_update() {
 				if (children.length>0) {
 					
 					// Remove floating
-					el.remove();
+					el.dispose();
 
 					// Notify system that a user attempted to mix 2 objects
 					var child = children[0];
@@ -79,7 +79,7 @@ function drag_update() {
 						gloryIO('?a=dragdrop&mode=mix&guid='+guid+'&target='+childguid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
 							if (data.mode == 'DRAG') {
 								if (data.action == 'REPLACE') {
-									srcelm.remove();
+									srcelm.dispose();
 									child.setProperties({
 										'src': data.item.src,
 										'title': data.item.name,
@@ -117,7 +117,7 @@ function drag_update() {
 				myobj.inject(this);
 								
 				// Remove floater
-				el.remove();
+				el.dispose();
 				
 				// Refresh droppables/draggables
 				drag_update();
@@ -199,7 +199,7 @@ function drag_update() {
 			// Make sure we are clicked with left click
 			e = new Event(e);
 			if (e.rightClick) {
-				e = new Event(e).stop();
+				e.stop();
 				return;
 			}
 			
@@ -227,7 +227,7 @@ function drag_update() {
 					}
 										
 					// Done with me
-					this.remove();
+					this.dispose();
 					
 					// Check if we were really dragged and not clicked (moved at least 5 px)
 					if ((Math.abs(ccoord.left-startcoord.left)>5) || (Math.abs(ccoord.top-startcoord.top)>5)) {
@@ -282,7 +282,9 @@ function drag_update() {
 			startcoord = $(this).getCoordinates();
 	  
 			var drag = clone.makeDraggable({
-				droppables: drag_hosts
+				droppables: drag_hosts,
+				precalculate : true,
+				grid: 16
 			}); // this returns the dragged element
 	 		
 			e.stop();
@@ -317,7 +319,7 @@ function qb_items_reset() {
 	for (var i=1; i<=21; i++) {
 	  try {
 		if (qb_items[i]) {
-			qb_items[i].remove();
+			qb_items[i].dispose();
 		}
 	  } catch(e) {
 	  }
@@ -352,7 +354,7 @@ function qb_spawn_item(slot, image, name, guid, tip) {
 }
 
 
-$(window).addEvent('load', function() {
+$(window).addEvent('domready', function() {
 	qb_items_build();
 	drag_update();
 });

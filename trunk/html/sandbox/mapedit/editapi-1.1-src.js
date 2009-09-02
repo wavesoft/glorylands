@@ -306,6 +306,7 @@ var win_objparm_objects = [];
 
 function win_objparm_show(infobj) {
 	$('ui_objinfo').setStyle('visibility','visible');
+	$('ui_objinfo').setStyle('z-index', 10000000000);
 	win_objparm_active_infobj = infobj;
 	win_objparm_reset();
 	win_objparm_spawncontrol('Object is dynamic','dynamic',infobj['dynamic'],'checkbox');
@@ -1742,6 +1743,8 @@ function cgrid_render(grid) {
 ================================================================================================================================
 **/
 
+var space_down = false;
+
 $(window).addEvent('load', function(e){	
 
 	tloader_download('');
@@ -1781,7 +1784,7 @@ $(window).addEvent('load', function(e){
 			scroller_start(e.client.x+p.x,e.client.y+p.y);
 			scroll_active = true;
 		} else if (e.event.button == 0) {
-			if (e.alt) {
+			if (space_down) {
 				scroller_start(e.client.x+p.x,e.client.y+p.y);
 				scroll_active = true;
 			} else {
@@ -1816,7 +1819,7 @@ $(window).addEvent('load', function(e){
 				}
 			}
 			brush_dragging = false;
-		} else if (object_put && (e.event.button == 0) && !e.alt) {
+		} else if (object_put && (e.event.button == 0) && !space_down) {
 			object_instance_bybrush();
 		}
 		scroll_active = false;
@@ -1900,6 +1903,7 @@ $(window).addEvent('load', function(e){
 
 	$(document).addEvent('keyup', function(e){
 		var e=new Event(e);
+		if (e.key == 'space') space_down = false;
 		e.stop();
 	});
 
@@ -1919,6 +1923,8 @@ $(window).addEvent('load', function(e){
 				ui_cgrid_put();
 				e.stop();
 			}
+		} else if (e.key == 'space') {
+			space_down = true;
 		}
 	});
 	

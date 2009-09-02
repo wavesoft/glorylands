@@ -1,9 +1,28 @@
 <?php
 
+registerEvent('npcwalk_store','map.render.npc');
+function npcwalk_store(&$object, $guid, $row) {
+	global $sql, $_CONFIG;
+
+	$ans = $sql->query("SELECT * FROM `data_npc_walk` WHERE `status` = 'WALK' AND `guid` = $guid");
+	if (!$ans) return true;
+	if ($sql->emptyResults) return true;
+	
+	$row = $sql->fetch_array(MYSQL_ASSOC);
+	
+	$object['fx_move'] = 'path';
+	$object['automate'] = array(	
+		'path' => unserialize($row['path'])		
+	);
+	
+	return true;
+}
+
+
 /**
   * Every second, check the npc animation paths
   */
-registerEvent('npcwalk_update', 'timesync.second');
+//registerEvent('npcwalk_update', 'timesync.second');
 function npcwalk_update() {	
 	global $sql, $_CONFIG;
 	

@@ -23,13 +23,13 @@ function battle_fx_apply(element, fx) {
 	var pos = $(element).getStyles('left','top');
 	pos.left = Number(pos.left.replace('px',''));
 	pos.top = Number(pos.top.replace('px',''));
-	var size = $(element).getSize().size;
+	var size = $(element).getSize();
 	var host = $$('.fight_frame')[0];
 	var direction = $(element).getProperty('fx_direction');
 	
 	var fx_nudge = function(nudge_direction) {
-		var fx1=new Fx.Styles(element, {duration: 100, transition: Fx.Transitions.Cubic.easeIn});
-		var fx2=new Fx.Styles(element, {duration: 100, transition: Fx.Transitions.Cubic.easeOut});
+		var fx1=new Fx.Morph(element, {duration: 100, transition: Fx.Transitions.Cubic.easeIn});
+		var fx2=new Fx.Morph(element, {duration: 100, transition: Fx.Transitions.Cubic.easeOut});
 		fx1.start({
 			'left': pos.left+10*direction*nudge_direction
 		}).chain(function() {
@@ -44,7 +44,7 @@ function battle_fx_apply(element, fx) {
 			'height': size.y
 		});
 		e.inject(host);
-		var fx=new Fx.Styles(e, {'duration': duration, transition: Fx.Transitions.linear});
+		var fx=new Fx.Morph(e, {'duration': duration, transition: Fx.Transitions.linear});
 		e.setStyles({
 			'left': pos.left,
 			'top': pos.top,
@@ -53,7 +53,7 @@ function battle_fx_apply(element, fx) {
 		fx.start({
 			'opacity': 0
 		}).chain(function(){
-			e.remove();
+			e.dispose();
 		});
 	}
 
@@ -64,7 +64,7 @@ function battle_fx_apply(element, fx) {
 			'height': size.y
 		});
 		e.inject(host);
-		var fx=new Fx.Styles(e, {'duration': duration/2, transition: Fx.Transitions.linear});
+		var fx=new Fx.Morph(e, {'duration': duration/2, transition: Fx.Transitions.linear});
 		e.setStyles({
 			'left': pos.left+(size.x)/2+5,
 			'top': pos.top+(size.y)/2+5,
@@ -83,7 +83,7 @@ function battle_fx_apply(element, fx) {
 			fx.start({
 				'opacity': 0
 			}).chain(function() {
-				e.remove();
+				e.dispose();
 			});			
 		});
 	}
@@ -99,8 +99,8 @@ function battle_fx_apply(element, fx) {
 		d.inject(host);
 		
 		var phase_duration = duration/3;
-		var fx=new Fx.Styles(d, {'duration': phase_duration, transition: Fx.Transitions.linear});
-		var fxe=new Fx.Styles(e, {'duration': phase_duration, transition: Fx.Transitions.linear});
+		var fx=new Fx.Morph(d, {'duration': phase_duration, transition: Fx.Transitions.linear});
+		var fxe=new Fx.Morph(e, {'duration': phase_duration, transition: Fx.Transitions.linear});
 		d.setStyles({
 			'left': pos.left,
 			'top': pos.top+size.y-1,
@@ -122,8 +122,8 @@ function battle_fx_apply(element, fx) {
 			fx.start({
 				'height': 1
 			}).chain(function(){
-				e.remove();
-				d.remove();
+				e.dispose();
+				d.dispose();
 			});
 		});
 	}
@@ -142,7 +142,7 @@ function battle_fx_apply(element, fx) {
 			var dim = elm.getStyles('left','top');
 			dim.left = Number(dim.left.replace('px',''));
 			dim.top = Number(dim.top.replace('px',''));
-			var siz = elm.getSize().size;
+			var siz = elm.getSize();
 			var state = elm.getProperty('zoomstate');
 			if (state == 0) {
 				zfx.start({
@@ -163,8 +163,8 @@ function battle_fx_apply(element, fx) {
 			}
 		}
 		
-		var fx=new Fx.Styles(e, {'duration': duration, transition: Fx.Transitions.linear});
-		var zfx=new Fx.Styles(e, {'duration': 50, transition: Fx.Transitions.linear, onComplete: zoom_fx});
+		var fx=new Fx.Morph(e, {'duration': duration, transition: Fx.Transitions.linear});
+		var zfx=new Fx.Morph(e, {'duration': 50, transition: Fx.Transitions.linear, onComplete: zoom_fx});
 
 		e.setStyles({
 			'left': pos.left,
@@ -176,7 +176,7 @@ function battle_fx_apply(element, fx) {
 		fx.start({
 			'opacity': 0
 		}).chain(function(){
-			e.remove();
+			e.dispose();
 		});
 	}
 	
@@ -207,7 +207,7 @@ function battle_fx_apply(element, fx) {
 
 function blink_start(element) {
 	blink_element = element;
-	blink_fx=new Fx.Styles(element, {duration: 200, transition: Fx.Transitions.linear, 
+	blink_fx=new Fx.Morph(element, {duration: 200, transition: Fx.Transitions.linear, 
 		onComplete: function() {
 			if (blink_element != null) {
 				if (!blink_state) {
@@ -226,7 +226,7 @@ function blink_start(element) {
 function blink_stop() {
 	if (blink_element == null) return;
 	blink_element.setStyle('opacity', 1);
-	blink_fx.stop();
+	blink_fx.cancel();
 	clearInterval(blink_timer);
 	blink_element = null;
 	blink_timer = 0;
@@ -260,7 +260,7 @@ function battle_trigger() {
 			battle_fx_apply(fight_players[Math.floor(Math.random()*6)],'snap');
 			e.stop();
 		});
-		var siz = el.getSize().size;
+		var siz = el.getSize();
 		el.setStyles({
 			'cursor': 'pointer',
 			'opacity': 0,
@@ -272,7 +272,7 @@ function battle_trigger() {
 			'fx_left': pos_left
 		});
 		pos_left += pos_direction*(siz.x+5);
-		var efx = new  Fx.Styles(el, {duration: 200, transition: Fx.Transitions.linear, onComplete: fx_step});
+		var efx = new  Fx.Morph(el, {duration: 200, transition: Fx.Transitions.linear, onComplete: fx_step});
 		fx_chain.push(efx);
 	}
 
@@ -293,7 +293,7 @@ callback.register('iocomplete', function(cmd) {
 		// The iocomplete callback, after a 'MAIN' event, is called right
 		// before the curtain animation. This means that the DOM structure
 		// of the MAIN container is not yet built. It will be built
-		// about 500ms after the call (When the curtain FX is completed)		
+		// about 500ms after the call (When the curtain Fx is completed)		
 		setTimeout(function() {
 			battle_trigger();
 		}, 600);
@@ -374,5 +374,5 @@ callback.register('message', function(msg) {
 	}
 });
 
-// Preload battle FX as long as we are loaded
+// Preload battle Fx as long as we are loaded
 battle_fx_preload();

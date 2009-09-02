@@ -1,0 +1,6 @@
+ ========================
+   AUTOMATION FUNCTIONS
+ ========================
+ 
+   This category provides all the required functions to implement the off-server
+ object automation, like NPC walking, NPC chatting, player navigation etc.
