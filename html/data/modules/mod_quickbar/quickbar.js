@@ -1,6 +1,216 @@
-var drag_hosts = [];
+var drag_startcoord = {};
 var drag_ables = [];
+var drag_exclude = null;
 var drag_element = null;
+var drag_floating = null;
+
+function drag_eventhandler_click(elm) {
+	// Get some information about the element
+	var count = elm.getProperty('count');
+	if (!count) count=1;
+	var ccoord = $(elm).getCoordinates();
+	var guid = elm.getProperty('guid');
+	var slot_element = elm.getParent();
+	var slot=0;
+	var container=0;
+	if (slot_element) {
+		if (slot_element.getProperty('slot')) {
+			slot=slot_element.getProperty('slot');
+			container=slot_element.getProperty('container');
+		}
+	}
+
+	// Call the click event
+	gloryIO('?a=dragdrop&mode=click&guid='+guid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
+		if (data.mode == 'DRAG') {
+			if (data.action == 'REPLACE') {
+				srcelm.setProperties({
+					'src': data.item.src,
+					'title': data.item.name,
+					'guid': data.item.guid
+				});
+				srcelm.setStyles({
+					'width': 38,
+					'height': 38,
+					'padding': 1
+				});
+				if (!isInternetExplorer) {
+					srcelm.setAttribute('class', 'drag_able '+data.item.guid);
+				} else {
+					srcelm.setAttribute('className', 'drag_able '+data.item.guid);
+				}									
+			} else {
+				drag_callback(data.action, srcelm);
+			}
+		}					
+	});
+	
+	// Dispose the floating draggable item (if any)
+	if (drag_floating) {
+		drag_floating.dispose();
+		drag_floating=null;
+	}
+
+}
+
+function drag_eventhandler_enter(elm, target) {
+	if (target != drag_exclude) {
+		target.setStyle('opacity', 0.5);
+	}
+}
+
+function drag_eventhandler_leave(elm, target) {
+	if (target != drag_exclude) {
+		target.setStyle('opacity', 1);	
+	}
+}
+
+function drag_eventhandler_drop(elm, target, e) {
+	
+	// If we have no target, we are empty dropped...
+	if (!target || (target == drag_exclude)) {
+
+		// Get some information about the element
+		var count = elm.getProperty('count');
+		if (!count) count=1;
+		var ccoord = $(elm).getCoordinates();
+		var guid = elm.getProperty('guid');
+		var slot_element = elm.getParent();
+		var slot=0;
+		var container=0;
+		if (slot_element) {
+			if (slot_element.getProperty('slot')) {
+				slot=slot_element.getProperty('slot');
+				container=slot_element.getProperty('container');
+			}
+		}
+	
+		// Done with me
+		elm.dispose();
+		
+		// Check if we were really dragged and not clicked (moved at least 5 px)
+		if ((Math.abs(ccoord.left-drag_startcoord.left)>5) || (Math.abs(ccoord.top-drag_startcoord.top)>5)) {
+			
+			// Local copy to use within this namespace
+			var srcelm = elm;						
+									
+			// Make the item shaded
+			elm.setStyle('opacity',0.5);
+		
+			// Notify GUID removal
+			gloryIO('?a=dragdrop&mode=remove&guid='+guid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
+				if (data.mode == 'DRAG') {
+					drag_callback(data.action, srcelm);
+				}					
+			});
+		
+		// If not, it means we were clicked
+		} else {
+			// Notify GUID click
+			drag_eventhandler_click(elm);
+		}
+		
+	// Elseways, we have a target, so process the dropping into the new target
+	} else {
+		
+		target.setStyle('opacity', 1);
+		
+		// Get some container info
+		var guid = elm.getProperty('guid');
+		var srcelm = drag_element;
+		var count = srcelm.getProperty('count');
+
+		// Get information provided in the class
+		var container = target.getProperty('container');
+		var slot = target.getProperty('slot');
+		var c_info = target.getProperty('class').split(' ');
+		var c_slot = c_info[1];
+		var c_container = c_info[2];
+		if (!slot) slot = c_slot;
+		if (!container) container = c_container;
+
+		// Do not accept elements if I am already filled
+		var children = target.getChildren();
+		if (children.length>0) {
+			
+			// Remove floating
+			elm.dispose();
+
+			// Notify system that a user attempted to mix 2 objects
+			var child = children[0];
+			var childguid = children[0].getProperty('guid');
+			if (childguid != guid) {
+				
+				// Notify system for a button change
+				/* ### */
+				var host = target;
+				gloryIO('?a=dragdrop&mode=mix&guid='+guid+'&target='+childguid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
+					if (data.mode == 'DRAG') {
+						if (data.action == 'REPLACE') {
+							srcelm.dispose();
+							child.setProperties({
+								'src': data.item.src,
+								'title': data.item.name,
+								'guid': data.item.guid
+							});
+							child.setStyles({
+								'width': 38,
+								'height': 38,
+								'padding': 1									
+							});
+							if (!isInternetExplorer) {
+								child.setAttribute('class', 'drag_able '+data.item.guid);
+							} else {
+								child.setAttribute('className', 'drag_able '+data.item.guid);
+							}									
+						} else if (data.action == 'CANCEL')  {									
+						} else {
+							drag_callback(data.action, srcelm, child);
+						}
+					}					
+				});
+			}
+								
+			return;	
+		}
+					
+		// Create new draggable element on me
+		var myobj = elm.clone();
+		myobj.setStyles({
+			'position':'',
+			'width': 38,
+			'height': 38,
+			'padding': 1
+		});
+		myobj.inject(target);
+						
+		// Remove floater
+		elm.dispose();
+		
+		// Refresh droppables/draggables
+		drag_update();
+
+		// Notify system for a button change
+		/* ### */
+		if (!count) count=1;
+		var src_parent = srcelm.getParent();
+		var src_slot = src_parent.getProperty('slot');
+		if (!src_slot) src_slot=-1;
+		var src_container = src_parent.getProperty('container');
+		if (!src_container) src_container=-1;
+		gloryIO('?a=dragdrop&mode=move&guid='+guid+'&slot='+slot+'&container='+container+'&fromslot='+src_slot+'&fromcontainer='+src_container+'&count='+count, false,true,  function(data) {
+			if (data.mode == 'DRAG') {
+				drag_callback(data.action, srcelm, myobj);
+			}					
+		});
+		//setTimeout(drag_callback ,1000, 'MOVE',drag_element,myobj);
+
+	}
+
+	// The floating dragged has now completed it's purpose
+	drag_floating=null;
+
+}
 
 function drag_callback(mode, src, dst) {
 	try {
@@ -22,129 +232,11 @@ function drag_callback(mode, src, dst) {
 }		
 
 function drag_update() {
-
-	// Find all drag hosts
-	var drag_hosts_new=[];
-	$$('.drag_host').each(function(e) {	
-		// Check if this item already exists		
-		var i = drag_hosts.indexOf(e);
-		if (i>=0) {
-			drag_hosts_new.push(e);
-			return; // already exists
-		}
-		drag_hosts_new.push(e);
-		
-		// Get information provided in the class and sore
-		// them inside the element
-		var info = e.getProperty('class').split(' ');
-		var slot = info[1];
-		var container = info[2];
-		if (slot) e.setProperty('slot', slot);
-		if (container) e.setProperty('container', container);
-		
-		//alert('Found host SLOT='+slot+' CONTAINER='+container);
-		
-		// Make those item droppables
-		e.removeEvents();
-		e.addEvents({
-			'over': function(el, obj){
-				this.setStyle('opacity', 0.5);
-			},
-			'leave': function(el, obj){
-				this.setStyle('opacity', 1);
-			},
-			'drop': function(el, obj){
-				this.setStyle('opacity', 1);
-				
-				var container = this.getProperty('container');
-				var slot = this.getProperty('slot');
-				var guid = el.getProperty('guid');
-				var srcelm = drag_element;
-				var count = srcelm.getProperty('count');
-				
-				// Do not accept elements if I am already filled
-				var children = this.getChildren();
-				if (children.length>0) {
-					
-					// Remove floating
-					el.dispose();
-
-					// Notify system that a user attempted to mix 2 objects
-					var child = children[0];
-					var childguid = children[0].getProperty('guid');
-					if (childguid != guid) {
-						// Notify system for a button change
-						/* ### */
-						var host = this;
-						gloryIO('?a=dragdrop&mode=mix&guid='+guid+'&target='+childguid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
-							if (data.mode == 'DRAG') {
-								if (data.action == 'REPLACE') {
-									srcelm.dispose();
-									child.setProperties({
-										'src': data.item.src,
-										'title': data.item.name,
-										'guid': data.item.guid
-									});
-									child.setStyles({
-										'width': 38,
-										'height': 38,
-										'padding': 1									
-									});
-									if (!isInternetExplorer) {
-										child.setAttribute('class', 'drag_able '+data.item.guid);
-									} else {
-										child.setAttribute('className', 'drag_able '+data.item.guid);
-									}									
-								} else if (data.action == 'CANCEL')  {									
-								} else {
-									drag_callback(data.action, srcelm, child);
-								}
-							}					
-						});
-					}
-										
-					return;	
-				}
-							
-				// Create new draggable element on me
-				var myobj = el.clone();
-				myobj.setStyles({
-					'position':'',
-					'width': 38,
-					'height': 38,
-					'padding': 1
-				});
-				myobj.inject(this);
-								
-				// Remove floater
-				el.dispose();
-				
-				// Refresh droppables/draggables
-				drag_update();
-
-				// Notify system for a button change
-				/* ### */
-				if (!count) count=1;
-				var src_parent = srcelm.getParent();
-				var src_slot = src_parent.getProperty('slot');
-				if (!src_slot) src_slot=-1;
-				var src_container = src_parent.getProperty('container');
-				if (!src_container) src_container=-1;
-				gloryIO('?a=dragdrop&mode=move&guid='+guid+'&slot='+slot+'&container='+container+'&fromslot='+src_slot+'&fromcontainer='+src_container+'&count='+count, false,true,  function(data) {
-					if (data.mode == 'DRAG') {
-						drag_callback(data.action, srcelm, myobj);
-					}					
-				});
-				//setTimeout(drag_callback ,1000, 'MOVE',drag_element,myobj);
-			}
-		});
-		
-	});
-	drag_hosts=drag_hosts_new;
 	
 	// Find all draggables
 	var drag_ables_new=[];
 	$$('.drag_able').each(function(e) {
+								   
 		// Check if this item already exists
 		var i = drag_ables.indexOf(e);
 		if (i>=0) {
@@ -158,7 +250,6 @@ function drag_update() {
 		var guid=info[1];
 		if (guid) e.setProperty('guid',guid);
 		var tip=e.getProperty('tip');		
-		//alert('Found item GUID='+guid);
 
 		// If we have title, add the hover window
 		if (tip) {
@@ -194,102 +285,55 @@ function drag_update() {
 			e.stop();
 		});
 
+		// Add a click event
+		e.addEvent('click', function(e) {
+			drag_eventhandler_click(this);
+		});
+
 		// Make the item draggable
 		e.addEvent('mousedown', function(e) {
+										 
 			// Make sure we are clicked with left click
 			e = new Event(e);
 			if (e.rightClick) {
 				e.stop();
 				return;
+			}			
+			
+			// Make sure we have no two or more simultanously dragging elements
+			if (drag_floating) {
+				drag_floating.dispose();
+				drag_floating=null;
 			}
+
+			// Exlude our parent
+			drag_exclude = $(this).getParent();
+			drag_element = this;
 			
 			// Create clone
-			drag_element = this;
-			var startcoord = $(this).getCoordinates();
+			drag_startcoord = $(this).getCoordinates();
 			var clone = $(this).clone()
-				.setStyles(this.getCoordinates()) // this returns an object with left/top/bottom/right, so its perfect
+				.setStyles(drag_startcoord) // this returns an object with left/top/bottom/right, so its perfect
 				.setStyles({'opacity': 0.7, 'position': 'absolute', 'z-index': lastZ})
-				.addEvent('emptydrop', function() {	
-			
-					// Get some information
-					var count = this.getProperty('count');
-					if (!count) count=1;
-					var ccoord = $(this).getCoordinates();
-					var guid = this.getProperty('guid');
-					var slot_element = drag_element.getParent();
-					var slot=0;
-					var container=0;
-					if (slot_element) {
-						if (slot_element.getProperty('slot')) {
-							slot=slot_element.getProperty('slot');
-							container=slot_element.getProperty('container');
-						}
-					}
-										
-					// Done with me
-					this.dispose();
-					
-					// Check if we were really dragged and not clicked (moved at least 5 px)
-					if ((Math.abs(ccoord.left-startcoord.left)>5) || (Math.abs(ccoord.top-startcoord.top)>5)) {
-						
-						// Local copy to use within this namespace
-						var srcelm = drag_element;						
-												
-						// Make the item shaded
-						drag_element.setStyle('opacity',0.5);
-
-						// Notify GUID removal
-						gloryIO('?a=dragdrop&mode=remove&guid='+guid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
-							if (data.mode == 'DRAG') {
-								drag_callback(data.action, srcelm);
-							}					
-						});
-					
-					// If not, it means we were clicked
-					} else {
-						// Notify GUID click
-						var host = this;
-						gloryIO('?a=dragdrop&mode=click&guid='+guid+'&slot='+slot+'&container='+container+'&count='+count, false, true, function(data) {
-							if (data.mode == 'DRAG') {
-								if (data.action == 'REPLACE') {
-									srcelm.setProperties({
-										'src': data.item.src,
-										'title': data.item.name,
-										'guid': data.item.guid
-									});
-									srcelm.setStyles({
-										'width': 38,
-										'height': 38,
-										'padding': 1
-									});
-									if (!isInternetExplorer) {
-										srcelm.setAttribute('class', 'drag_able '+data.item.guid);
-									} else {
-										srcelm.setAttribute('className', 'drag_able '+data.item.guid);
-									}									
-								} else {
-									drag_callback(data.action, srcelm);
-								}
-							}					
-						});
-					}
-					
-					// We are not dragging anything right now
-					drag_element=null;
-
-				})
 				.inject(document.body);
-			startcoord = $(this).getCoordinates();
-	  
-			var drag = clone.makeDraggable({
-				droppables: drag_hosts,
-				precalculate : true,
-				grid: 16
+			
+			var drag = new Drag.Move(clone, {
+				droppables: '.drag_host',
+				snap: 6,				
+				onDrop: drag_eventhandler_drop,
+				onEnter: drag_eventhandler_enter,
+				onLeave: drag_eventhandler_leave,
+
 			}); // this returns the dragged element
 	 		
+			// Store the floating clone
+			drag_floating = clone;
+			
 			e.stop();
 			drag.start(e); // start the event manually
+			
 		});
+		
 	});
 	drag_ables=drag_ables_new;
 }
