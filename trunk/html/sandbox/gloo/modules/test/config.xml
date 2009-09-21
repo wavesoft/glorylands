@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<module>
+
+	<provision>
+	
+		<unit name="GLUICore">
+			<server class="GLUICore" file="core.php" />
+			<client class="GLUICore" file="core.js" />
+			<bind>
+				<forward call="msgbox" function="msgbox" expand="true" />
+				<forward call="cycle" function="msgbox" expand="true" />
+				<forward call="msgbox" function="msgbox" expand="true" />
+			</bind>
+		</unit>
+		
+	</provision>	
+	
+</module>
