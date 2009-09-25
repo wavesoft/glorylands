@@ -22,6 +22,8 @@ class GLOOLink {
 			}		
 		}
 	}
+
+	// =======[ PHP - JS Interaction ]================================================
 	
 	static public function get_object($linkid) {
 		foreach (self::$ObjectStack as $info) {
@@ -51,8 +53,12 @@ class GLOOLink {
 		//  MUST assign this ID on the linkID property)
 		return $id;
 	}
-	
-	static private function compile_structure($structure, &$delay_ref, $path) {		
+
+	static public function get_object_reference($object) {
+		return '#GL.DOM.get('.$object->linkID.')#';
+	}
+
+	static public function compile_structure($structure, &$delay_ref, $path) {		
 	
 		if (is_array($structure)) {
 		
@@ -99,7 +105,7 @@ class GLOOLink {
 		}
 
 	}
-	
+		
 	static public function compile_js() {
 	
 		// Make sure $ObjectStack is defined (since we are static)
@@ -115,10 +121,10 @@ class GLOOLink {
 		// time the delay-mapping that should be done in order to properly set-up
 		// the object references
 		$delay_ref = array();
-		foreach (self::$ObjectStack as $object) {
+		foreach (self::$ObjectStack as $i => $object) {
 			
 			// Prepare the variables that should be used for the initialization of the JS unit
-			$init_vars = array_merge($object['object']->prepare_vars(), array(
+			$init_vars = array_merge($object['object']->_vars(), array(
 				'root' => $object['object']->root,
 				'parent' => $object['object']->parent,
 				'previous' => $object['object']->previous,
@@ -128,7 +134,10 @@ class GLOOLink {
 			
 			// Write the code that should initialize the JS interface, and in the same
 			// time extract the delay references
-			$script.='GLOOCore.register(new '.$object['class'].'('.$object['id'].','.self::compile_structure($init_vars, $delay_ref, $object['id'].'#').'));'."\r\n";
+			$script.='GL.DOM.register(new '.$object['class'].'('.$object['id'].','.self::compile_structure($init_vars, $delay_ref, $object['id'].'#').'));'."\r\n";
+			
+			// Merk the object as synced
+			self::$ObjectStack[$i]['object']->synced = true;
 		}
 		
 		// Compile the delay-mapping in order to implement
@@ -141,17 +150,35 @@ class GLOOLink {
 				$ref['path'] = substr($part[1],1);
 				$group = (int)$part[0];
 				
-				if (!isset($groups[$group])) $groups[$group]='with(GLOOCore.get('.$group.')){';
-				$groups[$group].=$ref['path']."=GLOOCore.get(".$ref['id'].");";
+				if (!isset($groups[$group])) $groups[$group]='with(GL.DOM.get('.$group.')){';
+				$groups[$group].=$ref['path']."=GL.DOM.get(".$ref['id'].");";
 			}
 			$script.=implode("};\r\n", $groups)."};\r\n";
 		}
 
 		// Finalize the script
-		$script.= "$(window).addEvent('domready',function(){GLOOCore.run();});\r\n";
+		$script.= "$(window).addEvent('domready',function(){GL.Core.run();});\r\n";
 		
 		// Return the compiled script
 		return $script;
+	}
+	
+	// =======[ Async I/O ]===========================================================
+	
+	static public function peek_messages() {
+		// #@# This should be implemented using GLCache::Get()
+		if (!isset($_SESSION['messages'])) return array();
+		$msg = $_SESSION['messages'];
+		unset($_SESSION['messages']);
+		return $msg;
+	}
+	
+	static public function store_message($linkid, $call, $parm) {
+		// #@# This should be implemented using GLCache::Set()
+		if (!isset($_SESSION['messages'])) $_SESSION['messages'] = array();
+		$_SESSION['messages'][] = array(
+			'id' => $linkid, 'c' => $call, 'p' => $parm
+		);
 	}
 	
 }

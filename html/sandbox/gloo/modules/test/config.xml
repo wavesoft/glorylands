@@ -6,11 +6,11 @@
 		<unit name="GLUICore">
 			<server class="GLUICore" file="core.php" />
 			<client class="GLUICore" file="core.js" />
-			<bind>
-				<forward call="msgbox" function="msgbox" expand="true" />
-				<forward call="cycle" function="msgbox" expand="true" />
-				<forward call="msgbox" function="msgbox" expand="true" />
-			</bind>
+		</unit>
+
+		<unit name="GLUIPanel">
+			<server class="GLUIPanel" file="core.php" />
+			<client class="GLUIPanel" file="core.js" />
 		</unit>
 		
 	</provision>	

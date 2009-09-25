@@ -46,7 +46,8 @@ class GLOOModule {
 			$attrib[$n] = (string)$v;
 		}
 		
-		// Render each one of our children
+		// Render each one of our children. If we found a second
+		// occurance of the same name, convert the entry into an array		
 		$vars = array();
 		foreach ($simplexml->children() as $name => $c) {
 			if (isset($vars[$name])) {
@@ -135,7 +136,7 @@ class GLOOModule {
 		return $this->unitconfig[$name];
 	}
 	
-	public function send($call) {
+	public function call($call, $vars) {
 		
 	}
 

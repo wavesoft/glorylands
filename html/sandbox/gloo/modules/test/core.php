@@ -8,4 +8,13 @@ class GLUICore extends GLOOObject {
 
 }
 
+class GLUIPanel extends GLOOObject {
+
+	function position($new_pos) {
+		$this->left = $new_pos['x'];
+		$this->top = $new_pos['y'];		
+	}
+
+}
+
 ?>

@@ -1,5 +1,11 @@
 <?php
 
+class GLDOM {
+
+	public static $root;
+
+}
+
 class GLDOMElement extends GLDataset {
 	
 	public $children;
