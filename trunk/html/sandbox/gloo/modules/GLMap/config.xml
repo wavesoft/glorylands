@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<module>
+
+	<!-- Module information -->
+	<info>
+		<guid>e0c3a97b884c9e86424356efd6e45f38</guid>
+		<name>Map configuration</name>
+		<author>John Haralampidis</author>
+		<version>1.0</version>
+	</info>
+
+	<!--| Define all the database structures that should be created
+	    | in order to run this module -->			
+	<database>
+		
+		<table name="gl_map">		
+			<field name="index" type="int" autoincrement="true" prikey="true" />
+			<field name="x" type="int" />
+			<field name="y" type="int" />
+		</table>
+		
+	</database>
+
+	<!-- Define a possible module configuration parameters -->
+	<config>
+		
+		<!-- Define an option group (Must exist at least one) -->
+		<group name="visual" title="Visual">
+			
+			<field name="mode" title="Map Mode" type="list">
+				<value name=""></value>
+			</field>
+			
+		</group>
+		
+	</config>
+
+	<!-- Define some requirements in order to install this module -->
+	<depends>
+		
+		<!-- Require the specific module to be installed for all of my structures -->
+		<module name="Map info" version="1.0" />
+		
+		<!-- Require the specific module to be installed, in order to use a specific structure -->
+		<module name="Map info" version="1.0">
+			<for unit="GLMpap" />
+			<for block="GLMap" />
+		</module>
+		
+	</depends>
+
+	<!-- The <provide> tag defines all the structures that this module provide -->
+	<provide>
+	
+		<!--| A "Unit" is a PHP and/or JS code block 
+			| that provide code enhancement -->
+		<unit name="GLMap">
+			<server class="GLMap" file="map.php" />
+			<client class="GLMap" file="map.js" />
+		</unit>
+
+		<!--| A "Model" is a data representation component, 
+			| globally accessible that simplifies some data I/O 
+			| operations with the database
+			|-->
+		<model name="GUser">
+		
+		</model>
+
+		<!--| A "Block" is a visual addition on a layout. For example a
+		    | chat window. Optionally, you can bind the block with a unit,
+			| in order to create a dynamic/interactive block. -->
+		<block name="GLMap" template="map.tpl" unit="GLMap" />
+		
+		<!--| A "View" is a complete HTML layout that can optionally do
+		    | some data processing. A "view" might also contain some
+			| slots that allow blocks to be placed in.  -->
+		<view name="Main" template="main.tpl">
+			<slot id="right" description="Right panel" />
+		</view>
+
+		<!--| An "Action" is a game event. It is a group of actions
+			| that will be executed when requested. Actions are requested
+			| in the same way a view is requested, but it does not produce
+			| a visual result.
+			|-->
+		<action name="render" codebase="gloom" />
+		
+	</provide>	
+	
+</module>

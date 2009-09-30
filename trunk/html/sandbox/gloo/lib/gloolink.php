@@ -134,7 +134,7 @@ class GLOOLink {
 			
 			// Write the code that should initialize the JS interface, and in the same
 			// time extract the delay references
-			$script.='GL.DOM.register(new '.$object['class'].'('.$object['id'].','.self::compile_structure($init_vars, $delay_ref, $object['id'].'#').'));'."\r\n";
+			$script.='GL.DOM.register(new '.$object['class'].'('.self::compile_structure($init_vars, $delay_ref, $object['id'].'#').','.$object['id'].'));'."\r\n";
 			
 			// Merk the object as synced
 			self::$ObjectStack[$i]['object']->synced = true;

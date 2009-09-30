@@ -96,11 +96,11 @@ class GLOOModule {
 		$classes = array();
 		
 		// Include all the external files
-		if (isset($this->config['provision'])) {
+		if (isset($this->config['provide'])) {
 		
-			// Make sure provision units is an array, even if it's only one
-			if (!isset($this->config['provision']['unit'][0])) $this->config['provision']['unit']=array($this->config['provision']['unit']);			
-			foreach ($this->config['provision']['unit'] as $unit) {				
+			// Make sure provide units is an array, even if it's only one
+			if (!isset($this->config['provide']['unit'][0])) $this->config['provide']['unit']=array($this->config['provide']['unit']);			
+			foreach ($this->config['provide']['unit'] as $unit) {				
 				$id = $unit['name'];
 				
 				// Check for server file to include
