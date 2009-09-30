@@ -46,7 +46,7 @@ if (GL::$mode == GLREQ_API) {
 	
 	$panel = new GLUIPanel();
 	$panel->title = 'Another panel';
-	$panel->text = 'And this is another panel, just to demonstrate the effect';
+	$panel->text = '<a href="javascript:var v=new GLUIPanel({\'text\': \'This is a test\', \'title\':\'Static testing\'});">Click me!</a>';
 	$panel->right = 20;
 	$ui->second = $panel;
 

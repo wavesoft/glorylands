@@ -93,7 +93,7 @@ class GLOOObject extends GLDOMElement {
 	  */
 	protected function var_changed($name, &$value) {
 		if ($this->synced) {
-			$this->_call('__set', $name, $this->encode_structure($value));
+			$this->_call('_set', $name, $this->encode_structure($value));
 		}
 	}
 
@@ -105,7 +105,7 @@ class GLOOObject extends GLDOMElement {
 	  */
 	protected function var_removed($name) {
 		if ($this->synced) {
-			$this->_call('__unset', $name);
+			$this->_call('_unset', $name);
 		}
 	}
 

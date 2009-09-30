@@ -123,7 +123,8 @@ class GL {
 		self::$stream->title = 'GLOO Test';				
 		
 		// Install active extensions
-		GLOOModule::install('test');
+		GLOOModule::install('UIBasic');
+		GLOOModule::install('GLMap');
 		
 		// Start session
 		session_start();
